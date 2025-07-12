@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { encryptData,decryptData } from '../../../../utils/crypto-util';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-navbar',
   templateUrl: './admin-navbar.component.html',
-  styleUrls: ['./admin-navbar.component.css']
+  styleUrls: ['./admin-navbar.component.css'],
+  imports:[CommonModule]
 })
 export class AdminNavbarComponent {
   constructor(private router: Router) {}
@@ -32,4 +34,14 @@ export class AdminNavbarComponent {
 
     
   }
+
+  showNotifications = false;
+  showUserMenu = false;
+
+  notifications = [
+    { icon: 'bi bi-exclamation-circle text-danger', title: 'Update completed', message: 'Restart server 12 to complete the update.', time: '30m ago' },
+    { icon: 'bi bi-bell text-warning', title: 'Lorem ipsum', message: 'Aliquam ex eros, imperdiet vulputate hendrerit et.', time: '2h ago' },
+    { icon: 'bi bi-house text-primary', title: 'Login from 192.186.1.8', message: '', time: '5h ago' },
+    { icon: 'bi bi-person-plus text-success', title: 'New connection', message: 'Christina accepted your request.', time: '14h ago' }
+  ];
 }
