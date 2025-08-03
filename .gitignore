@@ -29,8 +29,6 @@ Thumbs.db
 .angular/cache/
 .angular/local/
 
-# Environment files
-src/environments/environment*.ts
 
 # Misc
 .sass-cache/
