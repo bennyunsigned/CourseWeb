@@ -5,6 +5,7 @@ import { CourseMasterService } from '../../../../services/course-master.service'
 import { CourseModuleService } from '../../../../services/course-module.service';
 import { ToastrService } from 'ngx-toastr';
 import { ModuleVideoRequest, ModuleVideoResponse } from '../../../../models/courseModuleModel';
+import { HttpEventType } from '@angular/common/http';
 
 
 @Component({
@@ -40,6 +41,7 @@ export class CourseModuleComponent implements OnInit {
   moduleVideoName: string = '';
   isFetchingDuration: boolean = false;
   videoUrls: ModuleVideoResponse[] = [];
+  downloadProgress: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -290,6 +292,64 @@ export class CourseModuleComponent implements OnInit {
     }
   }
 
+  onModuleNameChange(moduleId: number, newValue: string) {
+    if (!newValue.trim()) {
+      this.toastr.warning('Module Name cannot be empty.', 'Validation Error');
+      return;
+    }
+    this.moduleService.getModuleById(moduleId.toString()).subscribe({
+      next: (module) => {
+        const updatedModule = {
+          ...module,
+          ModuleName: newValue,
+          CourseId: module.CourseId
+        };
+        this.moduleService.updateModule(moduleId.toString(), updatedModule).subscribe({
+          next: () => {
+            this.toastr.success('Module Name updated!', 'Success');
+            const localModule = this.modules.find(m => m.ModuleId === moduleId);
+            if (localModule) localModule.ModuleName = newValue;
+          },
+          error: () => {
+            this.toastr.error('Failed to update Module Name.', 'Error');
+          }
+        });
+      },
+      error: () => {
+        this.toastr.error('Failed to fetch Module details.', 'Error');
+      }
+    });
+  }
+
+  onModuleDescriptionChange(moduleId: number, newValue: string) {
+    if (!newValue.trim()) {
+      this.toastr.warning('Module Description cannot be empty.', 'Validation Error');
+      return;
+    }
+    this.moduleService.getModuleById(moduleId.toString()).subscribe({
+      next: (module) => {
+        const updatedModule = {
+          ...module,
+          ModuleDescription: newValue,
+          CourseId: module.CourseId
+        };
+        this.moduleService.updateModule(moduleId.toString(), updatedModule).subscribe({
+          next: () => {
+            this.toastr.success('Module Description updated!', 'Success');
+            const localModule = this.modules.find(m => m.ModuleId === moduleId);
+            if (localModule) localModule.ModuleDescription = newValue;
+          },
+          error: () => {
+            this.toastr.error('Failed to update Module Description.', 'Error');
+          }
+        });
+      },
+      error: () => {
+        this.toastr.error('Failed to fetch Module details.', 'Error');
+      }
+    });
+  }
+
   // --- Attachment/Video Modal Logic ---
 
   AttachmentPopup(moduleId: number, moduleName: string, courseName: string, courseId?: number): void {
@@ -320,34 +380,70 @@ export class CourseModuleComponent implements OnInit {
     });
   }
 
-  fetchYoutubeDuration() {
+  fetchArchiveOrgDuration() {
     if (!this.moduleVideoName || !this.newVideoUrl || !this.selectedAttachmentModuleId || !this.selectedAttachmentCourseId) return;
     this.isFetchingDuration = true;
-    this.moduleService.getYoutubeDuration(this.newVideoUrl).subscribe({
-      next: (res) => {        
-        const videoData: ModuleVideoRequest = {
-          course_id: this.selectedAttachmentCourseId!,
-          module_id: this.selectedAttachmentModuleId!,
-          video_title: this.moduleVideoName,
-          video_url: this.newVideoUrl,
-          duration_in_seconds: res.duration,
-          sequence_no: this.videoUrls.length + 1,
-          created_by: 'admin'
-        };
-        this.moduleService.insertModuleVideo(videoData).subscribe({
-          next: () => {
-            this.isFetchingDuration = false;
-            this.moduleVideoName = '';
-            this.newVideoUrl = '';
-            this.getModuleVideos();
-          },
-          error: () => {
-            this.isFetchingDuration = false;
+    this.downloadProgress = 0;
+    this.moduleService.getArchiveOrgDuration(this.newVideoUrl).subscribe({
+      next: (event) => {
+        if (
+          event.type === HttpEventType.DownloadProgress &&
+          typeof (event as any).partialText === 'string'
+        ) {
+          // Streaming text response, parse each line
+          const lines = (event as any).partialText.split('\n');
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const data = JSON.parse(line);
+              if (typeof data.progress === 'number') {
+                this.downloadProgress = Math.min(Math.max(data.progress, 0), 100);
+              } else if (data.progress === 'indeterminate') {
+                this.downloadProgress = -1;
+              }
+            } catch {}
           }
-        });
+        } else if (event.type === HttpEventType.Response) {
+          // Final response, parse duration
+          try {
+            const lines = event.body.split('\n');
+            for (const line of lines) {
+              if (!line.trim()) continue;
+              const data = JSON.parse(line);
+              if (data.duration) {
+                const videoData: ModuleVideoRequest = {
+                  course_id: this.selectedAttachmentCourseId!,
+                  module_id: this.selectedAttachmentModuleId!,
+                  video_title: this.moduleVideoName,
+                  video_url: this.newVideoUrl,
+                  duration_in_seconds: data.duration, // Save as string (e.g., "06:38")
+                  sequence_no: this.videoUrls.length + 1,
+                  created_by: 'admin'
+                };
+                this.moduleService.insertModuleVideo(videoData).subscribe({
+                  next: () => {
+                    this.isFetchingDuration = false;
+                    this.moduleVideoName = '';
+                    this.newVideoUrl = '';
+                    this.downloadProgress = 0;
+                    this.getModuleVideos();
+                  },
+                  error: () => {
+                    this.isFetchingDuration = false;
+                    this.downloadProgress = 0;
+                  }
+                });
+              }
+            }
+          } catch {
+            this.isFetchingDuration = false;
+            this.downloadProgress = 0;
+          }
+        }
       },
       error: () => {
         this.isFetchingDuration = false;
+        this.downloadProgress = 0;
       }
     });
   }
@@ -356,6 +452,11 @@ export class CourseModuleComponent implements OnInit {
     // If it's a plain number string, just return it as seconds
     if (/^\d+$/.test(duration)) {
       return parseInt(duration, 10);
+    }
+    // If it's in mm:ss format
+    if (/^\d{2}:\d{2}$/.test(duration)) {
+      const [minutes, seconds] = duration.split(':').map(Number);
+      return minutes * 60 + seconds;
     }
     // ISO 8601 duration (e.g., PT1H2M3S)
     const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;

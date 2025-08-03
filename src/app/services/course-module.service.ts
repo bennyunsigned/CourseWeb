@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Course } from '../models/courseModel';
@@ -47,8 +47,16 @@ export class CourseModuleService {
   // Get YouTube video duration
   getYoutubeDuration(url: string): Observable<{ duration: string }> {
     return this.http.post<{ duration: string }>(
-      `${this.baseURL1}/getDailymotionDuration`,
+      `${this.baseURL1}/get_archiveorg_duration`,
       { url }
+    );
+  }
+
+  getArchiveOrgDuration(url: string): Observable<HttpEvent<any>> {
+    return this.http.post(
+      `${this.baseURL1}/getArchiveOrgDuration`,
+      { url },
+      { responseType: 'text', reportProgress: true, observe: 'events' }
     );
   }
 

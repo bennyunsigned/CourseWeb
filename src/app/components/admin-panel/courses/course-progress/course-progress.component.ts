@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { CourseProgressService } from '../../../../services/course-progress.service';
 import {CourseProgress} from '../../../../models/courseProgressModel';
-import { DailymotionPlayerComponent } from '../dailymotion-player/dailymotion-player.component';
+import { VideoPlayerComponent } from '../video-player/video-player.component';
 
 @Component({
   selector: 'app-course-progress',
-  imports: [CommonModule,DailymotionPlayerComponent ],
+  imports: [CommonModule,VideoPlayerComponent ],
   templateUrl: './course-progress.component.html',
   styleUrls: ['./course-progress.component.css']
 })
@@ -20,6 +20,24 @@ export class CourseProgressComponent implements OnInit {
     moduleDescription: string;
     videos: CourseProgress[];
   }[] = [];
+
+  @ViewChildren(VideoPlayerComponent) videoPlayers!: QueryList<VideoPlayerComponent>;
+  activeModuleIdx: number | null = null;
+  activeVideoIdx: number | null = null;
+  onVideoPlay(moduleIdx: number, videoIdx: number) {
+    this.activeModuleIdx = moduleIdx;
+    this.activeVideoIdx = videoIdx;
+    let idx = 0;
+    this.groupedModules.forEach((mod, mIdx) => {
+      mod.videos.forEach((_, vIdx) => {
+        if (!(mIdx === moduleIdx && vIdx === videoIdx)) {
+          const player = this.videoPlayers.get(idx);
+          if (player) player.pauseVideo();
+        }
+        idx++;
+      });
+    });
+  }
 
   constructor(private courseProgressService: CourseProgressService) {}
 

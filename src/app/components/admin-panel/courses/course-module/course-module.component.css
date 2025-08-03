@@ -1,0 +1,9 @@
+@media (max-width: 576px) {
+  td.mobile-vertical {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+}

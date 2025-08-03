@@ -102,22 +102,45 @@
                 <thead>
                     <tr>
                         <th>Sl#</th>
-                        <th (click)="sortData('CourseName')">Course</th>
+                        <th class="d-none" (click)="sortData('CourseName')">Course</th>
                         <th (click)="sortData('ModuleName')">Module</th>
                         <th (click)="sortData('ModuleDescription')">Description</th>
-                        <th (click)="sortData('SequenceNo')">Sequence No.</th>
+                        <th style="width: 10px;" (click)="sortData('SequenceNo')">Sequence No.</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let module of paginatedData; let i = index">
-                        <td><span class="mobileScreen">Sl- </span>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-                        <td><span class="mobileScreen">Course - </span>{{ module.CourseName }}</td>
-                        <td><span class="mobileScreen">Module - </span>{{ module.ModuleName }}</td>
-                        <td><span class="mobileScreen">Description- </span>{{ module.ModuleDescription }}</td>
-                        <td>
-                            <span class="mobileScreen">Sequence No- </span>
-                            <input #seqInput type="number" class="form-control form-control-sm d-inline w-auto"
+                        <td><span class="mobileScreen">Sl - </span>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                        <td class="d-none"><span class="mobileScreen">Course - </span>{{ module.CourseName }}</td>
+                        <td class="mobile-vertical">
+                            <span class="mobileScreen">Module </span>
+                            <textarea
+
+                                #moduleNameInput
+                                type="text"
+                                class="form-control"
+                                [value]="module.ModuleName"
+                                (change)="onModuleNameChange(module.ModuleId, moduleNameInput.value)"
+                                
+                                rows="4"
+                            ></textarea>
+                        </td>
+                        <td class="mobile-vertical">
+                            <span class="mobileScreen">Description </span>
+                            <textarea
+                                #moduleDescriptionInput
+                                type="text"
+                                class="form-control"
+                                [value]="module.ModuleDescription"
+                                (change)="onModuleDescriptionChange(module.ModuleId, moduleDescriptionInput.value)"
+                                
+                                rows="4"
+                            ></textarea>
+                        </td>
+                        <td class="mobile-vertical"> 
+                            <span class="mobileScreen">Sequence No </span>
+                            <input #seqInput style="width: 10px;" type="number" class="form-control"
                                 [value]="module.SequenceNo"
                                 (change)="onSequenceNoChange(module.ModuleId, seqInput.value)" style="width: 80px;" />
                         </td>
@@ -190,7 +213,7 @@
                         <div class="col-md-2 mt-2">
                             <br>
                             <button style="white-space: nowrap;" class="btn btn-primary mb-2"
-                                (click)="fetchYoutubeDuration()" [disabled]="isFetchingDuration">
+                                (click)="fetchArchiveOrgDuration()" [disabled]="isFetchingDuration">
                                 <ng-container *ngIf="!isFetchingDuration">
                                     <i class="bi bi-plus-circle"></i> Add
                                 </ng-container>
@@ -199,6 +222,21 @@
                                         aria-hidden="true"></span>
                                 </ng-container>
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar for Archive.org Duration Fetch -->
+                    <div *ngIf="isFetchingDuration" class="mb-3">
+                        <label class="form-label">Fetching video duration...</label>
+                        <div class="progress">
+                            <div *ngIf="downloadProgress >= 0" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                [style.width]="downloadProgress + '%'" aria-valuenow="downloadProgress" aria-valuemin="0" aria-valuemax="100">
+                                {{ downloadProgress }}%
+                            </div>
+                            <div *ngIf="downloadProgress < 0" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                Loading...
+                            </div>
                         </div>
                     </div>
 

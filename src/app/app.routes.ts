@@ -17,7 +17,8 @@ import { LoginReportComponent } from './components/admin-panel/reports/login-rep
 import { SalesReportComponent } from './components/admin-panel/reports/sales-report/sales-report.component';
 import { UserReportComponent } from './components/admin-panel/reports/user-report/user-report.component';
 import { CourseProgressComponent } from './components/admin-panel/courses/course-progress/course-progress.component';
-
+import { CourseContentDetailsComponent } from './components/admin-panel/courses/course-content-details/course-content-details.component';
+import { AvailableCoursesComponent } from './components/admin-panel/courses/available-courses/available-courses.component';
 
 export const routes: Routes = [
     {
@@ -53,6 +54,9 @@ export const routes: Routes = [
             { path: 'course-master', component: CourseMasterComponent, canActivate: [AuthGuard] },
             { path: 'module-master', component: CourseModuleComponent, canActivate: [AuthGuard] },
             { path: 'course-progress', component: CourseProgressComponent, canActivate: [AuthGuard] },
+            { path: 'course-content/:courseId', component: CourseContentDetailsComponent },
+            { path: 'available-course', component: AvailableCoursesComponent},
+            
             
         
         ]

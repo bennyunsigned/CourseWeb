@@ -1,0 +1,55 @@
+<div class="category-tabs-container mb-4">
+  <div class="d-flex flex-row flex-wrap">
+    <button
+      *ngFor="let cat of categories"
+      class="category-tab-btn me-2 mb-2"
+      [class.active]="cat.CategoryId === selectedCategoryId"
+      (click)="onCategoryTabClick(cat.CategoryId)">
+      {{ cat.CategoryName }}
+    </button>
+  </div>
+</div>
+
+<div *ngFor="let row of courseRows" class="row mb-4">
+  <div *ngFor="let course of row" class="col-md-4 col-sm-12 mb-4">
+    <div class="card course-card h-100 shadow-sm position-relative" (click)="onCardClick(course.CourseId)">
+      <div class="course-banner" [style.backgroundImage]="'url(' + course.BannerImage + ')'">
+        <div class="badge-row">
+          <span *ngIf="course.IsBestSeller" class="badge badge-best-seller">Best Seller</span>
+          <span *ngIf="course.IsPremium" class="badge badge-premium">Premium</span>
+          <span class="badge badge-duration">
+            {{ course.TotalDurationPerCourse | durationFormat }}
+          </span>
+        </div>
+      </div>
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title text-truncate mb-2" title="{{ course.CourseName }}">{{ course.CourseName }}</h5>
+        <ul class="list-group list-group-flush mb-2">
+          <li class="list-group-item py-1 px-0 border-0">
+            <strong>Price:</strong>
+            <span *ngIf="course.DiscountedPrice < course.ActualPrice">
+              <del class="text-danger">{{ course.ActualPrice | currency:'INR' }}</del>
+              <span class="text-success ms-2">{{ course.DiscountedPrice | currency:'INR' }}</span>
+            </span>
+            <span *ngIf="course.DiscountedPrice >= course.ActualPrice">
+              {{ course.ActualPrice | currency:'INR' }}
+            </span>
+          </li>
+        </ul>
+        <div class="mt-auto d-flex gap-2 justify-content-between">
+          <button class="btn btn-success btn-xs flex-fill" (click)="buyNow(course.CourseId); $event.stopPropagation();">
+            <i class="bi bi-bag-check"></i> Buy Now
+          </button>
+          <button class="btn btn-cart btn-xs flex-fill" (click)="addToCart(course.CourseId); $event.stopPropagation();">
+            <i class="bi bi-bell"></i> Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="text-center mb-4" *ngIf="hasMore">
+  <button class="btn btn-secondary" (click)="loadMore()">Load More</button>
+</div>
+
+
