@@ -22,29 +22,8 @@ export class VideoPlayerComponent implements OnChanges {
     this.updateVideoSource();
   }
 
-  private convertToDownloadUrl(detailsUrl: string): string | null {
-    try {
-      const url = new URL(detailsUrl);
-      if (!url.hostname.includes('archive.org') || !url.pathname.startsWith('/details/')) {
-        return null;
-      }
-      const parts = url.pathname.split('/');
-      const identifier = parts[2];
-      const filename = parts[3];
-      const decodedFilename = decodeURIComponent(filename).replace(/\+/g, ' ');
-      return `https://archive.org/download/${identifier}/${encodeURIComponent(decodedFilename)}`;
-    } catch (e) {
-      return null;
-    }
-  }
-
   private updateVideoSource() {
-    const downloadUrl = this.convertToDownloadUrl(this.videoInput);
-    if (downloadUrl) {
-      this.videoSrc = downloadUrl;
-    } else {
-      this.videoSrc = '';
-    }
+    this.videoSrc = this.videoInput || '';
     this.isPlaying = false; // Reset play state when video changes
   }
 
