@@ -1,48 +1,384 @@
 
-  <h4 class="mb-4 fw-bold text-primary">
-    <i class="bi bi-bar-chart-steps me-2"></i>{{ courseName }}
-  </h4>
-  <div class="mb-4">
-    <div class="p-3 bg-light border-start border-4 border-primary rounded shadow-sm d-flex align-items-center">
-      <i class="bi bi-info-circle-fill text-primary fs-4 me-3"></i>
-      <span class="fs-6 text-secondary">{{ courseDescription }}</span>
+  <div class="course-progress-container">
+<!-- Floating Particles -->
+<div class="particles">
+  <div class="particle" *ngFor="let p of [1,2,3,4,5,6]"></div>
+</div>
+
+<!-- Course Header -->
+<div class="course-header mb-2">
+  <div class="d-flex align-items-start gap-3 mb-2">
+    <div class="course-icon">
+      <i class="bi bi-mortarboard-fill text-primary"></i>
+    </div>
+    <div class="flex-grow-1">
+      <h4 class="course-title mb-2">{{ courseName }}</h4>
+      <div class="course-description-card">
+        <i class="bi bi-info-circle-fill text-primary me-2"></i>
+        <span>{{ courseDescription }}</span>
+      </div>
     </div>
   </div>
-  <div *ngIf="courseProgressList.length > 0; else noData">
-    <div class="accordion" id="courseAccordion">
-      <ng-container *ngFor="let module of groupedModules; let i = index">
-        <div class="accordion-item shadow-sm mb-3 rounded-3 border-0">
-          <h2 class="accordion-header" id="heading{{i}}">
-          <button class="accordion-button bg-light fw-semibold" type="button" data-bs-toggle="collapse"
-            [attr.data-bs-target]="'#collapse' + i" [attr.aria-expanded]="activeModuleIdx === i ? 'true' : 'false'" [attr.aria-controls]="'collapse' + i">
-              <i class="bi bi-journal-bookmark-fill text-secondary me-2"></i>
-              {{ module.moduleName }}
-            </button>
-          </h2>
-          <div [id]="'collapse' + i" class="accordion-collapse collapse" [class.show]="activeModuleIdx === i" [attr.aria-labelledby]="'heading' + i"
-            data-bs-parent="#courseAccordion">
-            <div class="accordion-body bg-white">
-              <div class="mb-3">
-                <strong class="text-secondary">Description:</strong>
-                <div class="fst-italic text-muted">{{ module.moduleDescription }}</div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="course-tabs-container mb-2">
+  <ul class="nav nav-pills course-tabs" id="courseTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="modules-tab" data-bs-toggle="pill" 
+              data-bs-target="#modules" type="button" role="tab" 
+              aria-controls="modules" aria-selected="true">
+        <i class="bi bi-collection-play me-2"></i>
+        <span class="tab-text">Course Modules</span>
+        <span class="badge bg-primary ms-2 module-count">{{ allModules.length }}</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="reviews-tab" data-bs-toggle="pill" 
+              data-bs-target="#reviews" type="button" role="tab" 
+              aria-controls="reviews" aria-selected="false">
+        <i class="bi bi-star-fill me-2"></i>
+        <span class="tab-text">Reviews</span>
+        <span class="badge bg-secondary ms-2">0</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="discussions-tab" data-bs-toggle="pill" 
+              data-bs-target="#discussions" type="button" role="tab" 
+              aria-controls="discussions" aria-selected="false">
+        <i class="bi bi-chat-dots-fill me-2"></i>
+        <span class="tab-text">Discussions</span>
+        <span class="badge bg-secondary ms-2">0</span>
+      </button>
+    </li>
+  </ul>
+</div>
+
+<!-- Tab Content -->
+<div class="tab-content" id="courseTabContent">
+  <!-- Modules Tab -->
+  <div class="tab-pane fade show active" id="modules" role="tabpanel" aria-labelledby="modules-tab">
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="d-flex flex-column align-items-center py-5">
+        <div class="spinner-border text-primary mb-2" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="text-muted">Loading course modules...</h5>
+        <p class="text-muted small">Please wait while we fetch your course content</p>
+      </div>
+      
+      <!-- Skeleton Loaders -->
+      <div class="skeleton-container mt-4">
+        <div class="skeleton-card" *ngFor="let item of [1,2,3]">
+          <div class="skeleton-header">
+            <div class="skeleton-circle"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-subtitle"></div>
+            </div>
+            <div class="skeleton-arrow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and filters -->
+    <div *ngIf="!isLoading && allModules.length > 0" class="search-controls mb-2">
+      <div class="search-bar-container">
+        <div class="row g-3 align-items-center">
+          <div class="col-lg-8 col-md-7">
+            <div class="search-input-group">
+              <div class="input-group">
+                <span class="input-group-text search-icon">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input type="text" 
+                       class="form-control search-input" 
+                       placeholder="Search modules, descriptions, or video titles..."
+                       [(ngModel)]="searchTerm"
+                       (input)="onSearchChange()">
+                <button *ngIf="searchTerm" 
+                        type="button" 
+                        class="btn btn-outline-secondary clear-search" 
+                        (click)="clearSearch()"
+                        title="Clear search">
+                  <i class="bi bi-x-lg"></i>
+                </button>
               </div>
-              <div *ngFor="let video of module.videos; let j = index" class="mb-4 ps-2 border-start border-3 border-primary">
-                <div class="fw-bold mb-1 d-flex align-items-center">
-                  <i class="bi bi-play-circle-fill text-primary me-2"></i>
-                  {{ video.VideoTitle }}
-                  <span class="badge bg-info text-dark ms-2">
-                    {{ video.DurationInSeconds }}s
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-5">
+            <div class="search-stats text-end">
+              <span class="stats-text">
+                <i class="bi bi-collection me-1"></i>
+                Total: <strong>{{ allModules.length }}</strong> modules
+                <span *ngIf="searchTerm && filteredModules.length !== allModules.length" class="found-results">
+                  | Found: <strong class="text-primary">{{ filteredModules.length }}</strong>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination info and controls -->
+    <div *ngIf="!isLoading && filteredModules.length > modulesPerPage" class="pagination-header mb-2">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-2 mb-md-0">
+          <div class="pagination-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <span>{{ paginationInfo }}</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="pagination-controls-top">
+            <div class="d-flex align-items-center justify-content-md-end gap-2 flex-wrap">
+              <div class="per-page-selector">
+                <label for="modulesPerPage" class="form-label me-2 mb-0">Show:</label>
+                <select id="modulesPerPage" class="form-select form-select-sm" 
+                        [(ngModel)]="modulesPerPage" 
+                        (change)="onModulesPerPageChange()">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+              <div class="page-navigation">
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-outline-primary btn-sm" 
+                          [disabled]="currentPage === 0" 
+                          (click)="previousPage()">
+                    <i class="bi bi-chevron-left"></i>
+                    <span class="d-none d-sm-inline ms-1">Previous</span>
+                  </button>
+                  <span class="btn btn-light btn-sm page-indicator">
+                    <span class="d-none d-sm-inline">Page </span>{{ currentPage + 1 }} of {{ totalPages }}
                   </span>
+                  <button type="button" class="btn btn-outline-primary btn-sm" 
+                          [disabled]="currentPage === totalPages - 1" 
+                          (click)="nextPage()">
+                    <span class="d-none d-sm-inline me-1">Next</span>
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
                 </div>
-                <app-video-player [videoInput]="video.VideoUrl" (playClicked)="onVideoPlay(i, j)"></app-video-player>
               </div>
             </div>
           </div>
         </div>
-      </ng-container>
+      </div>
+    </div>
+
+    <!-- Course Modules Content -->
+    <div *ngIf="!isLoading && courseProgressList.length > 0; else noData" class="modules-content">
+      <div class="modules-grid">
+        <ng-container *ngFor="let module of displayedModules; let i = index">
+          <div class="module-card" [attr.data-module-index]="i">
+            <div class="module-header" 
+                 [class.active]="activeModuleIdx === (currentPage * modulesPerPage + i)"
+                 data-bs-toggle="collapse"
+                 [attr.data-bs-target]="'#module-' + i"
+                 [attr.aria-expanded]="activeModuleIdx === (currentPage * modulesPerPage + i) ? 'true' : 'false'"
+                 [attr.aria-controls]="'module-' + i"
+                 (click)="toggleModule(i)">
+              <div class="module-header-content">
+                <div class="module-icon">
+                  <i class="bi bi-play-circle-fill"></i>
+                </div>
+                                <div class="module-info">
+                  <h5 class="module-title">{{ module.moduleName }}</h5>
+                  <div class="module-meta">
+                    <span class="video-count">
+                      <i class="bi bi-collection-play me-1"></i>
+                      {{ module.videos.length }} video{{ module.videos.length !== 1 ? 's' : '' }}
+                    </span>
+                    <span class="total-duration">
+                      <i class="bi bi-clock me-1"></i>
+                      {{ getTotalDuration(module.videos) }}
+                    </span>
+                  </div>
+                </div>
+                <div class="module-toggle">
+                  <i class="bi bi-chevron-down"></i>
+                </div>
+              </div>
+            </div>
+            
+            <div [id]="'module-' + i" 
+                 class="collapse module-content" 
+                 [class.show]="activeModuleIdx === (currentPage * modulesPerPage + i)">
+              <div class="module-body">
+                <div class="module-description" *ngIf="module.moduleDescription">
+                  <p>{{ module.moduleDescription }}</p>
+                </div>
+                
+                <div class="videos-list">
+                  <div *ngFor="let video of module.videos; let j = index" 
+                       class="video-item" 
+                       [class.playing]="activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j">
+                    <div class="video-header">
+                      <div class="video-info">
+                        <div class="video-details">
+                          <h6 class="video-title">
+                            <i class="bi bi-play-fill me-2"></i>
+                            {{ video.VideoTitle }}
+                          </h6>
+                          <div class="video-meta">
+                            <span class="video-duration">
+                              <i class="bi bi-clock me-1"></i>
+                              {{ formatVideoDuration(video.DurationInSeconds) }}
+                            </span>
+                            <span class="video-sequence">
+                              <i class="bi bi-list-ol me-1"></i>
+                              Video {{ video.VideoSequence }}
+                            </span>
+                          </div>
+                        </div>
+                        <div class="video-actions">
+                          <button class="btn btn-sm btn-outline-primary" 
+                                  [class.btn-success]="activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j"
+                                  (click)="onVideoPlay(i, j)">
+                            <i class="bi bi-play-fill" *ngIf="!(activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j)"></i>
+                            <i class="bi bi-pause-fill" *ngIf="activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j"></i>
+                            {{ (activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j) ? 'Playing' : 'Play' }}
+                          </button>
+                        </div>
+                      </div>
+                    </div>                    <div class="video-player-container">
+                      <app-video-player 
+                        [videoInput]="video.VideoUrl" 
+                        (playClicked)="onVideoPlay(i, j)">
+                      </app-video-player>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Enhanced Bottom Pagination -->
+      <div *ngIf="filteredModules.length > modulesPerPage" class="bottom-pagination">
+        <div class="pagination-wrapper">
+          <!-- Pagination Stats -->
+          <div class="pagination-stats text-center mb-2">
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-collection me-1"></i>
+              {{ paginationInfo }}
+            </span>
+          </div>
+          
+          <nav aria-label="Course modules pagination">
+            <ul class="pagination pagination-modern justify-content-center">
+              <!-- First Page -->
+              <li class="page-item" [class.disabled]="currentPage === 0">
+                <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0" title="First page">
+                  <i class="bi bi-chevron-double-left"></i>
+                </button>
+              </li>
+              
+              <!-- Previous Page -->
+              <li class="page-item" [class.disabled]="currentPage === 0">
+                <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0" title="Previous page">
+                  <i class="bi bi-chevron-left"></i>
+                  <span class="d-none d-sm-inline ms-1">Previous</span>
+                </button>
+              </li>
+              
+              <!-- Page Numbers -->
+              <ng-container *ngFor="let p of visiblePages">
+                <li class="page-item" [class.active]="p === currentPage">
+                  <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
+                    {{ p + 1 }}
+                  </button>
+                </li>
+              </ng-container>
+              
+              <!-- Next Page -->
+              <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Next page">
+                  <span class="d-none d-sm-inline me-1">Next</span>
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+              
+              <!-- Last Page -->
+              <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="currentPage === totalPages - 1" title="Last page">
+                  <i class="bi bi-chevron-double-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+          
+          <!-- Jump to Page -->
+          <div class="jump-to-page text-center mt-3" *ngIf="totalPages > 5">
+            <div class="d-inline-flex align-items-center gap-2">
+              <span class="text-muted small">Jump to:</span>
+              <select class="form-select form-select-sm" 
+                      [value]="currentPage" 
+                      (change)="goToPage(+$any($event.target).value)"
+                      style="width: auto;">
+                <option *ngFor="let p of getAllPages()" [value]="p">
+                  Page {{ p + 1 }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <ng-template #noData>
-    <div class="alert alert-info shadow-sm mt-4">No course progress data available.</div>
-  </ng-template>
+
+  <!-- Reviews Tab -->
+  <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+    <div class="reviews-placeholder">
+      <div class="text-center py-5">
+        <div class="placeholder-icon mb-2">
+          <i class="bi bi-star-fill text-warning display-4"></i>
+        </div>
+        <h4 class="text-muted">Reviews Coming Soon</h4>
+        <p class="text-muted">Course reviews and ratings will be available here.</p>
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-star me-2"></i>Be the first to review
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discussions Tab -->
+  <div class="tab-pane fade" id="discussions" role="tabpanel" aria-labelledby="discussions-tab">
+    <div class="discussions-placeholder">
+      <div class="text-center py-5">
+        <div class="placeholder-icon mb-2">
+          <i class="bi bi-chat-dots-fill text-info display-4"></i>
+        </div>
+        <h4 class="text-muted">Discussions Coming Soon</h4>
+        <p class="text-muted">Course discussions and Q&A will be available here.</p>
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-chat-dots me-2"></i>Start a discussion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noData>
+  <div class="no-data-state">
+    <div class="text-center py-5">
+      <div class="no-data-icon mb-2">
+        <i class="bi bi-collection text-muted display-4"></i>
+      </div>
+      <h4 class="text-muted">No Course Content Available</h4>
+      <p class="text-muted">This course doesn't have any modules or content yet.</p>
+      <button class="btn btn-primary">
+        <i class="bi bi-plus-circle me-2"></i>Add Content
+      </button>
+    </div>
+  </div>
+</ng-template>
+</div>
 
