@@ -6,8 +6,15 @@
 
 .dropdown .dropdown-menu.show {
     min-width: 300px;
-    max-height: 350px;
-    overflow-y: auto;
+    /* Remove max-height and overflow-y to prevent double scrollbars */
     z-index: 9999;
+}
+
+/* Make the admin navbar fixed at the top */
+.navbar {
+    position: fixed;
+    top: 0;   
+    z-index: 1000000000;
+    width: -webkit-fill-available;
 }
 

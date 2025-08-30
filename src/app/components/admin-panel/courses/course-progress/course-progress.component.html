@@ -82,47 +82,25 @@
     </div>
 
     <!-- Search and filters -->
-    <div *ngIf="!isLoading && allModules.length > 0" class="search-controls mb-2">
-      <div class="search-bar-container">
-        <div class="row g-3 align-items-center">
-          <div class="col-lg-8 col-md-7">
-            <div class="search-input-group">
-              <div class="input-group">
-                <span class="input-group-text search-icon">
-                  <i class="bi bi-search"></i>
-                </span>
-                <input type="text" 
-                       class="form-control search-input" 
-                       placeholder="Search modules, descriptions, or video titles..."
-                       [(ngModel)]="searchTerm"
-                       (input)="onSearchChange()">
-                <button *ngIf="searchTerm" 
-                        type="button" 
-                        class="btn btn-outline-secondary clear-search" 
-                        (click)="clearSearch()"
-                        title="Clear search">
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-5">
-            <div class="search-stats text-end">
-              <span class="stats-text">
-                <i class="bi bi-collection me-1"></i>
-                Total: <strong>{{ allModules.length }}</strong> modules
-                <span *ngIf="searchTerm && filteredModules.length !== allModules.length" class="found-results">
-                  | Found: <strong class="text-primary">{{ filteredModules.length }}</strong>
-                </span>
-              </span>
-            </div>
-          </div>
+    <div *ngIf="!isLoading && allModules.length > 0" class="responsive-search-bar mb-2">
+      <div class="search-bar-flex">
+        <input type="text" 
+               class="form-control search-input-responsive" 
+               placeholder="Search modules, descriptions, video titles..."
+               [(ngModel)]="searchTerm"
+               (input)="onSearchChange()">
+        <div class="module-count-info">
+          <i class="bi bi-collection me-1"></i>
+          <span class="total-label">Total:</span> <strong>{{ allModules.length }}</strong> modules
+          <span *ngIf="searchTerm && filteredModules.length !== allModules.length" class="found-label">
+            | Found: <strong>{{ filteredModules.length }}</strong>
+          </span>
         </div>
       </div>
     </div>
 
-    <!-- Pagination controls only -->
-    <div *ngIf="!isLoading && filteredModules.length > modulesPerPage" class="mb-2">
+    <!-- Pagination controls and Show selector always visible when modules exist -->
+    <div *ngIf="!isLoading && allModules.length > 0" class="mb-2">
       <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
         <div class="per-page-selector">
           <label for="modulesPerPage" class="form-label me-2 mb-0">Show:</label>
@@ -133,6 +111,7 @@
             <option value="10">10</option>
             <option value="20">20</option>
             <option value="50">50</option>
+            <option [value]="filteredModules.length">All</option>
           </select>
         </div>
       </div>
@@ -143,18 +122,14 @@
       <div class="modules-grid">
         <ng-container *ngFor="let module of displayedModules; let i = index">
           <div class="module-card" [attr.data-module-index]="i">
-            <div class="module-header" 
-                 [class.active]="activeModuleIdx === (currentPage * modulesPerPage + i)"
-                 data-bs-toggle="collapse"
-                 [attr.data-bs-target]="'#module-' + i"
-                 [attr.aria-expanded]="activeModuleIdx === (currentPage * modulesPerPage + i) ? 'true' : 'false'"
-                 [attr.aria-controls]="'module-' + i"
-                 (click)="toggleModule(i)">
+      <div style="color: #222e3c;" class="module-header custom-accordion-header" 
+        [class.active]="expandedModuleIdx === i"
+        (click)="toggleModule(i)">
               <div class="module-header-content">
-                <div class="module-icon">
-                  <i class="bi bi-play-circle-fill"></i>
-                </div>
-                                <div class="module-info">
+                  <div class="module-icon d-none d-sm-flex">
+                    <i class="bi bi-play-circle-fill"></i>
+                  </div>
+                  <div class="module-info">
                   <h5 class="module-title">{{ module.moduleName }}</h5>
                   <div class="module-meta">
                     <span class="video-count">
@@ -167,49 +142,33 @@
                     </span>
                   </div>
                 </div>
-                <div class="module-toggle">
-                  <i class="bi bi-chevron-down"></i>
-                </div>
+                  <div class="module-toggle" style="display:flex;align-items:center;">
+                    <i class="bi bi-chevron-down"></i>
+                  </div>
               </div>
             </div>
             
-            <div [id]="'module-' + i" 
-                 class="collapse module-content" 
-                 [class.show]="activeModuleIdx === (currentPage * modulesPerPage + i)">
+      <div class="module-content custom-accordion-content" 
+        *ngIf="expandedModuleIdx === i">
               <div class="module-body">
                 <div class="module-description" *ngIf="module.moduleDescription">
                   <p>{{ module.moduleDescription }}</p>
                 </div>
                 
                 <div class="videos-list">
-                  <div *ngFor="let video of module.videos; let j = index" 
-                       class="video-item" 
-                       [class.playing]="activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j">
+                  <div *ngFor="let video of module.videos; let j = index">
                     <div class="video-header">
                       <div class="video-info">
                         <div class="video-details">
-                          <h6 class="video-title">
-                            <i class="bi bi-play-fill me-2"></i>
-                            {{ video.VideoTitle }}
-                          </h6>
-                          <div class="video-meta">
-                            <span class="video-duration">
-                              <i class="bi bi-clock me-1"></i>
-                              {{ formatVideoDuration(video.DurationInSeconds) }}
-                            </span>
-                            <span class="video-sequence">
-                              <i class="bi bi-list-ol me-1"></i>
-                              Video {{ video.VideoSequence }}
-                            </span>
-                          </div>
+                          <!-- Video title and timings removed as requested -->
                         </div>
                         <div class="video-actions">
                           <button class="btn btn-sm btn-outline-primary" 
-                                  [class.btn-success]="activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j"
+                                  [class.btn-success]="expandedModuleIdx === i && activeVideoIdx === j"
                                   (click)="onVideoPlay(i, j)">
-                            <i class="bi bi-play-fill" *ngIf="!(activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j)"></i>
-                            <i class="bi bi-pause-fill" *ngIf="activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j"></i>
-                            {{ (activeModuleIdx === (currentPage * modulesPerPage + i) && activeVideoIdx === j) ? 'Playing' : 'Play' }}
+                            <i class="bi bi-play-fill" *ngIf="!(expandedModuleIdx === i && activeVideoIdx === j)"></i>
+                            <i class="bi bi-pause-fill" *ngIf="expandedModuleIdx === i && activeVideoIdx === j"></i>
+                            {{ (expandedModuleIdx === i && activeVideoIdx === j) ? 'Playing' : 'Play' }}
                           </button>
                         </div>
                       </div>
@@ -228,38 +187,38 @@
       </div>
 
       <!-- Simple Pagination -->
-      <div *ngIf="filteredModules.length > modulesPerPage" class="bottom-pagination">
+  <div *ngIf="!isLoading && allModules.length > 0" class="bottom-pagination">
         <nav aria-label="Course modules pagination">
           <ul class="pagination pagination-modern justify-content-center">
             <!-- First Page -->
-            <li class="page-item" [class.disabled]="currentPage === 0">
-              <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0" title="First page">
+            <li class="page-item" [class.disabled]="currentPage === 0 || modulesPerPage === filteredModules.length">
+              <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0 || modulesPerPage === filteredModules.length" title="First page">
                 <i class="bi bi-chevron-double-left"></i>
               </button>
             </li>
             <!-- Previous Page -->
-            <li class="page-item" [class.disabled]="currentPage === 0">
-              <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0" title="Previous page">
+            <li class="page-item" [class.disabled]="currentPage === 0 || modulesPerPage === filteredModules.length">
+              <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0 || modulesPerPage === filteredModules.length" title="Previous page">
                 <i class="bi bi-chevron-left"></i>
               </button>
             </li>
             <!-- Page Numbers -->
             <ng-container *ngFor="let p of visiblePages">
-              <li class="page-item" [class.active]="p === currentPage">
-                <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
+              <li class="page-item" [class.active]="p === currentPage || modulesPerPage === filteredModules.length">
+                <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)" [disabled]="modulesPerPage === filteredModules.length">
                   {{ p + 1 }}
                 </button>
               </li>
             </ng-container>
             <!-- Next Page -->
-            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-              <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Next page">
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length">
+              <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length" title="Next page">
                 <i class="bi bi-chevron-right"></i>
               </button>
             </li>
             <!-- Last Page -->
-            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-              <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="currentPage === totalPages - 1" title="Last page">
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length">
+              <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length" title="Last page">
                 <i class="bi bi-chevron-double-right"></i>
               </button>
             </li>

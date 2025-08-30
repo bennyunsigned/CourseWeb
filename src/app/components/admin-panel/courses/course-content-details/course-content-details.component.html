@@ -50,7 +50,7 @@
                   aria-controls="modules" aria-selected="true">
             <i class="bi bi-collection-play me-2"></i>
             <span class="tab-text">Course Modules</span>
-            <span class="badge bg-primary ms-2 module-count">{{ courseContent?.Modules?.length ?? 0 }}</span>
+            <span class="badge bg-primary ms-2 module-count">{{ courseContent && courseContent.Modules ? courseContent.Modules.length : 0 }}</span>
           </button>
         </li>
         <li class="nav-item" role="presentation">

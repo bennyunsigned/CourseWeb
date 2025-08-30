@@ -45,12 +45,10 @@ export class CourseProgressComponent implements OnInit {
   searchTerm = '';
 
   @ViewChildren(VideoPlayerComponent) videoPlayers!: QueryList<VideoPlayerComponent>;
-  activeModuleIdx: number | null = null;
+  expandedModuleIdx: number | null = null;
   activeVideoIdx: number | null = null;
   onVideoPlay(moduleIdx: number, videoIdx: number) {
-    // Adjust index based on current page
-    const actualModuleIdx = this.currentPage * this.modulesPerPage + moduleIdx;
-    this.activeModuleIdx = actualModuleIdx;
+    this.expandedModuleIdx = moduleIdx;
     this.activeVideoIdx = videoIdx;
     let idx = 0;
     this.displayedModules.forEach((mod, mIdx) => {
@@ -67,6 +65,7 @@ export class CourseProgressComponent implements OnInit {
   constructor(private courseProgressService: CourseProgressService) {}
 
   ngOnInit(): void {
+    this.expandedModuleIdx = null; // Ensure all accordions are collapsed on init
     this.loadCourseProgress();
   }
 
@@ -79,6 +78,7 @@ export class CourseProgressComponent implements OnInit {
         this.courseDescription = this.courseProgressList.length > 0 ? this.courseProgressList[0].CourseDescription : '';
         this.groupModules();
         this.setupPagination();
+        this.expandedModuleIdx = null; // Collapse all accordions after loading
         this.isLoading = false;
       },
       error: (err) => {
@@ -110,10 +110,11 @@ export class CourseProgressComponent implements OnInit {
   }
 
   loadCurrentPage() {
-    const startIndex = this.currentPage * this.modulesPerPage;
-    const endIndex = startIndex + this.modulesPerPage;
-    this.displayedModules = this.filteredModules.slice(startIndex, endIndex);
-    this.groupedModules = this.displayedModules; // Keep compatibility
+  const startIndex = this.currentPage * this.modulesPerPage;
+  const endIndex = startIndex + this.modulesPerPage;
+  this.displayedModules = this.filteredModules.slice(startIndex, endIndex);
+  this.groupedModules = this.displayedModules; // Keep compatibility
+  this.expandedModuleIdx = null; // Collapse all accordions when page changes
   }
 
   nextPage() {
@@ -144,7 +145,7 @@ export class CourseProgressComponent implements OnInit {
     if (this.videoPlayers) {
       this.videoPlayers.forEach(player => player.pauseVideo());
     }
-    this.activeModuleIdx = null;
+  // removed reference to activeModuleIdx
     this.activeVideoIdx = null;
   }
 
@@ -168,8 +169,9 @@ export class CourseProgressComponent implements OnInit {
   }
 
   onSearchChange() {
-    this.currentPage = 0; // Reset to first page when searching
-    this.setupPagination();
+  this.currentPage = 0; // Reset to first page when searching
+  this.expandedModuleIdx = null; // Collapse all accordions on search
+  this.setupPagination();
   }
 
   clearSearch() {
@@ -192,19 +194,25 @@ export class CourseProgressComponent implements OnInit {
   }
 
   onModulesPerPageChange() {
-    this.currentPage = 0; // Reset to first page
-    this.setupPagination();
+  this.currentPage = 0; // Reset to first page
+  this.expandedModuleIdx = null; // Collapse all accordions on per page change
+  this.setupPagination();
   }
 
   // New methods for enhanced UI
   toggleModule(moduleIndex: number) {
-    const actualModuleIdx = this.currentPage * this.modulesPerPage + moduleIndex;
-    if (this.activeModuleIdx === actualModuleIdx) {
-      this.activeModuleIdx = null;
-      this.pauseAllVideos();
+    if (!this.displayedModules || this.displayedModules.length === 0) {
+      this.expandedModuleIdx = null;
+      return;
+    }
+    if (this.expandedModuleIdx === moduleIndex) {
+      this.expandedModuleIdx = null;
     } else {
-      this.activeModuleIdx = actualModuleIdx;
-      this.pauseAllVideos();
+      this.expandedModuleIdx = moduleIndex;
+    }
+    this.activeVideoIdx = null;
+    if (this.videoPlayers) {
+      this.videoPlayers.forEach(player => player.pauseVideo());
     }
   }
 
@@ -246,14 +254,14 @@ export class CourseProgressComponent implements OnInit {
 
   // Enhanced video management
   playNextVideo() {
-    if (this.activeModuleIdx !== null && this.activeVideoIdx !== null) {
-      const currentModule = this.displayedModules[this.activeModuleIdx - (this.currentPage * this.modulesPerPage)];
+    if (this.expandedModuleIdx !== null && this.activeVideoIdx !== null) {
+      const currentModule = this.displayedModules[this.expandedModuleIdx];
       if (currentModule && this.activeVideoIdx < currentModule.videos.length - 1) {
         // Play next video in current module
-        this.onVideoPlay(this.activeModuleIdx - (this.currentPage * this.modulesPerPage), this.activeVideoIdx + 1);
+        this.onVideoPlay(this.expandedModuleIdx, this.activeVideoIdx + 1);
       } else {
         // Move to next module's first video
-        const nextModuleIdx = this.activeModuleIdx - (this.currentPage * this.modulesPerPage) + 1;
+        const nextModuleIdx = this.expandedModuleIdx + 1;
         if (nextModuleIdx < this.displayedModules.length) {
           this.toggleModule(nextModuleIdx);
           this.onVideoPlay(nextModuleIdx, 0);
@@ -263,13 +271,13 @@ export class CourseProgressComponent implements OnInit {
   }
 
   playPreviousVideo() {
-    if (this.activeModuleIdx !== null && this.activeVideoIdx !== null) {
+    if (this.expandedModuleIdx !== null && this.activeVideoIdx !== null) {
       if (this.activeVideoIdx > 0) {
         // Play previous video in current module
-        this.onVideoPlay(this.activeModuleIdx - (this.currentPage * this.modulesPerPage), this.activeVideoIdx - 1);
+        this.onVideoPlay(this.expandedModuleIdx, this.activeVideoIdx - 1);
       } else {
         // Move to previous module's last video
-        const prevModuleIdx = this.activeModuleIdx - (this.currentPage * this.modulesPerPage) - 1;
+        const prevModuleIdx = this.expandedModuleIdx - 1;
         if (prevModuleIdx >= 0) {
           const prevModule = this.displayedModules[prevModuleIdx];
           this.toggleModule(prevModuleIdx);

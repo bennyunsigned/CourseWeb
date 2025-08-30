@@ -254,3 +254,16 @@
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }
+
+/* Hide default Webkit scrollbar for all elements */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+/* Margin for toast messages */
+.toast-top-right,
+.toast-top-center,
+.toast-top-left {
+    margin-top: 50px !important;
+}
