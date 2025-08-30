@@ -1,22 +1,18 @@
 /* Course Progress Component - Professional & Responsive Design */
 /* ========== CSS CUSTOM PROPERTIES ========== */
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
-  --background-light: rgba(255, 255, 255, 0.95);
-  --background-dark: rgba(248, 250, 252, 0.8);
-  --text-primary: #2d3748;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --border-light: rgba(226, 232, 240, 0.5);
-  --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.1);
-  --border-radius: 12px;
-  --border-radius-lg: 16px;
-  --border-radius-xl: 20px;
-  --transition: all 0.3s ease;
+  --primary-color: #222e3c;
+  --secondary-color: #f5f6fa;
+  --background-light: #fff;
+  --background-dark: #f5f6fa;
+  --text-primary: #222e3c;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  --border-light: #e9ecef;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --transition: all 0.2s ease;
 }
 
 /* ========== MAIN CONTAINER ========== */
@@ -65,14 +61,10 @@
 
 /* ========== COURSE HEADER ========== */
 .course-header {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.95) 0%, 
-    rgba(248, 250, 252, 0.95) 50%, 
-    rgba(237, 242, 247, 0.95) 100%);
-  backdrop-filter: blur(15px);
+  background: var(--background-light);
   border-radius: var(--border-radius-xl);
-  padding: 1.5rem;  
-  border: 1px solid rgba(102, 126, 234, 0.1);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-light);
   position: relative;
   z-index: 2;
   transition: var(--transition);
@@ -119,18 +111,12 @@
 }
 
 .course-title {
-  color: var(--text-primary);
-  font-weight: 700;
-  font-size: 2rem;
-  margin-bottom: 0.8rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-  background-size: 200% 100%;
-  animation: titleGradient 4s ease-in-out infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
   line-height: 1.2;
-  text-shadow: 0 4px 8px rgba(102, 126, 234, 0.1);
+  text-shadow: none;
 }
 
 @keyframes titleGradient {
@@ -139,17 +125,13 @@
 }
 
 .course-description-card {
-  background: linear-gradient(135deg, 
-    rgba(248, 250, 252, 0.9) 0%, 
-    rgba(237, 242, 247, 0.9) 50%, 
-    rgba(224, 231, 255, 0.9) 100%);
-  padding: 0.8rem 1.2rem;
+  background: var(--background-dark);
+  padding: 0.5rem 0.75rem;
   border-radius: var(--border-radius);
-  border-left: 4px solid transparent;
-  border-image: linear-gradient(45deg, #667eea, #764ba2, #f093fb) 1;
-  color: #4a5568;
-  font-size: 1rem;
-  line-height: 1.6;
+  border-left: 3px solid var(--primary-color);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
   transition: var(--transition);
   position: relative;
   overflow: hidden;
@@ -180,26 +162,25 @@
 }
 
 .course-tabs {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 0.5rem;
-  
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  gap: 0.5rem;
+  background: var(--background-light);
+  border-radius: var(--border-radius-lg);
+  padding: 0.25rem;
+  border: 1px solid var(--border-light);
+  gap: 0.25rem;
   display: flex;
 }
 
 .course-tabs .nav-link {
-  border-radius: 12px;
-  padding: 0.8rem 1.2rem;
-  font-weight: 600;
-  color: #64748b;
+  border-radius: var(--border-radius);
+  padding: 0.4rem 0.7rem;
+  font-weight: 500;
+  color: var(--primary-color);
   border: none;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   position: relative;
   overflow: hidden;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  background: #f0f2f5;
 }
 
 .course-tabs .nav-link:before {
@@ -221,9 +202,9 @@
 
 .course-tabs .nav-link.active,
 .course-tabs .nav-link:hover {
-  color: white;
-  
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  color: #fff;
+  background: var(--primary-color);
+  box-shadow: none;
 }
 
 .tab-text {
@@ -242,13 +223,10 @@
 }
 
 .tab-pane {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 1.5rem;
-  
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  min-height: 600px;
+  background: var(--background-light);
+  border-radius: var(--border-radius-xl);  
+  border: 1px solid var(--border-light);
+  min-height: 400px;
 }
 
 /* ========== LOADING STATE ========== */
@@ -559,12 +537,11 @@
 }
 
 .module-card {
-  background: white;
-  border-radius: 16px;
-  
-  border: 1px solid rgba(226, 232, 240, 0.5);
+  background: var(--background-light);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-light);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .module-card:hover {
@@ -573,11 +550,11 @@
 }
 
 .module-header {
-  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-  padding: 1.5rem;
+  background: var(--background-dark);
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  transition: var(--transition);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .module-header:hover {
@@ -585,8 +562,8 @@
 }
 
 .module-header.active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
+  background: var(--primary-color);
+  color: #fff;
 }
 
 .module-header.active .module-icon i {
@@ -622,25 +599,25 @@
 }
 
 .module-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #2d3748;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  color: var(--primary-color);
 }
 
 .module-header.active .module-title {
-  color: white;
+  color: #fff;
 }
 
 .module-meta {
   display: flex;
-  gap: 1.5rem;
-  font-size: 0.9rem;
-  color: #64748b;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
 }
 
 .module-header.active .module-meta {
-  color: rgba(255, 255, 255, 0.9);
+  color: #fff;
 }
 
 .module-toggle {
@@ -660,15 +637,15 @@
 }
 
 .module-body {
-  padding: 2rem;
+  padding: 0.5rem 0.75rem;
 }
 
 .module-description {
-  background: rgba(248, 250, 252, 0.8);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  border-left: 4px solid #667eea;
+  background: var(--background-dark);
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 0.7rem;
+  border-left: 3px solid var(--primary-color);
 }
 
 .module-description p {
@@ -685,11 +662,11 @@
 }
 
 .video-item {
-  background: rgba(248, 250, 252, 0.5);
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
+  background: var(--background-dark);
+  border-radius: var(--border-radius);
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
 }
 
 .video-item:hover {
@@ -718,10 +695,10 @@
 }
 
 .video-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  margin-bottom: 0.2rem;
   display: flex;
   align-items: center;
 }
@@ -732,9 +709,9 @@
 
 .video-meta {
   display: flex;
-  gap: 1rem;
-  font-size: 0.9rem;
-  color: #64748b;
+  gap: 0.7rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
   flex-wrap: wrap;
 }
 
@@ -781,20 +758,12 @@
 }
 
 .pagination-wrapper {
-  background: linear-gradient(135deg, 
-    rgba(199, 210, 254, 0.9) 0%, 
-    rgba(221, 214, 254, 0.9) 25%, 
-    rgba(243, 232, 255, 0.9) 50%, 
-    rgba(252, 231, 243, 0.9) 75%, 
-    rgba(254, 242, 242, 0.9) 100%);
-  backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 1.5rem;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+  border: none;
+  background: none;
   position: relative;
-  overflow: hidden;
-  
+  overflow: visible;
 }
 
 .pagination-wrapper::before {
@@ -835,32 +804,29 @@
 
 .pagination-modern .page-link {
   border: none;
-  border-radius: 12px;
-  margin: 0 0.2rem;
-  padding: 0.6rem 0.8rem;
-  color: #7c3aed;
-  background: white;
-  backdrop-filter: blur(5px);
-  
-  transition: var(--transition);
+  border-radius: var(--border-radius);
+  margin: 0 0.15rem;
+  padding: 0.4rem 0.8rem;
+  color: var(--primary-color);
+  background: #e9ecef;
   font-weight: 500;
-  border: 2px solid rgba(139, 92, 246, 0.2);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
+  box-shadow: none;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pagination-modern .page-link:hover {
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
-  color: white;
-  
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-  border-color: transparent;
+  background: #e9ecef;
+  color: var(--primary-color);
 }
 
 .pagination-modern .page-item.active .page-link {
-  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
-  color: white;
-  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-  border-color: transparent;
+  background: #222e3c;
+  color: #fff;
+  box-shadow: none;
   position: relative;
   overflow: hidden;
 }

@@ -8,9 +8,7 @@
 <!-- Course Header -->
 <div class="course-header mb-2">
   <div class="d-flex align-items-start gap-3 mb-2">
-    <div class="course-icon">
-      <i class="bi bi-mortarboard-fill text-primary"></i>
-    </div>
+    
     <div class="flex-grow-1">
       <h4 class="course-title mb-2">{{ courseName }}</h4>
       <div class="course-description-card">
@@ -123,50 +121,19 @@
       </div>
     </div>
 
-    <!-- Pagination info and controls -->
-    <div *ngIf="!isLoading && filteredModules.length > modulesPerPage" class="pagination-header mb-2">
-      <div class="row align-items-center">
-        <div class="col-md-6 mb-2 mb-md-0">
-          <div class="pagination-info">
-            <i class="bi bi-info-circle me-2"></i>
-            <span>{{ paginationInfo }}</span>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="pagination-controls-top">
-            <div class="d-flex align-items-center justify-content-md-end gap-2 flex-wrap">
-              <div class="per-page-selector">
-                <label for="modulesPerPage" class="form-label me-2 mb-0">Show:</label>
-                <select id="modulesPerPage" class="form-select form-select-sm" 
-                        [(ngModel)]="modulesPerPage" 
-                        (change)="onModulesPerPageChange()">
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                </select>
-              </div>
-              <div class="page-navigation">
-                <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-outline-primary btn-sm" 
-                          [disabled]="currentPage === 0" 
-                          (click)="previousPage()">
-                    <i class="bi bi-chevron-left"></i>
-                    <span class="d-none d-sm-inline ms-1">Previous</span>
-                  </button>
-                  <span class="btn btn-light btn-sm page-indicator">
-                    <span class="d-none d-sm-inline">Page </span>{{ currentPage + 1 }} of {{ totalPages }}
-                  </span>
-                  <button type="button" class="btn btn-outline-primary btn-sm" 
-                          [disabled]="currentPage === totalPages - 1" 
-                          (click)="nextPage()">
-                    <span class="d-none d-sm-inline me-1">Next</span>
-                    <i class="bi bi-chevron-right"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+    <!-- Pagination controls only -->
+    <div *ngIf="!isLoading && filteredModules.length > modulesPerPage" class="mb-2">
+      <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
+        <div class="per-page-selector">
+          <label for="modulesPerPage" class="form-label me-2 mb-0">Show:</label>
+          <select id="modulesPerPage" class="form-select form-select-sm" 
+                  [(ngModel)]="modulesPerPage" 
+                  (change)="onModulesPerPageChange()">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
         </div>
       </div>
     </div>
@@ -260,75 +227,44 @@
         </ng-container>
       </div>
 
-      <!-- Enhanced Bottom Pagination -->
+      <!-- Simple Pagination -->
       <div *ngIf="filteredModules.length > modulesPerPage" class="bottom-pagination">
-        <div class="pagination-wrapper">
-          <!-- Pagination Stats -->
-          <div class="pagination-stats text-center mb-2">
-            <span class="badge bg-light text-dark border">
-              <i class="bi bi-collection me-1"></i>
-              {{ paginationInfo }}
-            </span>
-          </div>
-          
-          <nav aria-label="Course modules pagination">
-            <ul class="pagination pagination-modern justify-content-center">
-              <!-- First Page -->
-              <li class="page-item" [class.disabled]="currentPage === 0">
-                <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0" title="First page">
-                  <i class="bi bi-chevron-double-left"></i>
+        <nav aria-label="Course modules pagination">
+          <ul class="pagination pagination-modern justify-content-center">
+            <!-- First Page -->
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0" title="First page">
+                <i class="bi bi-chevron-double-left"></i>
+              </button>
+            </li>
+            <!-- Previous Page -->
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0" title="Previous page">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </li>
+            <!-- Page Numbers -->
+            <ng-container *ngFor="let p of visiblePages">
+              <li class="page-item" [class.active]="p === currentPage">
+                <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
+                  {{ p + 1 }}
                 </button>
               </li>
-              
-              <!-- Previous Page -->
-              <li class="page-item" [class.disabled]="currentPage === 0">
-                <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0" title="Previous page">
-                  <i class="bi bi-chevron-left"></i>
-                  <span class="d-none d-sm-inline ms-1">Previous</span>
-                </button>
-              </li>
-              
-              <!-- Page Numbers -->
-              <ng-container *ngFor="let p of visiblePages">
-                <li class="page-item" [class.active]="p === currentPage">
-                  <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
-                    {{ p + 1 }}
-                  </button>
-                </li>
-              </ng-container>
-              
-              <!-- Next Page -->
-              <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-                <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Next page">
-                  <span class="d-none d-sm-inline me-1">Next</span>
-                  <i class="bi bi-chevron-right"></i>
-                </button>
-              </li>
-              
-              <!-- Last Page -->
-              <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-                <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="currentPage === totalPages - 1" title="Last page">
-                  <i class="bi bi-chevron-double-right"></i>
-                </button>
-              </li>
-            </ul>
-          </nav>
-          
-          <!-- Jump to Page -->
-          <div class="jump-to-page text-center mt-3" *ngIf="totalPages > 5">
-            <div class="d-inline-flex align-items-center gap-2">
-              <span class="text-muted small">Jump to:</span>
-              <select class="form-select form-select-sm" 
-                      [value]="currentPage" 
-                      (change)="goToPage(+$any($event.target).value)"
-                      style="width: auto;">
-                <option *ngFor="let p of getAllPages()" [value]="p">
-                  Page {{ p + 1 }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
+            </ng-container>
+            <!-- Next Page -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Next page">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </li>
+            <!-- Last Page -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="currentPage === totalPages - 1" title="Last page">
+                <i class="bi bi-chevron-double-right"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>

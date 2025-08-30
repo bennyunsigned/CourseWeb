@@ -32,63 +32,110 @@
           <span class="fw-bold text-success">₹{{ courseContent.DiscountedPrice }}</span>
         </div>
         <div class="d-flex flex-wrap gap-2 mt-3">
-          <button class="btn btn-gradient-cart px-4 py-2 fw-semibold rounded-pill d-flex align-items-center gap-2" type="button">
+          <button class="btn-add-cart d-flex align-items-center gap-2" type="button">
             <i class="bi bi-cart-plus fs-5"></i> Add to Cart
           </button>
-          <button class="btn btn-gradient-buy px-4 py-2 fw-semibold rounded-pill d-flex align-items-center gap-2" type="button">
+          <button class="btn-buy-now d-flex align-items-center gap-2" type="button">
             <i class="bi bi-lightning-charge-fill fs-5"></i> Buy Now
           </button>
         </div>
-        <style>
-          .course-header-sm {
-            font-size: 0.97rem;
-          }
-          .btn-gradient-cart {
-            background: linear-gradient(90deg, #f8fafc 0%, #e0e7ff 100%);
-            color: #0d6efd;
-            border: 1px solid #b6c6e6;
-            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-          }
-          .btn-gradient-cart:hover {
-            background: linear-gradient(90deg, #e0e7ff 0%, #c7d2fe 100%);
-            color: #0a58ca;
-            box-shadow: 0 0.5rem 1.5rem rgba(13, 110, 253, 0.08);
-          }
-          .btn-gradient-buy {
-            background: linear-gradient(90deg, #0d6efd 0%, #38bdf8 100%);
-            color: #fff;
-            border: none;
-            transition: background 0.2s, box-shadow 0.2s;
-          }
-          .btn-gradient-buy:hover {
-            background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-            color: #fff;
-            box-shadow: 0 0.5rem 1.5rem rgba(56, 189, 248, 0.10);
-          }
-        </style>
       </div>
     </div>
-    <div class="mb-4">
-      <h4 class="fw-semibold text-secondary mb-3"><i class="bi bi-journal-bookmark-fill me-2"></i>Course Modules</h4>
-      <div *ngIf="courseContent?.Modules?.length === 0" class="alert alert-info">No modules available.</div>
-      <div class="accordion" id="modulesAccordion">
-        <ng-container *ngFor="let module of courseContent?.Modules; let mIdx = index">
-          <div class="accordion-item rounded-3 shadow-sm mb-2 border-0">
-            <h2 class="accordion-header" id="heading{{mIdx}}">
-              <button class="accordion-button bg-light fw-semibold d-flex align-items-center gap-2" type="button" data-bs-toggle="collapse"
-                [attr.data-bs-target]="'#collapse' + mIdx" [attr.aria-expanded]="mIdx === 0 ? 'true' : 'false'" [attr.aria-controls]="'collapse' + mIdx">
-                <i class="bi bi-collection-play text-primary fs-5"></i>
-                <span>{{ module.ModuleName }}</span>
-                <span class="badge bg-info text-dark ms-2"><i class="bi bi-clock me-1"></i>{{ module.TotalDurationPerModule | durationFormat }}</span>
-              </button>
-            </h2>
-            <div [id]="'collapse' + mIdx" class="accordion-collapse collapse" [class.show]="mIdx === 0" [attr.aria-labelledby]="'heading' + mIdx" data-bs-parent="#modulesAccordion">
-              <div class="accordion-body bg-white">
-                <div class="text-muted fst-italic">{{ module.ModuleDescription }}</div>
+    <!-- Tabs for Course Modules and Reviews -->
+    <div class="course-tabs-container mb-4">
+      <ul class="nav nav-pills course-tabs" id="courseContentTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="modules-tab" data-bs-toggle="pill"
+                  data-bs-target="#modules" type="button" role="tab"
+                  aria-controls="modules" aria-selected="true">
+            <i class="bi bi-collection-play me-2"></i>
+            <span class="tab-text">Course Modules</span>
+            <span class="badge bg-primary ms-2 module-count">{{ courseContent?.Modules?.length ?? 0 }}</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="reviews-tab" data-bs-toggle="pill"
+                  data-bs-target="#reviews" type="button" role="tab"
+                  aria-controls="reviews" aria-selected="false">
+            <i class="bi bi-star-fill me-2"></i>
+            <span class="tab-text">Reviews</span>
+            <span class="badge bg-secondary ms-2">0</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div class="tab-content" id="courseContentTabContent">
+      <!-- Course Modules Tab -->
+      <div class="tab-pane fade show active" id="modules" role="tabpanel" aria-labelledby="modules-tab">
+        <div *ngIf="courseContent?.Modules?.length === 0" class="alert alert-info">No modules available.</div>
+        <div class="accordion" id="modulesAccordion">
+          <ng-container *ngFor="let module of displayedModules; let mIdx = index">
+            <div class="accordion-item rounded-3 shadow-sm mb-2 border-0">
+              <h2 class="accordion-header" id="heading{{mIdx}}">
+                <button class="accordion-button bg-light fw-semibold d-flex align-items-center gap-2" type="button" data-bs-toggle="collapse"
+                  [attr.data-bs-target]="'#collapse' + mIdx" [attr.aria-expanded]="mIdx === 0 ? 'true' : 'false'" [attr.aria-controls]="'collapse' + mIdx">
+                  <i class="bi bi-collection-play text-primary fs-5"></i>
+                  <span>{{ module.ModuleName }}</span>
+                  <span class="badge bg-info text-dark ms-2"><i class="bi bi-clock me-1"></i>{{ module.TotalDurationPerModule | durationFormat }}</span>
+                </button>
+              </h2>
+              <div [id]="'collapse' + mIdx" class="accordion-collapse collapse" [class.show]="mIdx === 0" [attr.aria-labelledby]="'heading' + mIdx" data-bs-parent="#modulesAccordion">
+                <div class="accordion-body bg-white">
+                  <div class="text-muted fst-italic">{{ module.ModuleDescription }}</div>
+                </div>
               </div>
             </div>
+          </ng-container>
+        </div>
+        <!-- Pagination -->
+  <div *ngIf="(courseContent?.Modules?.length ?? 0) > modulesPerPage" class="bottom-pagination mt-3">
+          <nav aria-label="Course modules pagination">
+            <ul class="pagination pagination-modern justify-content-center">
+              <li class="page-item" [class.disabled]="currentPage === 0">
+                <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0" title="First page">
+                  <i class="bi bi-chevron-double-left"></i>
+                </button>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === 0">
+                <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0" title="Previous page">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+              </li>
+              <ng-container *ngFor="let p of visiblePages">
+                <li class="page-item" [class.active]="p === currentPage">
+                  <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
+                    {{ p + 1 }}
+                  </button>
+                </li>
+              </ng-container>
+              <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1" title="Next page">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="currentPage === totalPages - 1" title="Last page">
+                  <i class="bi bi-chevron-double-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <!-- Reviews Tab -->
+      <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+        <div class="reviews-placeholder">
+          <div class="text-center py-5">
+            <div class="placeholder-icon mb-2">
+              <i class="bi bi-star-fill text-warning display-4"></i>
+            </div>
+            <h4 class="text-muted">Reviews Coming Soon</h4>
+            <p class="text-muted">Course reviews and ratings will be available here.</p>
+            <button class="btn btn-outline-primary">
+              <i class="bi bi-star me-2"></i>Be the first to review
+            </button>
           </div>
-        </ng-container>
+        </div>
       </div>
     </div>
   </ng-container>

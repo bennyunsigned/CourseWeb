@@ -1,0 +1,129 @@
+/* Pagination styles matching course-progress */
+.bottom-pagination {
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid #e9ecef;
+}
+.pagination-modern {
+	margin-bottom: 0;
+}
+.pagination-modern .page-link {
+	border: none;
+	border-radius: var(--border-radius);
+	margin: 0 0.15rem;
+	padding: 0.4rem 0.8rem;
+	color: var(--primary-color);
+	background: #e9ecef;
+	font-weight: 500;
+	font-size: 0.95rem;
+	box-shadow: none;
+	transition: 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.pagination-modern .page-link:hover {
+	background: #e9ecef;
+	color: var(--primary-color);
+}
+.pagination-modern .page-item.active .page-link {
+	background: #222e3c;
+	color: #fff;
+	box-shadow: none;
+	position: relative;
+	overflow: hidden;
+}
+.pagination-modern .page-item.disabled .page-link {
+	opacity: 0.4;
+	pointer-events: none;
+	background: #e9ecef;
+	color: #adb5bd;
+}
+/* Tabs and pagination styles matching course-progress */
+:root {
+	--primary-color: #222e3c;
+	--background-light: #fff;
+	--background-dark: #f5f6fa;
+	--border-radius: 8px;
+	--border-radius-lg: 12px;
+}
+
+.course-tabs-container {
+	position: relative;
+	z-index: 2;
+}
+.course-tabs {
+	background: var(--background-light);
+	border-radius: var(--border-radius-lg);
+	padding: 0.25rem;
+	border: 1px solid #e9ecef;
+	gap: 0.25rem;
+	display: flex;
+}
+.course-tabs .nav-link {
+	border-radius: var(--border-radius);
+	padding: 0.4rem 0.7rem;
+	font-weight: 500;
+	color: var(--primary-color);
+	border: none;
+	transition: 0.2s;
+	position: relative;
+	overflow: hidden;
+	font-size: 0.85rem;
+	background: #e9ecef;
+}
+.course-tabs .nav-link.active,
+.course-tabs .nav-link:hover {
+	color: #fff;
+	background: #222e3c;
+	box-shadow: none;
+}
+/* Buy Now and Add to Cart button styles */
+.btn-buy-now {
+	background: #222e3c;
+	color: #fff;
+	border: none;
+	border-radius: 24px;
+	padding: 0.5rem 1.5rem;
+	font-weight: 600;
+	transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-buy-now:hover {
+	background: #11161e;
+	color: #fff;
+	box-shadow: 0 2px 8px rgba(34,46,60,0.12);
+}
+.btn-add-cart {
+	background: #e9ecef;
+	color: #222e3c;
+	border: none;
+	border-radius: 24px;
+	padding: 0.5rem 1.5rem;
+	font-weight: 600;
+	transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-add-cart:hover {
+	background: #d1d5db;
+	color: #222e3c;
+	box-shadow: 0 2px 8px rgba(34,46,60,0.08);
+}
+.tab-text {
+	font-size: 0.85rem;
+}
+.module-count {
+	font-size: 0.7rem;
+	padding: 0.15rem 0.5rem;
+}
+.reviews-placeholder {
+	text-align: center;
+	padding: 4rem 2rem;
+}
+.placeholder-icon i {
+	font-size: 4rem;
+	opacity: 0.6;
+}
+.reviews-placeholder h4,
+.reviews-placeholder p {
+	color: #6c757d;
+	margin-bottom: 1rem;
+}
