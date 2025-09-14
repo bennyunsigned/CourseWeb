@@ -10,8 +10,25 @@
   </div>
 </div>
 
+<!-- Search Bar -->
+<div class="mb-3" style="max-width: 400px;">
+  <div class="input-group shadow-sm" style="border-radius: 1.5rem; background: #f8fafc;">
+    <span class="input-group-text bg-white border-0 px-2" style="font-size:1.2rem;color:#888; background: transparent;">
+      <i class="bi bi-search"></i>
+    </span>
+    <input
+      type="text"
+      class="form-control border-0 bg-transparent"
+      placeholder="Search courses..."
+      [(ngModel)]="searchText"
+      (ngModelChange)="onSearchTextChange()"
+      style="border-radius: 1.5rem; background: transparent; font-size: 1rem; box-shadow: none;"
+    />
+  </div>
+</div>
+
 <div class="row mb-4">
-  <div *ngFor="let course of courses" class="col-md-4 col-sm-12 mb-4">
+  <div *ngFor="let course of displayedCourses" class="col-md-4 col-sm-12 mb-4">
     <div class="card course-card h-100 shadow-sm position-relative" (click)="onCardClick(course.CourseId)">
       <div class="course-banner" [style.backgroundImage]="'url(' + course.BannerImage + ')'">
         <div class="badge-row">
@@ -48,8 +65,45 @@
     </div>
   </div>
 </div>
-<div class="text-center mb-4" *ngIf="hasMore">
-  <button class="btn btn-secondary" (click)="loadMore()">Load More</button>
+
+<!-- Pagination Controls (Course Progress Style) -->
+<div *ngIf="visiblePages.length > 1" class="bottom-pagination mt-3">
+  <nav aria-label="Courses pagination">
+    <ul class="pagination pagination-modern justify-content-center">
+      <!-- First Page -->
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
+        <button class="page-link" (click)="goToPage(0)" [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="First page">
+          <i class="bi bi-chevron-double-left"></i>
+        </button>
+      </li>
+      <!-- Previous Page -->
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
+        <button class="page-link" (click)="previousPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="Previous page">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </li>
+      <!-- Page Numbers -->
+      <ng-container *ngFor="let p of visiblePages">
+        <li class="page-item" [class.active]="p === categoryPagination[selectedCategoryId].currentPage">
+          <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
+            {{ p + 1 }}
+          </button>
+        </li>
+      </ng-container>
+      <!-- Next Page -->
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
+        <button class="page-link" (click)="nextPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)" title="Next page">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </li>
+      <!-- Last Page -->
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
+        <button class="page-link" (click)="goToPage(categoryPagination[selectedCategoryId].totalPages - 1)" [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)" title="Last page">
+          <i class="bi bi-chevron-double-right"></i>
+        </button>
+      </li>
+    </ul>
+  </nav>
 </div>
 
 
