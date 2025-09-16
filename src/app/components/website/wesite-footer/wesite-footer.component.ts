@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { environment } from '../../../../environments/environment';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-wesite-footer',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './wesite-footer.component.html',
   styleUrl: './wesite-footer.component.css'
 })
