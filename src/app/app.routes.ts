@@ -19,6 +19,7 @@ import { UserReportComponent } from './components/admin-panel/reports/user-repor
 import { CourseProgressComponent } from './components/admin-panel/courses/course-progress/course-progress.component';
 import { CourseContentDetailsComponent } from './components/admin-panel/courses/course-content-details/course-content-details.component';
 import { AvailableCoursesComponent } from './components/admin-panel/courses/available-courses/available-courses.component';
+import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
 import { WebsiteRefundCancellationPolicyComponent } from './components/website/website-refund-cancellation-policy/website-refund-cancellation-policy.component';
 import { WebsiteTermsComponent } from './components/website/website-terms/website-terms.component';
 
@@ -66,6 +67,7 @@ export const routes: Routes = [
             { path: 'course-progress', component: CourseProgressComponent, canActivate: [AuthGuard] },
             { path: 'course-content/:courseId', component: CourseContentDetailsComponent },
             { path: 'available-course', component: AvailableCoursesComponent},
+            { path: 'payment-success', component: PaymentSuccessComponent },
             
             
         

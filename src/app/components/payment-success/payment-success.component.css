@@ -1,0 +1,8 @@
+.payment-success-container .card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.payment-success-container p {
+  font-size: 1rem;
+}

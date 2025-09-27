@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { AllCourseContent } from '../../../../models/allPublicCourseContentModel';
 import { DurationFormatPipe } from '../../../../pipes/duration-format.pipe';
 import { Router } from '@angular/router';
+import { PaymentService } from '../../../../services/payment.service';
+import { decryptData } from '../../../../utils/crypto-util';
 import { FormsModule } from '@angular/forms';
 
 interface CategoryTab {
@@ -34,7 +36,8 @@ export class AvailableCoursesComponent implements OnInit {
   constructor(
     private categoryService: CategoryMasterService,
     private courseProgressService: CourseProgressService,
-    private router: Router
+    private router: Router,
+    private paymentService: PaymentService
   ) {}
 
   ngOnInit(): void {
@@ -186,7 +189,65 @@ export class AvailableCoursesComponent implements OnInit {
   }
 
   buyNow(courseId: number) {
-    alert('Buy Now clicked for courseId: ' + courseId);
+    // Get logged in user id (stored encrypted in localStorage)
+    const encUserId = localStorage.getItem('user_id') || '';
+    const userIdStr = decryptData(encUserId);
+    const userId = Number(userIdStr) || null;
+
+    if (!userId) {
+      alert('Please login to purchase the course.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Find course details to get price
+    const course = this.displayedCourses.find(c => c.CourseId === courseId) ||
+      Object.values(this.categoryCourses).flat().find((c: any) => c.CourseId === courseId);
+
+    if (!course) {
+      alert('Course not found');
+      return;
+    }
+
+    const amount = course.DiscountedPrice && course.DiscountedPrice > 0 ? course.DiscountedPrice : course.ActualPrice;
+
+    // include user and course info in redirect url so the success page can read them after Instamojo redirect
+    const redirectWithParams = `${window.location.origin}/course/payment-success`;
+
+    const payload = {
+      amount: amount,
+      purpose: `Purchase Course: ${course.CourseName}`,
+      buyer_name: '',
+      email: '',
+      phone: '',
+      redirect_url: redirectWithParams,
+      payment_type: 'individual' as const,
+      user_id: userId,
+      // NOTE: do not send course_id in create payload — backend create may not have this column
+    };
+
+    this.paymentService.createPayment(payload).subscribe({
+      next: (res: any) => {
+        const redirect = res?.payment_request?.longurl || res?.payment_request?.payment_url || res?.longurl;
+        if (redirect) {
+          // persist pending payment info so we can confirm after redirect
+          try {
+            const pending = { user_id: userId, course_id: courseId, amount, payment_request_id: res?.payment_request?.id || res?.id || null };
+            localStorage.setItem('pending_payment', JSON.stringify(pending));
+          } catch (e) {
+            console.warn('Failed to save pending payment info', e);
+          }
+          window.location.href = redirect;
+        } else {
+          alert('Unable to start payment.');
+          console.error('Unexpected create payment response', res);
+        }
+      },
+      error: (err) => {
+        console.error('Payment create error', err);
+        alert('Failed to create payment. Please try again.');
+      }
+    });
   }
 
   addToCart(courseId: number) {
