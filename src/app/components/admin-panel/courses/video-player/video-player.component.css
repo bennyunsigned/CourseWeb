@@ -1,51 +1,41 @@
-/* Responsive container and wrapper for video player */
-.dailymotion-player-container {
-  width: 100%;
-  max-width: min(90vw, 900px);
-  margin: 0 auto;
+.video-player-container {
+	width: 100%;
+	margin: 0 auto;
 }
 
-.dailymotion-player-wrapper {
-  aspect-ratio: 16/9;
-  background: #181818;
-  overflow: hidden;
-  min-height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.video-player-wrapper {
+	position: relative;
+	background: #000;
+	border-radius: 0.5rem;
+	overflow: hidden;
 }
 
-@media (max-width: 576px) {
-  .dailymotion-player-wrapper {
-    min-height: 140px;
-  }
-  .play-btn {
-    padding: 0.3rem 0.9rem;
-    font-size: 1.1rem;
-    border-radius: 0.5rem;
-  }
-  .bi-play-circle-fill {
-    font-size: 2rem;
-  }
+/* Responsive video sizing using aspect-ratio (16:9) with max-heights per device */
+.video-element {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 16 / 9;
+	max-height: 480px; /* default for laptops/desktops */
+	display: block;
 }
 
-.play-btn {
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  border: none;
-  transition: background 0.2s, color 0.2s;
-  cursor: pointer;
-  padding: 0.5rem 1.5rem;
-  font-size: 1.3rem;
-  border-radius: 0.75rem;
+/* Mobile: shorter max-height */
+@media (max-width: 600px) {
+	.video-element {
+		max-height: 260px;
+	}
 }
 
-.play-btn:hover {
-  background: rgba(0,0,0,0.95);
-  color: #fff;
+/* Tablet */
+@media (min-width: 601px) and (max-width: 1024px) {
+	.video-element {
+		max-height: 360px;
+	}
 }
 
-.bi-play-circle-fill {
-  font-size: 3rem;
-  color: #0077ff;
+/* Large screens / TV */
+@media (min-width: 1400px) {
+	.video-element {
+		max-height: 720px;
+	}
 }

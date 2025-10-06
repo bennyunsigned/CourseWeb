@@ -30,9 +30,14 @@ export const routes: Routes = [
         pathMatch: 'full',
     },
     {
+        path: 'available-course',
+        component: AvailableCoursesComponent
+    },
+    {
         path: 'login',
         component: LoginComponent,
     },
+    
     {
         path: 'signup',
         component: SignupComponent,

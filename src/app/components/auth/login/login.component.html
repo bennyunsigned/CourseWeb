@@ -18,7 +18,8 @@
                                     <!-- Email Field -->
                                     <div class="mb-4">
                                         <label for="email" class="form-label fw-semibold">Email Address</label>
-                                        <input class="form-control form-control-lg" type="email" id="email" placeholder="Enter your email" formControlName="email" />
+                                        <input class="form-control form-control-lg" type="email" id="email"
+                                            placeholder="Enter your email" formControlName="email" />
                                         <div class="text-danger mt-1" *ngIf="hasDisplayableError('email')">
                                             <ng-container [ngSwitch]="form.controls['email'].errors | firstkey">
                                                 <div *ngSwitchCase="'required'">Please enter your email address.</div>
@@ -30,7 +31,8 @@
                                     <!-- Password Field -->
                                     <div class="mb-4">
                                         <label for="password" class="form-label fw-semibold">Password</label>
-                                        <input class="form-control form-control-lg" type="password" id="password" placeholder="Enter your password" formControlName="password" />
+                                        <input class="form-control form-control-lg" type="password" id="password"
+                                            placeholder="Enter your password" formControlName="password" />
                                         <div class="text-danger mt-1" *ngIf="hasDisplayableError('password')">
                                             <ng-container [ngSwitch]="form.controls['password'].errors | firstkey">
                                                 <div *ngSwitchCase="'required'">Please enter your password.</div>
@@ -40,7 +42,8 @@
 
                                     <!-- Remember Me Checkbox -->
                                     <div class="form-check mb-4">
-                                        <input id="rememberMe" type="checkbox" class="form-check-input" value="remember-me" name="remember-me" checked>
+                                        <input id="rememberMe" type="checkbox" class="form-check-input"
+                                            value="remember-me" name="remember-me" checked>
                                         <label class="form-check-label text-small" for="rememberMe">Remember me</label>
                                     </div>
 
@@ -51,8 +54,12 @@
 
                                     <!-- Social Login Buttons -->
                                     <div class="d-grid gap-2 mt-4">
-                                        <button type="button" class="btn btn-danger w-100"><i class="bi bi-google"></i> Google</button>
-                                        <button type="button" class="btn btn-primary w-100"><i class="bi bi-facebook"></i> Facebook</button>
+                                        <div id="g_id_onload" data-auto_prompt="false"
+                                            data-callback="handleCredentialResponse"
+                                            data-client_id="411656733323-2p348igl6kgfo7756i61ivng2b62fkov.apps.googleusercontent.com">
+                                        </div>
+                                        <!-- g_id_signin places the button on a page and supports customization -->
+                                        <div class="g_id_signin"></div>
                                     </div>
                                 </form>
                             </div>
@@ -61,7 +68,7 @@
 
                     <div class="text-center mt-4">
                         <p class="text-muted">
-                            Don't have an account? 
+                            Don't have an account?
                             <a routerLink="/signup" class="fw-bold text-primary">Sign Up</a>
                         </p>
                     </div>

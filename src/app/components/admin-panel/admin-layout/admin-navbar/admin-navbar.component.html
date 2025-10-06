@@ -41,7 +41,7 @@
                     <i class="bi bi-gear"></i>
                 </a>
                 <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()">
-                    <img src="/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="userName" /> 
+                    <img [src]="safeUserPicture" class="avatar img-fluid rounded me-1" alt="userName" /> 
                     <span class="text-dark">{{userName}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" [class.show]="showUserMenu">

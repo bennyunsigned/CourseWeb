@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { FirstkeyPipe } from '../../../pipes/firstkey.pipe';
 import { ToastrService } from 'ngx-toastr';
 import { jwtDecode } from 'jwt-decode'; // Import jwt-decode
+import { firstValueFrom } from 'rxjs';
 import { encryptData } from '../../../utils/crypto-util';
 import { AuthService } from '../../../services/auth.service';
+import { LoadingService } from '../../../services/loading.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +26,8 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     private authService: AuthService,
     private router: Router,
+    private ngZone: NgZone,
+    private loadingService: LoadingService,
   ) {
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]], // Added email validation
@@ -30,12 +35,163 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // Load Google Identity script dynamically if not present and render button
+  
+
+  // Click handler for the Google button: request ID token and send to backend
+  async signInWithGoogle(): Promise<void> {
+    const w: any = window as any;
+    // show global loader while Google flow starts
+    this.loadingService.show();
+    if (!w.google || !w.google.accounts || !w.google.accounts.id) {
+      console.error('Google Identity Services not loaded');
+      this.toastr.error('Google sign-in is not available right now');
+      this.loadingService.hide();
+      return;
+    }
+
+    try {
+      const client_id = (environment as any).googleClientId || (document.querySelector('meta[name="google-signin-client_id"]') as HTMLMetaElement)?.content;
+      if (!client_id) {
+        console.error('No google client id configured in environment');
+        this.toastr.error('Google client id not configured');
+        return;
+      }
+
+      // Initialize with callback to receive id_token
+      w.google.accounts.id.initialize({
+        client_id: client_id,
+        callback: async (resp: any) => {
+          try {
+            const id_token = resp?.credential;
+            if (!id_token) {
+              console.error('No id_token returned by Google');
+              this.toastr.error('Google sign-in failed');
+              return;
+            }
+            const profile: any = jwtDecode(id_token);
+            console.log('Decoded profile from id_token:', profile);
+
+            // POST to backend via AuthService and await response (backend returns app JWT)
+            try {
+              const res: any = await firstValueFrom(this.authService.googleCallback(id_token, { name: profile.name, email: profile.email, picture: profile.picture }));
+              console.log('Backend GoogleCallBack response:', res);
+
+              // backend expected to return new application JWT (e.g., access_token)
+              const appJwt = res?.access_token || res?.token || res?.accessToken || (res?.data && (res.data.access_token || res.data.token));
+              if (appJwt) {
+                // reuse previous JWT handling
+                this.handleAppJwt(appJwt);
+                this.loadingService.hide();
+              } else {
+                // fallback: store profile and notify
+                try {
+                  if (profile?.name) localStorage.setItem('user_name', encryptData(profile.name));
+                  if (profile?.email) localStorage.setItem('user_email', encryptData(profile.email));
+                } catch (e) {
+                  console.warn('Failed storing google profile', e);
+                }
+                this.ngZone.run(() => {
+                  this.toastr.success(`Signed in as ${profile?.name || profile?.email}`, 'Google', { timeOut: 3000 });
+                  this.router.navigate(['/dashboard']);
+                  this.loadingService.hide();
+                });
+              }
+            } catch (err) {
+              console.error('Google callback failed:', err);
+              this.ngZone.run(() => this.toastr.error('Google login failed on server'));
+              this.loadingService.hide();
+            }
+          } catch (e) {
+            console.error('Error processing Google credential', e);
+            this.toastr.error('Failed to process Google sign-in');
+            this.loadingService.hide();
+          }
+        }
+      });
+
+      // Show One-Tap / account chooser
+      w.google.accounts.id.prompt();
+    } catch (err) {
+      console.error('Google sign-in failed', err);
+      this.toastr.error('Google sign-in failed');
+      this.loadingService.hide();
+    }
+  }
+
   ngOnInit(): void {
+    
     const token = localStorage.getItem('access_token');
     if (token) {
       this.setTokenTimeout(token); // Set token timeout if already logged in
       this.router.navigate(['/admin/dashboard']); // Redirect if already logged in
     }
+
+    // Listen for google-id-token events dispatched from index.html
+    window.addEventListener('google-id-token', (ev: any) => {
+      try {
+        const detail = ev.detail || {};
+        const id_token = detail.credential;
+        const profile = detail.profile;
+        console.log('Received google-id-token event', { id_token, profile });
+        if (id_token) {
+          this.authService.googleCallback(id_token, profile).subscribe({
+            next: (res: any) => {
+              console.log('Backend GoogleCallBack response:', res);
+              // store returned info if needed
+              try {
+                if (profile?.name) localStorage.setItem('user_name', encryptData(profile.name));
+                if (profile?.email) localStorage.setItem('user_email', encryptData(profile.email));
+                // Prefer the application JWT returned by the backend instead of storing the Google id_token
+                const appJwt = res?.access_token || res?.token || res?.accessToken || (res?.data && (res.data.access_token || res.data.token));
+                if (appJwt) {
+                  // Use the same handling as normal login
+                  this.handleAppJwt(appJwt);
+                  this.loadingService.hide();
+                  return;
+                }
+                // If backend did not return an app token, do NOT store the Google id_token as access_token
+                // (we keep profile info but rely on the backend-provided token when available)
+              } catch (e) {
+                console.warn('Failed storing google profile', e);
+              }
+              this.toastr.success(`Signed in as ${profile?.name || profile?.email}`, 'Google', { timeOut: 3000 });
+              this.router.navigate(['/dashboard']);
+              this.loadingService.hide();
+            },
+            error: (err: any) => {
+              console.error('Google callback failed:', err);
+              this.toastr.error('Google login failed on server');
+              this.loadingService.hide();
+            }
+          });
+        }
+      } catch (e) {
+        console.error('Error handling google-id-token event', e);
+        this.loadingService.hide();
+      }
+    });
+    // Start loader until Google button is rendered (masks intermittent CDN/script timing issues)
+    this.loadingService.show();
+    this.waitForGoogleButtonReady().then(() => this.loadingService.hide()).catch(() => this.loadingService.hide());
+    // Trigger global initializer in case index.html init ran before Angular inserted the placeholder
+    try { (window as any).__gsi_render_buttons && (window as any).__gsi_render_buttons(); } catch(e){}
+  }
+
+  // Poll until the Google button is rendered or timeout
+  private waitForGoogleButtonReady(timeoutMs = 10000): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const start = Date.now();
+      const check = () => {
+        const w: any = window as any;
+        const btn = document.querySelector('.g_id_signin');
+        const ready = (w.google && w.google.accounts && w.google.accounts.id) && !!btn && (btn as HTMLElement).childElementCount > 0;
+        if (ready) return resolve();
+        if (Date.now() - start > timeoutMs) return reject(new Error('google button ready timeout'));
+        setTimeout(check, 200);
+      };
+      check();
+    });
   }
 
   async onSubmit(): Promise<void> {
@@ -120,5 +276,39 @@ export class LoginComponent implements OnInit {
   hasDisplayableError(controlName: string): Boolean {
     const control = this.form.get(controlName);
     return Boolean(control?.invalid) && (this.isSubmitted || Boolean(control?.touched) || Boolean(control?.dirty));
+  }
+
+  private handleAppJwt(token: string): void {
+    try {
+      // Save token
+      localStorage.setItem('access_token', token);
+
+      // Decode the token to extract claims
+      const claims: any = jwtDecode(token);
+
+      // Validate and convert claims to strings before encryption
+      const userId = claims.id ? claims.id.toString() : '';
+      const userName = claims.name || '';
+      const userEmail = claims.email || '';
+      const userRole = claims.role || '';
+      const picture = claims.picture || '';
+
+      console.log('Decoded app JWT claims:', claims);
+
+      // Encrypt and store claims in localStorage
+      localStorage.setItem('user_id', encryptData(userId));
+      localStorage.setItem('user_name', encryptData(userName));
+      localStorage.setItem('user_email', encryptData(userEmail));
+      localStorage.setItem('user_role', encryptData(userRole));
+      localStorage.setItem('user_picture', picture);
+
+      this.setTokenTimeout(token);
+      this.ngZone.run(() => {
+        this.toastr.success('Logged in successfully!', 'Success', { timeOut: 3000 });
+        this.router.navigate(['/dashboard']);
+      });
+    } catch (e) {
+      console.error('Error handling app JWT:', e);
+    }
   }
 }

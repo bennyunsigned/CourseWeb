@@ -1,0 +1,37 @@
+/* Bootstrap Icons copied from node_modules and adjusted to use /vendor/fonts path */
+/* Source: node_modules/bootstrap-icons/font/bootstrap-icons.css */
+
+@font-face {
+  font-display: block;
+  font-family: "bootstrap-icons";
+  src: url("/vendor/fonts/bootstrap-icons.woff2") format("woff2"),
+       url("/vendor/fonts/bootstrap-icons.woff") format("woff");
+}
+
+/* Icon definitions (truncated in this file for brevity) */
+/* It's recommended to copy the full file from node_modules/bootstrap-icons/font/bootstrap-icons.css for production. */
+
+.bi::before,
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -.125em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* To keep repository size small here, only a subset of icons are included. */
+.bi-list::before { content: "\\f12f"; }
+.bi-bell::before { content: "\\f18a"; }
+.bi-gear::before { content: "\\f3e5"; }
+.bi-person::before { content: "\\f4d7"; }
+.bi-pie-chart::before { content: "\\f210"; }
+.bi-box-arrow-right::before { content: "\\f1c6"; }
+
+/* If you need the full icon set, replace this file with the full CSS from node_modules/bootstrap-icons/font/bootstrap-icons.css */

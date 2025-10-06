@@ -1,16 +1,8 @@
-<div class="archive-video-player-container py-3">
-  <div class="archive-video-player-wrapper position-relative rounded-4 shadow mx-auto" style="max-width:640px;">
-    <video 
-      #videoRef
-      [src]="videoSrc"
-      [attr.controls]="isPlaying ? true : null"
-      [muted]="!isPlaying"
-      controlsList="nodownload"
-      style="width:100%;border-radius:1.5rem;background:#000;"
-      (click)="$event.stopPropagation()"
-    ></video>
-    <button *ngIf="!isPlaying && videoSrc" (click)="onPlayClick()" class="play-overlay-btn position-absolute top-50 start-50 translate-middle rounded-circle border-0 bg-white shadow" style="width:70px;height:70px;z-index:2;display:flex;align-items:center;justify-content:center;">
-      <span style="display:inline-block;width:0;height:0;border-top:18px solid transparent;border-bottom:18px solid transparent;border-left:28px solid #333;margin-left:8px;"></span>
-    </button>
+<div class="video-player-container">
+  <div class="video-player-wrapper">
+        <video #videoRef class="video-element" preload="none" playsinline controls>
+      <source [attr.src]="videoSrc" type="video/mp4" />
+      Your browser does not support HTML5 video.
+    </video>
   </div>
 </div>

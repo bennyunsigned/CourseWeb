@@ -27,7 +27,6 @@ export class VideoPlayerComponent implements OnChanges {
     this.isPlaying = false; // Reset play state when video changes
   }
 
-
   onPlayClick() {
     this.playClicked.emit();
     this.isPlaying = true;

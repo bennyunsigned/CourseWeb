@@ -17,4 +17,10 @@ export class AuthService {
   login(formData: { email: string; password: string }) {
     return this.http.post(`${this.baseURL}/login`, formData);
   }
+
+  // Send id_token and decoded profile to backend /auth/GoogleCallBack
+  googleCallback(id_token: string, profile: any) {
+    const payload = { id_token, profile };
+    return this.http.post(`${this.baseURL}/GoogleCallBack`, payload);
+  }
 }

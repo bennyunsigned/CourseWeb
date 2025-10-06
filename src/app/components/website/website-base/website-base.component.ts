@@ -6,10 +6,20 @@ import { WebsiteContactusComponent } from "../website-contactus/website-contactu
 import { WebsiteTestimonialsComponent } from "../website-testimonials/website-testimonials.component";
 import { WebsitePricingComponent } from "../website-pricing/website-pricing.component";
 import { WesiteFooterComponent } from "../wesite-footer/wesite-footer.component";
+import { AvailableCoursesComponent } from '../../admin-panel/courses/available-courses/available-courses.component';
 
 @Component({
   selector: 'app-website-base',
-  imports: [WebsiteNavbarComponent, WebsiteCarouselComponent, WebsiteAboutusComponent, WebsiteContactusComponent, WebsiteTestimonialsComponent, WebsitePricingComponent, WesiteFooterComponent],
+  imports: [
+    WebsiteNavbarComponent, 
+    WebsiteCarouselComponent, 
+    WebsiteAboutusComponent, 
+    WebsiteContactusComponent, 
+    WebsiteTestimonialsComponent, 
+    WebsitePricingComponent, 
+    WesiteFooterComponent,
+    AvailableCoursesComponent
+  ],
   templateUrl: './website-base.component.html',
   styleUrl: './website-base.component.css'
 })

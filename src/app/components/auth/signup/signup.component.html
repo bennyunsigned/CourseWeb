@@ -72,18 +72,14 @@
                                         <button type="submit" class="btn btn-lg btn-primary fw-bold">Sign Up</button>
                                     </div>
                                 </form>
-                                <div class="button mt-3">
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-12">
-                                            <div class="btn btn-danger w-100 mb-2"><i class="bi bi-google"></i> Google</div>
+                                <div class="d-grid gap-2 mt-4">
+                                        <div id="g_id_onload" data-auto_prompt="false"
+                                            data-callback="handleCredentialResponse"
+                                            data-client_id="411656733323-2p348igl6kgfo7756i61ivng2b62fkov.apps.googleusercontent.com">
                                         </div>
-                                         <div class="col-md-6 col-sm-12">
-                                            <div class="btn btn-primary w-100"><i class="bi bi-facebook"></i> Facebook</div>
-                                        </div>
+                                        <!-- g_id_signin places the button on a page and supports customization -->
+                                        <div class="g_id_signin"></div>
                                     </div>
-                                    
-                                    
-                                </div>
                                 <div class="text-center mt-4">
                                     <p class="text-muted">
                                         Already have an account? 
