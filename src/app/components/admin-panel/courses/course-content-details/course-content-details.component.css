@@ -2,110 +2,101 @@
 .bottom-pagination {
 	margin-top: 2rem;
 	padding-top: 1rem;
-	border-top: 1px solid #e9ecef;
+	border-top: 1px solid rgba(255,255,255,0.04);
 }
 .pagination-modern {
 	margin-bottom: 0;
 }
 .pagination-modern .page-link {
 	border: none;
-	border-radius: var(--border-radius);
+	border-radius: 999px;
 	margin: 0 0.15rem;
-	padding: 0.4rem 0.8rem;
-	color: var(--primary-color);
-	background: #e9ecef;
+	padding: 0.35rem 0.75rem;
+	color: var(--text);
+	background: rgba(255,255,255,0.02);
 	font-weight: 500;
 	font-size: 0.95rem;
 	box-shadow: none;
-	transition: 0.2s;
+	transition: 0.12s;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 .pagination-modern .page-link:hover {
-	background: #e9ecef;
-	color: var(--primary-color);
+	background: rgba(255,255,255,0.04);
+	color: var(--text);
 }
 .pagination-modern .page-item.active .page-link {
-	background: #222e3c;
-	color: #fff;
-	box-shadow: none;
-	position: relative;
-	overflow: hidden;
+	background: linear-gradient(90deg,var(--neon-yellow-08), rgba(255,255,255,0.02));
+	color: var(--text);
+	box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 0 8px var(--neon-yellow-04);
 }
 .pagination-modern .page-item.disabled .page-link {
-	opacity: 0.4;
+	opacity: 0.45;
 	pointer-events: none;
-	background: #e9ecef;
-	color: #adb5bd;
+	background: rgba(255,255,255,0.02);
+	color: var(--muted);
 }
 /* Tabs and pagination styles matching course-progress */
-:root {
-	--primary-color: #222e3c;
-	--background-light: #fff;
-	--background-dark: #f5f6fa;
-	--border-radius: 8px;
-	--border-radius-lg: 12px;
-}
-
 .course-tabs-container {
 	position: relative;
 	z-index: 2;
 }
 .course-tabs {
-	background: var(--background-light);
-	border-radius: var(--border-radius-lg);
+	background: rgba(255,255,255,0.02);
+	border-radius: 12px;
 	padding: 0.25rem;
-	border: 1px solid #e9ecef;
+	border: 1px solid rgba(255,255,255,0.03);
 	gap: 0.25rem;
 	display: flex;
 }
 .course-tabs .nav-link {
-	border-radius: var(--border-radius);
-	padding: 0.4rem 0.7rem;
+	border-radius: 8px;
+	padding: 0.35rem 0.6rem;
 	font-weight: 500;
-	color: var(--primary-color);
+	color: var(--muted);
 	border: none;
-	transition: 0.2s;
+	transition: 0.12s;
 	position: relative;
 	overflow: hidden;
 	font-size: 0.85rem;
-	background: #e9ecef;
+	background: transparent;
 }
 .course-tabs .nav-link.active,
 .course-tabs .nav-link:hover {
-	color: #fff;
-	background: #222e3c;
-	box-shadow: none;
+	color: var(--text);
+	background: linear-gradient(90deg,var(--neon-yellow-08), rgba(255,255,255,0.02));
+	box-shadow: 0 6px 18px rgba(0,0,0,0.45), 0 0 8px var(--neon-yellow-04);
 }
 /* Buy Now and Add to Cart button styles */
 .btn-buy-now {
-	background: #222e3c;
-	color: #fff;
+	background: var(--neon-yellow);
+	color: #111;
 	border: none;
 	border-radius: 24px;
-	padding: 0.5rem 1.5rem;
-	font-weight: 600;
-	transition: background 0.2s, box-shadow 0.2s;
+	padding: 0.45rem 1.25rem;
+	font-weight: 700;
+	transition: background 0.12s, box-shadow 0.12s;
+	box-shadow: 0 8px 20px rgba(0,0,0,0.45), 0 0 8px rgba(255,212,0,0.08);
 }
 .btn-buy-now:hover {
-	background: #11161e;
-	color: #fff;
-	box-shadow: 0 2px 8px rgba(34,46,60,0.12);
+	background: #e6c700;
+	color: #111;
+	box-shadow: 0 10px 26px rgba(0,0,0,0.55), 0 0 12px rgba(255,212,0,0.12);
 }
 .btn-add-cart {
-	background: #e9ecef;
-	color: #222e3c;
-	border: none;
+	background: rgba(255,255,255,0.02);
+	color: var(--text);
+	border: 1px solid rgba(255,255,255,0.03);
 	border-radius: 24px;
-	padding: 0.5rem 1.5rem;
+	padding: 0.45rem 1.25rem;
 	font-weight: 600;
-	transition: background 0.2s, box-shadow 0.2s;
+	transition: background 0.12s, box-shadow 0.12s;
 }
 .btn-add-cart:hover {
-	background: #d1d5db;
-	color: #222e3c;
-	box-shadow: 0 2px 8px rgba(34,46,60,0.08);
+	background: rgba(255,255,255,0.04);
+	color: var(--text);
+	box-shadow: 0 6px 18px rgba(0,0,0,0.45);
 }
 .tab-text {
 	font-size: 0.85rem;
@@ -124,6 +115,24 @@
 }
 .reviews-placeholder h4,
 .reviews-placeholder p {
-	color: #6c757d;
+	color: var(--muted);
 	margin-bottom: 1rem;
+}
+
+/* Accordion / module card overrides to use panel background */
+.accordion-button.bg-panel {
+	background: var(--panel) !important;
+	color: var(--text) !important;
+}
+.accordion-body.bg-panel {
+	background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
+	color: var(--muted);
+}
+
+/* Banner image tweaks */
+.course-header-sm img {
+	max-height: 320px;
+	object-fit: cover;
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 8px rgba(255,212,0,0.04);
 }

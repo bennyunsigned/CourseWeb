@@ -6,14 +6,56 @@
   justify-content: center; /* Vertical center (for flex children) */
   min-height: 80px; /* Adjust as needed for vertical centering */
 }
+.search-input {
+  border-radius: 28px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+  white-space: nowrap; /* keep icon and input on one line */
+  height: 44px;
+  overflow: hidden;
+}
+.search-icon {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.55);
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+}
+.search-field {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text);
+  font-size: 0.98rem;
+  padding: 8px 12px !important;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+}
+.search-field::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+.search-input:focus-within {
+  box-shadow: 0 6px 28px rgba(120,90,255,0.06), 0 0 0 3px rgba(120,90,255,0.03) inset;
+  border-color: rgba(120,90,255,0.14);
+}
 .category-tabs-container > .d-flex {
   justify-content: center !important; /* Center tabs horizontally in each row */
   align-items: center !important;     /* Center tabs vertically in each row */
 }
 .category-tab-btn {
-  background: #f8fafc;         /* Off-white background by default */
-  color: #222e3c;              /* Sidebar/nav color for text */
-  border: 1px solid #d1d5db;
+  background: rgba(255,255,255,0.02);         /* subtle light on dark */
+  color: var(--text);              /* Sidebar/nav color for text */
+  border: 1px solid rgba(255,255,255,0.04);
   border-radius: 2rem;
   padding: 0.4rem 1.2rem;
   font-size: 1rem;
@@ -27,60 +69,130 @@
 }
 .category-tab-btn.active,
 .category-tab-btn:hover {
-  background: #222e3c;         /* Sidebar/nav color on active/hover */
-  color: #fff;
-  border-color: #222e3c;
-  box-shadow: 0 0.25rem 0.75rem rgba(34, 46, 60, 0.08);
+  background: rgba(255,255,255,0.06);         /* subtle highlight */
+  color: var(--text);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 0.6rem 1.6rem rgba(0,0,0,0.6);
+  transform: translateY(-2px);
 }
 
-.card {
-  background: #222e3c !important;
-  border: none;
-}
-
-/* Card Container - reduce height */
-.course-card {
-  border-radius: 16px;
-  overflow: hidden;
-  position: relative;
-  background: #f8fafc;
-  box-shadow: 0 2px 16px rgba(34,46,60,0.08);
-  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
-  height: auto;
-  min-height: 270px; /* reduced height */
+.wrapper .main .card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  backdrop-filter: blur(6px);
   display: flex;
   flex-direction: column;
-  border: 1px solid #e3e6ea;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
+
+.course-tooltip {
+  display: block;
+  position: absolute;
+  z-index: 10;
+  min-width: 260px;
+  max-width: 320px;
+  background: var(--panel);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: fadeIn 0.2s;
+}
+
+.banner-debug {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.banner-debug .debug-text{
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.badge-row .badge-duration { margin-right: 8px; }
+
+/* Ensure all badges are visually same height */
+.badge-row .badge-best-seller,
+.badge-row .badge-premium,
+.badge-row .badge-duration {
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 8px;
+}
 .course-card:hover {
-  box-shadow: 0 8px 32px rgba(34,46,60,0.18), 0 2px 16px rgba(34,46,60,0.08);
-  transform: translateY(-6px) scale(1.03);
-  border-color: #43e97b;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(12,20,32,0.45), 0 6px 20px rgba(92,85,255,0.06);
+  border-color: rgba(255,255,255,0.06);
 }
 
-/* Banner Image - 16:9 ratio */
 .course-banner {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 10; /* slightly taller ratio but smaller min height */
+  min-height: 120px; /* reduced height for compact cards */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border-bottom: 1px solid #e3e6ea;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
 }
 
-/* Badges centered at bottom of image */
+.course-banner-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  display: block;
+}
+
+.course-banner .badge-row { z-index: 2; }
+
+/* Badges positioned at bottom-center of the banner */
 .badge-row {
   position: absolute;
   left: 50%;
-  bottom: 8px;
+  bottom: 8px; /* sit just above the card body */
   transform: translateX(-50%);
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 8px;
-  z-index: 2;
+  gap: 6px;
+  z-index: 4;
+  pointer-events: none; /* allow clicks through badges */
+}
+
+/* subtle badge hover glow */
+.badge-row .badge-best-seller:hover,
+.badge-row .badge-premium:hover,
+.badge-row .badge-duration:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(92,85,255,0.08);
+}
+
+/* button pulse animation when adding to cart */
+.btn-pulse {
+  animation: btn-pulse 360ms ease-out;
+}
+@keyframes btn-pulse {
+  0% { transform: scale(1); box-shadow: 0 8px 30px rgba(255,110,110,0.12); }
+  50% { transform: scale(0.96); box-shadow: 0 12px 40px rgba(255,110,110,0.18); }
+  100% { transform: scale(1); box-shadow: 0 8px 30px rgba(255,110,110,0.12); }
 }
 
 /* Badges styling */
@@ -96,24 +208,100 @@
   display: inline-block;
 }
 .badge-best-seller {
-  background: linear-gradient(90deg, #ff9800 60%, #ffb74d 100%);
-  color: #fff;
+  background: #ffd700; /* solid gold */
+  color: #111;
+  box-shadow: 0 6px 18px rgba(255,215,0,0.18);
+  border: none;
 }
 .badge-premium {
-  background: linear-gradient(90deg, #673ab7 60%, #9575cd 100%);
+  background: #6d28d9; /* solid premium purple */
   color: #fff;
+  box-shadow: 0 6px 18px rgba(109,40,217,0.18);
+  border: none;
 }
 .badge-duration {
-  background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
-  color: #222e3c;
+  background: #06b6d4; /* solid cyan */
+  color: #042028;
+  font-weight: 700;
+  padding: 0 10px;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(6,182,212,0.12);
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/* New app-specific badge classes to avoid Bootstrap clashes */
+.aw-badge { display: inline-flex; align-items: center; justify-content: center; padding: 0 8px; height: 26px; border-radius: 14px; font-size: 0.78rem; font-weight: 600; white-space: nowrap; }
+.aw-badge-best-seller { background: linear-gradient(90deg,#ffd54a,#ffb300); color: #111; }
+.aw-badge-premium { background: linear-gradient(90deg,#7c4dff,#6156f6); color: #fff; }
+.aw-badge-duration { background: linear-gradient(90deg,#06b6d4,#0891b2); color: #042028; }
+
+/* Admin-scoped overrides to force the same visuals inside admin panel (higher specificity) */
+.wrapper .main .aw-badge,
+.wrapper .main .aw-badge-best-seller,
+.wrapper .main .aw-badge-premium,
+.wrapper .main .aw-badge-duration {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 8px !important;
+  height: 26px !important;
+  border-radius: 14px !important;
+  font-size: 0.78rem !important;
+  white-space: nowrap !important;
+}
+.wrapper .main .aw-badge-best-seller { background: linear-gradient(90deg,#ffd54a,#ffb300) !important; color: #111 !important; }
+.wrapper .main .aw-badge-premium { background: linear-gradient(90deg,#7c4dff,#6156f6) !important; color: #fff !important; }
+.wrapper .main .aw-badge-duration { background: linear-gradient(90deg,#06b6d4,#0891b2) !important; color: #042028 !important; }
+
+/* New app-specific button classes (replace Bootstrap `.btn`) */
+.aw-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
+.aw-btn-xs { padding: 8px 12px; font-size: 0.92rem; border-radius: 10px; }
+.aw-btn-success { background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); color: #111; }
+.aw-btn-cart { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); color: #fff; }
+.aw-btn:focus { outline: none; box-shadow: 0 6px 20px rgba(92,85,255,0.06); }
+
+/* Admin-scoped overrides for buttons to prevent Bootstrap from hiding text/icons */
+.wrapper .main .aw-btn,
+.wrapper .main .aw-btn-xs,
+.wrapper .main .aw-btn-success,
+.wrapper .main .aw-btn-cart {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 0.92rem !important;
+  border-radius: 10px !important;
+}
+.wrapper .main .aw-btn-success { background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%) !important; color: #111 !important; }
+.wrapper .main .aw-btn-cart { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%) !important; color: #fff !important; }
+
+/* Ensure cart text visible in admin */
+.wrapper .main .cart-text { display: inline !important; margin-left: 8px !important; }
+
+/* Make action buttons equal width */
+.action-row .action-btn { flex: 1 1 0; }
+.action-row .action-btn .btn-text, .action-row .action-btn .cart-text { font-weight: 600; }
 
 /* Card Body */
 .card-body {
-  background: #fff !important;
+  background: transparent !important;
   display: flex;
   flex-direction: column;
   padding: 0.7rem 0.7rem 0.7rem 0.7rem;
+}
+
+.btn-info {
+  background: linear-gradient(90deg, rgba(14,165,233,0.06), rgba(59,130,246,0.06));
+  color: var(--text);
+  border: 1px solid rgba(59,130,246,0.06);
+}
+.btn-info:hover {
+  background: linear-gradient(90deg, #0ea5e9, #3b82f6);
+  color: #fff;
 }
 
 /* Reduce gap between price and buttons */
@@ -129,17 +317,16 @@
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.4rem;
-  color: #222e3c;
+  color: var(--text);
   letter-spacing: 0.01em;
   text-align: left;
-  text-shadow: 0 1px 0 #f8fafc;
 }
 
 /* Description */
 .card-body .card-text,
 .card-body .text-muted {
   font-size: 0.97rem;
-  color: #5a6270;
+  color: var(--muted);
   margin-bottom: 0.5rem;
   min-height: 40px;
   max-height: 60px;
@@ -151,7 +338,7 @@
 .list-group-item {
   background: transparent;
   font-size: 0.88rem;
-  color: #222e3c;
+  color: var(--text);
   border: none;
   padding-left: 0;
   padding-right: 0;
@@ -175,6 +362,19 @@
   font-weight: 500;
   box-shadow: none;
   min-width: 0;
+}
+.card .btn.btn-cart, .card .btn.btn-success { z-index: 3 !important; }
+.btn-buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-cart-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 .card-body .btn-success {
   background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
@@ -227,6 +427,75 @@
   color: #fff;
 }
 
+/* New compact cart button (icon only) */
+.btn-cart-new {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 30px rgba(255,110,110,0.12);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-cart-new i {
+  font-size: 1.05rem;
+}
+.btn-cart-new:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 40px rgba(255,110,110,0.18);
+}
+
+/* Action row: two buttons split width equally */
+.action-row { display: flex; gap: 0.6rem; }
+.action-btn { flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; height: 44px; }
+.action-btn .btn-text { font-weight: 600; }
+.action-btn i { font-size: 1.05rem; }
+
+@media (max-width: 576px) {
+  .action-row { gap: 0.4rem; }
+  .action-btn { height: 40px; }
+  .btn-cart-new .cart-text { display: none; }
+}
+
+.btn-cart-new .cart-text {
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+@media (max-width: 576px) {
+  .btn-cart-new .cart-text { display: none; }
+}
+
+/* Slightly lift badges to be more visible */
+.badge-row { top: 10px; left: 10px; right: auto; transform: none; }
+.badge-row .badge-best-seller,
+.badge-row .badge-premium,
+.badge-row .badge-duration { margin-right: 8px; }
+
+/* High-specificity override: ensure badges are bottom-centered in the banner */
+.course-banner .badge-row {
+  left: 50% !important;
+  top: auto !important;
+  bottom: 12px !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+}
+
+/* Force .form-control visual overrides inside our search input */
+.search-input .form-control,
+.search-input input.form-control {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  height: 100% !important;
+  padding-left: 0.25rem !important;
+}
+
 /* Tooltip Styles */
 .course-tooltip {
   display: block;
@@ -234,11 +503,11 @@
   z-index: 10;
   min-width: 260px;
   max-width: 320px;
-  background: #fff;
+  background: var(--panel) !important;
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(34,46,60,0.18);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.6);
   padding: 1rem;
-  border: 1px solid #e3e6ea;
+  border: 1px solid rgba(255,255,255,0.04);
   animation: fadeIn 0.2s;
 }
 .course-tooltip-right {
@@ -371,6 +640,127 @@
   box-shadow: 0 12px 35px rgba(245, 158, 11, 0.25);
 }
 
+/* Strong-scoped overrides for the available-courses component to ensure identical visuals
+   both on the public website and inside the admin panel (where Bootstrap/global CSS may
+   override styles). These rules are intentionally specific. */
+.aw-available-courses,
+.aw-available-courses * {
+  --ac-badge-height: 26px;
+}
+
+.aw-available-courses .aw-badge,
+.aw-available-courses .aw-badge-best-seller,
+.aw-available-courses .aw-badge-premium,
+.aw-available-courses .aw-badge-duration {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 8px !important;
+  height: var(--ac-badge-height) !important;
+  border-radius: 14px !important;
+  font-size: 0.78rem !important;
+  white-space: nowrap !important;
+}
+
+.aw-available-courses .aw-badge-best-seller { background: linear-gradient(90deg,#ffd54a,#ffb300) !important; color: #111 !important; }
+.aw-available-courses .aw-badge-premium { background: linear-gradient(90deg,#7c4dff,#6156f6) !important; color: #fff !important; }
+.aw-available-courses .aw-badge-duration { background: linear-gradient(90deg,#06b6d4,#0891b2) !important; color: #042028 !important; }
+
+.aw-available-courses .aw-btn,
+.aw-available-courses .aw-btn-xs,
+.aw-available-courses .aw-btn-success,
+.aw-available-courses .aw-btn-cart {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 0.92rem !important;
+  border-radius: 10px !important;
+}
+
+.aw-available-courses .cart-text { display: inline !important; margin-left: 8px !important; }
+
+.aw-available-courses .search-input { height: 44px !important; }
+.aw-available-courses .search-field { height: 100% !important; }
+
+.aw-available-courses .course-banner .badge-row { bottom: 10px !important; }
+
+/* aw- grid and card system (component-scoped, no Bootstrap) */
+.aw-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem; /* tighter spacing */
+  align-items: start;
+}
+.aw-col {
+  display: flex; /* let columns stretch */
+}
+.aw-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 22px rgba(2,6,23,0.45);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.aw-card-body { padding: 0.7rem; display: flex; flex-direction: column; }
+.aw-card-title { font-size: 0.98rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; }
+.aw-list-group { list-style: none; padding: 0; margin: 0 0 0.75rem 0; }
+.aw-list-item { padding: 0; margin: 0; color: var(--text); }
+.price-old { color: #ff5252; margin-right: 0.5rem; }
+.price-new { color: #10b981; font-weight: 700; }
+
+@media (max-width: 1200px) {
+  .aw-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  .aw-row { grid-template-columns: 1fr; }
+}
+
+/* Make cards stretch for equal heights */
+.aw-col .aw-card { flex: 1 1 auto; display: flex; flex-direction: column; }
+.aw-card .aw-card-body { display: flex; flex-direction: column; flex: 1 1 auto; }
+
+/* Action buttons: equal width halves, icon + text visible */
+.action-row { display: flex; gap: 0.6rem; }
+.action-row .action-btn { flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0.4rem 0.6rem; border-radius: 8px; }
+.action-row .action-btn i { margin-right: 8px; font-size: 1.05rem; }
+.action-row .aw-btn-success { background: linear-gradient(90deg, #10b981, #34d399); color: #042028; }
+.action-row .aw-btn-cart { background: linear-gradient(90deg, #ff7a7a, #ffb86b); color: #111; }
+
+@media (max-width: 640px) {
+  .aw-row { grid-template-columns: 1fr; }
+  .action-row { gap: 0.4rem; }
+  .action-row .action-btn { height: 44px; }
+}
+
+/* Scoped utility mappings for Bootstrap-like classes used in the template
+   These only apply inside .aw-available-courses to avoid touching global styles */
+.aw-available-courses .d-flex { display: flex; }
+.aw-available-courses .flex-row { flex-direction: row; }
+.aw-available-courses .flex-column { flex-direction: column; }
+.aw-available-courses .flex-wrap { flex-wrap: wrap; }
+.aw-available-courses .me-2 { margin-right: 0.5rem; }
+.aw-available-courses .mb-2 { margin-bottom: 0.5rem; }
+.aw-available-courses .mb-3 { margin-bottom: 1rem; }
+.aw-available-courses .mb-4 { margin-bottom: 1.25rem; }
+.aw-available-courses .h-100 { height: 100%; }
+.aw-available-courses .position-relative { position: relative; }
+.aw-available-courses .text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aw-available-courses .gap-2 { gap: 0.5rem; }
+.aw-available-courses .mt-auto { margin-top: auto; }
+.aw-available-courses .justify-content-center { justify-content: center; }
+
+/* Pagination inside component: ensure centered controls and consistent sizing */
+.aw-available-courses .pagination { display: flex; list-style: none; padding: 0; margin: 0; gap: 0.5rem; align-items: center; }
+.aw-available-courses .page-item { display: inline-block; }
+.aw-available-courses .page-item.disabled .page-link { opacity: 0.45; pointer-events: none; }
+.aw-available-courses .page-item.active .page-link { background: linear-gradient(90deg,#7c4dff,#6156f6); color: #fff; border-radius: 8px; }
+.aw-available-courses .page-link { background: transparent; border: none; color: var(--text); padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+.aw-available-courses .page-link:hover { background: rgba(255,255,255,0.03); }
+
 .pagination-info {
   color: #92400e;
   font-weight: 600;
@@ -500,3 +890,72 @@
   justify-content: center;
   align-items: center;
 }
+
+/* Strong scoped fixes to undo any leftover large sizes from global/admin styles */
+.aw-available-courses .course-card { min-height: 0 !important; padding: 0 !important; }
+.aw-available-courses .aw-card { min-height: 0; }
+.aw-available-courses .aw-card-body { padding: 0.6rem !important; }
+.aw-available-courses .course-banner { min-height: 96px !important; aspect-ratio: 16/9 !important; }
+
+/* Tighter responsive grid: 3 cols desktop, 2 cols tablet, 1 col mobile */
+.aw-available-courses .aw-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; }
+@media (max-width: 992px) {
+  .aw-available-courses .aw-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 576px) {
+  .aw-available-courses .aw-row { grid-template-columns: 1fr; }
+}
+
+/* Ensure cards stretch to equal heights in a row */
+.aw-available-courses .aw-col { display: flex; }
+.aw-available-courses .aw-col .aw-card { display: flex; flex-direction: column; flex: 1 1 auto; }
+.aw-available-courses .aw-card .aw-card-body { flex: 1 1 auto; display: flex; flex-direction: column; }
+
+/* Force action buttons to be equal halves and show icon + text reliably */
+.aw-available-courses .action-row { display:flex; gap:0.5rem; }
+.aw-available-courses .action-row .action-btn { flex:1 1 0; display:flex !important; align-items:center !important; justify-content:center !important; height:44px !important; padding:0.45rem 0.6rem !important; border-radius:8px !important; }
+.aw-available-courses .action-row .action-btn i { margin-right:8px; }
+.aw-available-courses .action-row .btn-text, .aw-available-courses .action-row .cart-text { display:inline-block !important; }
+
+/* Prevent admin/global rules from collapsing button contents */
+.aw-available-courses .aw-btn, .aw-available-courses .aw-btn * { white-space: nowrap !important; }
+
+/* Reduce card hover lift to be subtle */
+.aw-available-courses .course-card:hover { transform: translateY(-6px) scale(1.01) !important; }
+
+/* Small screen tweaks */
+@media (max-width: 480px) {
+  .aw-available-courses .action-row { flex-direction: row; }
+  .aw-available-courses .action-row .action-btn { height:48px; }
+  .aw-available-courses .aw-card-title { font-size: 0.95rem; }
+}
+
+  /* Component-scoped Bootstrap color overrides for success/info buttons */
+  .aw-available-courses .btn-success {
+    background-color: #28a745 !important;
+    background-image: linear-gradient(180deg, #34d399 0%, #10b981 100%) !important;
+    border-color: rgba(16,185,129,0.12) !important;
+    color: #042028 !important;
+    box-shadow: 0 6px 18px rgba(16,185,129,0.08) !important;
+  }
+  .aw-available-courses .btn-success:hover {
+    filter: brightness(0.98) !important;
+  }
+  .aw-available-courses .btn-info {
+    background-color: #3b82f6 !important; /* blue-500 */
+    background-image: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%) !important;
+    border-color: rgba(59,130,246,0.12) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 18px rgba(59,130,246,0.06) !important;
+  }
+  .aw-available-courses .btn-info:hover {
+    filter: brightness(0.98) !important;
+  }
+
+  /* If admin CSS sets .btn-outline-primary or similar, ensure btn-info still looks like filled info */
+  .aw-available-courses .btn-info.btn-outline, .aw-available-courses .btn-outline-info {
+    background-image: none !important;
+    background-color: #3b82f6 !important;
+    color: #fff !important;
+    border: 1px solid rgba(59,130,246,0.12) !important;
+  }

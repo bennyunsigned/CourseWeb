@@ -1,5 +1,4 @@
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -48,8 +47,19 @@
   try { if(!window.__gsi_render_buttons) window.__gsi_render_buttons = initGSI; } catch(e){}
   // Observe DOM mutations for a short time: Angular may insert the placeholder later
   var mo = new MutationObserver(function(){ initGSI(); });
-  mo.observe(document.body, { childList: true, subtree: true });
-  setTimeout(function(){ mo.disconnect(); }, 10000);
+  function startGsiObserver(){
+    if(document.body){
+      try{ mo.observe(document.body, { childList: true, subtree: true }); }catch(e){/* ignore */}
+      setTimeout(function(){ mo.disconnect(); }, 10000);
+    } else {
+      // If body isn't available yet, wait for DOMContentLoaded then start
+      document.addEventListener('DOMContentLoaded', function(){
+        try{ mo.observe(document.body, { childList: true, subtree: true }); }catch(e){/* ignore */}
+        setTimeout(function(){ mo.disconnect(); }, 10000);
+      });
+    }
+  }
+  startGsiObserver();
     })();
   </script>
 
@@ -68,8 +78,7 @@
 </head>
 
 <body id="page-top">
-    <app-root></app-root>
-    <script src="js/app.js"></script>
+  <app-root></app-root>
   <!-- Local Bootstrap bundle (includes Popper) -->
   <script src="/vendor/bootstrap.bundle.min.js"></script>
 <script>
@@ -108,6 +117,48 @@
           console.warn('Could not dispatch google-id-token event', e);
         }
       }
+    </script>
+    <!-- Popup blur toggle: add/remove body.popup-open when Bootstrap popups appear -->
+    <script>
+      (function(){
+        function updatePopupOpen(){
+          var hasModal = !!document.querySelector('.modal.show');
+          var hasPopover = !!document.querySelector('.popover.show');
+          var hasTooltip = !!document.querySelector('.tooltip.show');
+          var hasDropdown = !!document.querySelector('.dropdown-menu.show');
+          if(hasModal || hasPopover || hasTooltip || hasDropdown){
+            document.body.classList.add('popup-open');
+          } else {
+            document.body.classList.remove('popup-open');
+          }
+        }
+
+        // Bootstrap events
+        document.addEventListener('shown.bs.modal', updatePopupOpen);
+        document.addEventListener('hidden.bs.modal', updatePopupOpen);
+        document.addEventListener('shown.bs.popover', updatePopupOpen);
+        document.addEventListener('hidden.bs.popover', updatePopupOpen);
+        document.addEventListener('shown.bs.tooltip', updatePopupOpen);
+        document.addEventListener('hidden.bs.tooltip', updatePopupOpen);
+        document.addEventListener('shown.bs.dropdown', updatePopupOpen);
+        document.addEventListener('hidden.bs.dropdown', updatePopupOpen);
+
+        // MutationObserver fallback (guard against null document.body)
+        var mo = new MutationObserver(updatePopupOpen);
+        function startPopupObserver(){
+          if(document.body){
+            try{ mo.observe(document.body, { childList: true, subtree: true }); }catch(e){/* ignore */}
+          } else {
+            document.addEventListener('DOMContentLoaded', function(){
+              try{ mo.observe(document.body, { childList: true, subtree: true }); }catch(e){/* ignore */}
+            });
+          }
+        }
+        startPopupObserver();
+
+        // initial check
+        if(document.readyState !== 'loading') updatePopupOpen(); else document.addEventListener('DOMContentLoaded', updatePopupOpen);
+      })();
     </script>
 </body>
 

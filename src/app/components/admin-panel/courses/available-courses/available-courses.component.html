@@ -1,4 +1,6 @@
-<div class="category-tabs-container mb-4">
+<div class="aw-available-courses mt-2">
+
+  <div class="category-tabs-container mb-4">
   <div class="d-flex flex-row flex-wrap">
     <button
       *ngFor="let cat of categories"
@@ -8,59 +10,65 @@
       {{ cat.CategoryName }}
     </button>
   </div>
-</div>
+  </div>
 
 <!-- Search Bar -->
 <div class="mb-3" style="max-width: 400px;">
-  <div class="input-group shadow-sm" style="border-radius: 1.5rem; background: #f8fafc;">
-    <span class="input-group-text bg-white border-0 px-2" style="font-size:1.2rem;color:#888; background: transparent;">
+  <div class="search-input">
+    <span class="search-icon">
       <i class="bi bi-search"></i>
     </span>
     <input
+      #searchInput
       type="text"
-      class="form-control border-0 bg-transparent"
+      class="search-field"
       placeholder="Search courses..."
       [(ngModel)]="searchText"
       (ngModelChange)="onSearchTextChange()"
-      style="border-radius: 1.5rem; background: transparent; font-size: 1rem; box-shadow: none;"
     />
   </div>
 </div>
 
-<div class="row mb-4">
-  <div *ngFor="let course of displayedCourses" class="col-md-4 col-sm-12 mb-4">
-    <div class="card course-card h-100 shadow-sm position-relative" (click)="onCardClick(course.CourseId)">
-      <div class="course-banner" [style.backgroundImage]="'url(' + course.BannerImage + ')'">
+<div class="aw-row mb-4">
+  <div *ngFor="let course of displayedCourses" class="aw-col mb-4">
+    <div class="aw-card course-card h-100 position-relative" (click)="onCardClick(course.CourseId)">
+      <div class="course-banner" [style.backgroundImage]="getBannerStyle(course.BannerImage)">
+        <!-- Use an actual <img> to force a network request for easier debugging and fallback handling -->
+        <img class="course-banner-img" [src]="getBannerUrl(course.BannerImage)"
+                (error)="onBannerError($event)" alt="{{course.CourseName}} banner" />
         <div class="badge-row">
-          <span *ngIf="course.IsBestSeller" class="badge badge-best-seller">Best Seller</span>
-          <span *ngIf="course.IsPremium" class="badge badge-premium">Premium</span>
-          <span class="badge badge-duration">
+          <span *ngIf="course.IsBestSeller" class="aw-badge aw-badge-best-seller">Best Seller</span>
+          <span *ngIf="course.IsPremium" class="aw-badge aw-badge-premium">Premium</span>
+          <span class="aw-badge aw-badge-duration">
             {{ course.TotalDurationPerCourse | durationFormat }}
           </span>
         </div>
+        <!-- Debug overlay removed -->
       </div>
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title text-truncate mb-2" title="{{ course.CourseName }}">{{ course.CourseName }}</h5>
-        <ul class="list-group list-group-flush mb-2">
-          <li class="list-group-item py-1 px-0 border-0">
+      <div class="aw-card-body d-flex flex-column">
+        <h5 class="aw-card-title text-truncate mb-2" title="{{ course.CourseName }}">{{ course.CourseName }}</h5>
+        <ul class="aw-list-group mb-2">
+          <li class="aw-list-item py-1 px-0 border-0">
             <strong>Price:</strong>
             <span *ngIf="course.DiscountedPrice < course.ActualPrice">
-              <del class="text-danger">{{ course.ActualPrice | currency:'INR' }}</del>
-              <span class="text-success ms-2">{{ course.DiscountedPrice | currency:'INR' }}</span>
+              <del class="price-old">{{ course.ActualPrice | currency:'INR' }}</del>
+              <span class="price-new">{{ course.DiscountedPrice | currency:'INR' }}</span>
             </span>
             <span *ngIf="course.DiscountedPrice >= course.ActualPrice">
               {{ course.ActualPrice | currency:'INR' }}
             </span>
           </li>
         </ul>
-        <div class="mt-auto d-flex gap-2 justify-content-between">
-          <button class="btn btn-success btn-xs flex-fill" (click)="buyNow(course.CourseId); $event.stopPropagation();">
-            <i class="bi bi-bag-check"></i> Buy Now
-          </button>
-          <button class="btn btn-cart btn-xs flex-fill" (click)="addToCart(course.CourseId); $event.stopPropagation();">
-            <i class="bi bi-bell"></i> Add to Cart
-          </button>
-        </div>
+          <div class="mt-auto d-flex gap-2 action-row">
+            <button class="btn btn-success btn-sm action-btn" (click)="buyNow(course.CourseId); $event.stopPropagation();">
+              <i class="bi bi-bag-check"></i>
+              <span class="btn-text">Buy Now</span>
+            </button>
+            <button class="btn btn-info btn-sm action-btn" (click)="addToCart(course.CourseId, $event); $event.stopPropagation();" title="Add to cart" aria-label="Add to cart">
+              <i class="bi bi-cart-plus"></i>
+              <span class="cart-text">Add to Cart</span>
+            </button>
+          </div>
       </div>
     </div>
   </div>

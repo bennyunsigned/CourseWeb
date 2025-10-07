@@ -1,57 +1,68 @@
 .sidebar{
     height: 100vh;
     overflow-y: auto;
+    background: var(--panel) !important;
+    color: var(--text) !important;
+    border-right: 1px solid rgba(255,255,255,0.03);
 }
 
 .sidebar-brand {
-    color: #f8f9fa;
+    color: var(--text);
     display: block;
     font-size: 1.55rem;
     font-weight: 600;
-    padding: 1.15rem 4.5rem;
-    
+    padding: 1.15rem 2rem;
 }
 
 /* Sidebar link hover effect */
 .sidebar-link {
-    color: #fff;
-    transition: color 0.3s ease, background-color 0.3s ease;
+    color: var(--muted);
+    transition: color 0.18s ease, background-color 0.18s ease;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .sidebar-link:hover {
-    color: #fff;
-    background-color: #007bff;
-    border-radius: 4px;
+    color: var(--text);
+    background: linear-gradient(90deg, rgba(255,212,0,0.04), rgba(255,212,0,0.02));
+    border-left: 3px solid var(--neon-yellow) !important;
 }
 
 /* Ensure icons are visible on hover */
+.sidebar-link i {
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
 .sidebar-link:hover i {
-    color: #fff !important; /* Ensure the icon color changes on hover */
+    color: var(--text) !important;
 }
 
 /* Active link styling */
 .sidebar-link.active {
-    color: #fff;
-    background-color: #007bff;
-    border-radius: 4px;
+    color: var(--text) !important;
+    background: linear-gradient(90deg, rgba(255,212,0,0.06), rgba(255,212,0,0.03));
+    border-left: 4px solid var(--neon-yellow) !important;
 }
 
 /* Active link styling */
 .sidebar-item .active {
-    color: #007bff; /* Adjust to match your theme */
-    font-weight: bold;
+    color: var(--accent) !important;
+    font-weight: 700;
 }
 
 /* Ensure icons are visible in active main menu */
 .sidebar-item.active > .sidebar-link i {
-    color: #007bff !important; /* Ensure the icon color matches the active theme */
+    color: var(--neon-yellow) !important; /* neon icon for active item */
 }
 
 /* Active parent menu styling */
 .sidebar-item.active > .sidebar-link {
-    background-color: #3c3c3c; /* Adjust to match your theme */
-    color: #007bff !important;
-    font-weight: bold;
+    background: rgba(255,212,0,0.02);
+    color: var(--text) !important;
+    font-weight: 700;
 }
 
 /* Collapse menu styling */
@@ -61,21 +72,21 @@
 
 /* Submenu indentation */
 .collapse .sidebar-link {
-    font-size: 0.9rem;
-    padding-left: 1.5rem;
+    font-size: 0.95rem;
+    padding-left: 2rem;
 }
 
 /* Active submenu link styling */
 .collapse .sidebar-link.active {
-    color: #fff !important;
-    background-color: #007bff !important;
-    border-radius: 4px;
-    font-weight: bold;
+    color: var(--text) !important;
+    background: rgba(255,212,0,0.03) !important;
+    border-left: 3px solid var(--neon-yellow) !important;
+    font-weight: 700;
 }
 
 /* Ensure icons are visible in active submenu */
 .collapse .sidebar-item .sidebar-link.active i {
-    color: #fff !important; /* Ensure the icon color is white for active submenus */
+    color: var(--neon-yellow) !important; /* neon icon for active submenus */
 }
 
 /* Active submenu link styling */
@@ -89,7 +100,7 @@
 /* Ensure icons are visible in all states */
 .sidebar-item.active i,
 .collapse .sidebar-item .sidebar-link.active i {
-    color: inherit !important; /* Inherit the color from the parent element */
+    color: var(--neon-yellow) !important;
 }
 
 /* Sidebar header styling */
@@ -101,13 +112,17 @@
 }
 
 .logo {
-  width: 200px;
-  height: auto;
-  display: block;
-  transition: transform 0.3s ease-in-out;
+    width: 180px;
+    height: auto;
+    display: block;
+    transition: transform 0.18s ease-in-out;
+    border-radius: 6px;
 }
 
 .logo:hover {
-  transform: scale(1.05);
+    transform: scale(1.03);
 }
+
+/* Utility: darker sidebar variant for admin area */
+.sidebar-dark { background: linear-gradient(180deg, var(--panel), rgba(17,21,27,0.98)); }
 

@@ -7,3 +7,24 @@
     gap: 0.5rem;
   }
 }
+
+/* Dark table overrides for course module tables */
+.table {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border-collapse: collapse;
+}
+/* header styling intentionally left to global styles in src/styles.css */
+.table tbody td {
+  background: transparent;
+  color: var(--text);
+  padding: 0.6rem;
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background: rgba(255,255,255,0.01);
+}
+.table-hover tbody tr:hover {
+  background: rgba(255,212,0,0.03);
+  color: var(--text);
+}

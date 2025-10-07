@@ -1,11 +1,15 @@
 .about-us-section {
-    background-color: #f8f9fa;
+    background: var(--panel) !important;
+    color: var(--text) !important;
 }
 
 .about-us-section img {
-    transition: transform 0.3s ease;
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
 }
 
 .about-us-section img:hover {
-    transform: scale(1.05);
+    transform: scale(1.05) translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.6), 0 0 18px rgba(255,212,0,0.06);
 }

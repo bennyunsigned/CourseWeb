@@ -8,14 +8,21 @@
 .carousel-caption {
     bottom: 20%; /* Adjust text position */
     text-align: center; /* Center-align text */
-    color: #fff; /* Ensure text is white for visibility */
+    color: var(--text); /* Use theme text color */
 }
 
-/* Add a semi-transparent background for better contrast */
+/* Add a semi-transparent panel background for better contrast */
 .carousel-caption {
-    background: rgba(0, 0, 0, 0.5); /* Black background with 50% opacity */
-    padding: 10px;
-    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.36), rgba(0,0,0,0.24));
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+    backdrop-filter: blur(4px);
+}
+
+/* Accent headline */
+.carousel-caption h2 { 
+    text-shadow: 0 8px 30px rgba(0,0,0,0.6);
 }
 
 /* Adjustments for mobile screens */

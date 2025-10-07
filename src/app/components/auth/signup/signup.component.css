@@ -1,9 +1,19 @@
 .signupCard {
     width: 650px;
+    background: var(--panel) !important;
+    color: var(--text) !important;
+    border-radius: 12px;
+    max-height: calc(100vh - 120px);
+    overflow: auto;
 }
 
 @media (max-width: 576px) {
     .signupCard {
         width: 100%;
+        max-height: calc(100vh - 80px);
+        overflow: auto;
     }
 }
+
+/* Error feedback same red as login */
+.error-feedback, .error-feedback div { color: #ff4d4f !important; font-weight:600; }

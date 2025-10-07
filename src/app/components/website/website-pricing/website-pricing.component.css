@@ -1,12 +1,12 @@
 .pricing-section {
-    background: linear-gradient(135deg, #f8f9fa, #e3f2fd); /* Subtle gradient background */
+    background: var(--panel) !important;
+    color: var(--text) !important;
     padding: 50px 0;
 }
 
 .flip-card {
     perspective: 1000px;
     border: none;
-    
 }
 
 .flip-card-inner {
@@ -29,28 +29,33 @@
     height: 100%;
     backface-visibility: hidden;
     border-radius: 15px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.6);
     overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.04);
 }
 
 .flip-card-front {
-    background: linear-gradient(135deg, #fddb92, #d1fdff); /* Yellowish gradient for the front */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #ffffff;
-    font-weight: bold;
+    color: var(--text);
+    font-weight: 700;
+    /* richer front treatment — visible but still dark */
+    background: linear-gradient(135deg, rgba(255,212,0,0.10), rgba(255,212,0,0.03));
+    border-left: 6px solid rgba(255,212,0,0.06);
+    padding: 1rem;
 }
 
 .flip-card-back {
-    background: linear-gradient(135deg, #f6d365, #fda085); /* Yellowish gradient for the back */
-    color: #ffffff;
+    color: var(--text);
     transform: rotateY(180deg);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(135deg, rgba(255,212,0,0.04), rgba(255,212,0,0.02));
 }
 
 .flip-card h4,
@@ -58,62 +63,47 @@
     margin: 0;
     font-size: 2rem; /* Increased font size for price text */
     font-weight: bold; /* Make it more attractive */
+    color: var(--text);
+    text-shadow: 0 4px 18px rgba(0,0,0,0.6);
 }
 
 .flip-card p {
     margin: 10px 0;
     font-size: 1rem; /* Adjusted for better readability */
-    color: white !important;
+    color: var(--muted) !important;
 }
 
 .flip-card button {
-    background-color: #ffffff;
-    color: #007bff;
-    border: none;
-    padding: 10px 20px;
+    background: transparent;
+    color: var(--text);
     border-radius: 20px;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: all 0.28s ease;
+    padding: 10px 20px;
+    border: 1px solid rgba(255,255,255,0.04);
 }
-
 .flip-card button:hover {
-    background-color: #007bff;
-    color: #ffffff;
-    transform: scale(1.1);
+    transform: translateY(-4px) scale(1.03);
+    background: linear-gradient(90deg, rgba(255,212,0,0.12), rgba(255,212,0,0.06));
+    color: #111;
 }
 
-/* Card 1 */
-.flip-card.card-1 .flip-card-front {
-    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Swapped with hover color */
-}
+/* Card color accents - keep the existing variations but darken them */
+.flip-card.card-1 .flip-card-front { background: linear-gradient(135deg, rgba(255,126,95,0.16), rgba(254,180,123,0.06)); color: #0b0b0b; }
+.flip-card.card-1 .flip-card-back { background: linear-gradient(135deg, rgba(247,183,51,0.12), rgba(252,74,26,0.06)); }
+.flip-card.card-2 .flip-card-front { background: linear-gradient(135deg, rgba(59,130,246,0.14), rgba(37,99,235,0.06)); color: #fff; }
+.flip-card.card-2 .flip-card-back { background: linear-gradient(135deg, rgba(57,106,252,0.08), rgba(41,72,255,0.04)); }
+.flip-card.card-3 .flip-card-front { background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(211,97,0,0.06)); color: #0b0b0b; }
+.flip-card.card-3 .flip-card-back { background: linear-gradient(135deg, rgba(255,117,140,0.08), rgba(255,126,179,0.04)); }
+.flip-card.card-4 .flip-card-front { background: linear-gradient(135deg, rgba(17,153,142,0.12), rgba(56,239,125,0.06)); color: #0b0b0b; }
+.flip-card.card-4 .flip-card-back { background: linear-gradient(135deg, rgba(17,153,142,0.05), rgba(56,239,125,0.04)); }
 
-.flip-card.card-1 .flip-card-back {
-    background: linear-gradient(135deg, #f7b733, #fc4a1a); /* Swapped with hover color */
+/* Ensure headings contrast on colored fronts */
+.flip-card.card-1 .flip-card-front h4,
+.flip-card.card-3 .flip-card-front h4,
+.flip-card.card-4 .flip-card-front h4 {
+    color: #0b0b0b;
 }
-
-/* Card 2 */
-.flip-card.card-2 .flip-card-front {
-    background: linear-gradient(135deg, #4b79a1, #283e51); /* Swapped with hover color */
-}
-
-.flip-card.card-2 .flip-card-back {
-    background: linear-gradient(135deg, #396afc, #2948ff); /* Swapped with hover color */
-}
-
-/* Card 3 */
-.flip-card.card-3 .flip-card-front {
-    background: linear-gradient(135deg, #d38312, #a83279); /* Swapped with hover color */
-}
-
-.flip-card.card-3 .flip-card-back {
-    background: linear-gradient(135deg, #ff758c, #ff7eb3); /* Swapped with hover color */
-}
-
-/* Card 4 */
-.flip-card.card-4 .flip-card-front {
-    background: linear-gradient(135deg, #0f2027, #203a43); /* Swapped with hover color */
-}
-
-.flip-card.card-4 .flip-card-back {
-    background: linear-gradient(135deg, #11998e, #38ef7d); /* Swapped with hover color */
+.flip-card.card-2 .flip-card-front h4 {
+    color: #fff;
 }

@@ -1,17 +1,21 @@
-<ul class="nav nav-tabs custom-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button (click)="changeActiveTab('Add')" [ngClass]="{'active': ActiveTab === 'Add'}" class="nav-link custom-tab"
-      id="add-tab" type="button" role="tab" aria-controls="add" aria-selected="true">
-      <i class="bi bi-plus-circle"></i> Add
-    </button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button (click)="changeActiveTab('View')" [ngClass]="{'active': ActiveTab === 'View'}" class="nav-link custom-tab"
-      id="view-tab" type="button" role="tab" aria-controls="view" aria-selected="false">
-      <i class="bi bi-eye"></i> View
-    </button>
-  </li>
-</ul>
+<div class="course-master">
+  <ul class="nav app-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button (click)="changeActiveTab('Add')" [ngClass]="{'active': ActiveTab === 'Add'}" class="nav-link"
+        id="add-tab" type="button" role="tab" aria-controls="add" aria-selected="true">
+        <i class="bi bi-plus-circle"></i>
+        <span class="d-none d-md-inline"> Add</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button (click)="changeActiveTab('View')" [ngClass]="{'active': ActiveTab === 'View'}" class="nav-link"
+        id="view-tab" type="button" role="tab" aria-controls="view" aria-selected="false">
+        <i class="bi bi-eye"></i>
+        <span class="d-none d-md-inline"> View</span>
+      </button>
+    </li>
+  </ul>
+</div>
 
 <div class="tab-content pt-2" id="myTabContent">
   <!-- Add Form -->
@@ -143,10 +147,10 @@
         <div class="col-md-8">
           Page Size:
           <div class="btn-group pagesize" role="group" aria-label="Items per page">
-            <button type="button" class="btn-custom" (click)="setItemsPerPage(10)">10</button>
-            <button type="button" class="btn-custom" (click)="setItemsPerPage(50)">50</button>
-            <button type="button" class="btn-custom" (click)="setItemsPerPage(100)">100</button>
-            <button type="button" class="btn-custom" (click)="setItemsPerPage('all')">All</button>
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage(10)">10</button>
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage(50)">50</button>
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage(100)">100</button>
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage('all')">All</button>
           </div>
         </div>
         <div class="col-md-4 text-right d-flex ">
@@ -209,18 +213,14 @@
         </tbody>
       </table>
 
-      <div class="pagination">
-        <div class="row w-100">
-          <div class="col-md-10 col-sm-12">
-            <span> Page {{ currentPage }} of {{ totalPages }} </span>
-          </div>
-          <div class="col-md-2 col-sm-12 mt-2 d-flex justify-content-end">
-            <button (click)="goToPage(1)" [disabled]="currentPage === 1">First</button>
-            <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Prev</button>
-            <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
-            <button (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages">Last</button>
-          </div>
-        </div>
+      <div class="pagination-modern custom-pagination">
+        <button class="pg-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+          <i class="bi bi-chevron-left"></i> Prev
+        </button>
+        <div class="page-info">Page {{ currentPage }} of {{ totalPages }}</div>
+        <button class="pg-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+          Next <i class="bi bi-chevron-right"></i>
+        </button>
       </div>
     </div>
   </div>

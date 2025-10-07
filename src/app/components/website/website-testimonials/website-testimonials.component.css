@@ -1,24 +1,28 @@
 .testimonials-section {
-    background-color: #f8f9fa;
+    background: var(--panel) !important;
+    color: var(--text) !important;
     padding: 50px 0;
 }
 
 .testimonials-section .card {
-    border: none;
     border-radius: 10px;
     transition: transform 0.3s ease;
+    background: var(--panel) !important;
+    color: var(--text) !important;
+    border: 1px solid rgba(255,212,0,0.06) !important;
 }
 
 .testimonials-section .card:hover {
-    transform: scale(1.05); /* Slight zoom effect on hover */
+    transform: scale(1.03); /* Slight zoom effect on hover */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 12px rgba(255,212,0,0.04);
 }
 
 .testimonials-section img {
-    border: 2px solid #ddd;
     padding: 5px;
     display: block;
     margin: 0 auto; /* Center the image */
     width: 150px; /* Increased width */
     height: 150px; /* Increased height */
     object-fit: cover; /* Ensures the image scales properly */
+    border-radius: 50%;
 }

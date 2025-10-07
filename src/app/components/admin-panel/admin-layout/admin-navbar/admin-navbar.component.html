@@ -1,12 +1,12 @@
 <nav class="navbar navbar-expand navbar-light navbar-bg" style="padding: 10px;">
-    <a class="sidebar-toggle" (click)="sidebarToggle()">
-        <i class="bi bi-list" style="font-size: 30px;color:black;font-weight: 800;"></i>
+    <a class="sidebar-toggle" (click)="sidebarToggle()" aria-label="Toggle sidebar">
+        <i class="bi bi-list sidebar-hamburger"></i>
     </a>
     <div class="navbar-collapse collapse">
         <ul class="navbar-nav navbar-align">
             <!-- Notifications Dropdown -->
             <li class="nav-item dropdown position-relative" [class.show]="showNotifications">
-                <a class="nav-icon dropdown-toggle" href="#" (click)="showNotifications=!showNotifications; $event.preventDefault()">
+                <a class="nav-icon dropdown-toggle" href="#" (click)="showNotifications=!showNotifications; $event.preventDefault()" aria-haspopup="true" aria-expanded="false">
                     <div class="position-relative">
                         <i class="bi bi-bell"></i>
                         <span class="indicator">4</span>
@@ -37,12 +37,12 @@
             </li>
             <!-- User Dropdown -->
             <li class="nav-item dropdown position-relative" [class.show]="showUserMenu">
-                <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()">
+                <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()" aria-haspopup="true" aria-expanded="false">
                     <i class="bi bi-gear"></i>
                 </a>
                 <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()">
                     <img [src]="safeUserPicture" class="avatar img-fluid rounded me-1" alt="userName" /> 
-                    <span class="text-dark">{{userName}}</span>
+                    <span class="navbar-username">{{userName}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" [class.show]="showUserMenu">
                     <a class="dropdown-item" href="pages-profile.html"><i class="bi bi-person"></i> Profile</a>
@@ -68,9 +68,12 @@
     top: 100%;
     position: absolute !important;
     z-index: 1050;
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+    box-shadow: 0 8px 26px rgba(0,0,0,0.6), 0 0 10px rgba(255,212,0,0.03);
     border-radius: 0.5rem;
     overflow: hidden;
+    background: var(--panel) !important;
+    color: var(--text) !important;
+    border: 1px solid rgba(255,255,255,0.03) !important;
 }
 .notifications-list {
     max-height: 250px;
@@ -87,6 +90,9 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s;
+    background: var(--panel) !important;
+    color: var(--text) !important;
+    border: 1px solid rgba(255,255,255,0.03) !important;
 }
 @media (max-width: 576px) {
     .custom-dropdown-menu {

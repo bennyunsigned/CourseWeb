@@ -21,19 +21,21 @@ export function encryptData(data: string): string {
  * @returns The decrypted string.
  */
 export function decryptData(data: string): string {
-  if (!data || data.trim() === '') {
-    console.warn('Data to decrypt is empty or invalid.');
-    return ''; // Return an empty string if data is invalid
+  if (!data || typeof data !== 'string' || data.trim() === '') {
+    // Not a string or empty — nothing to decrypt
+    return '';
   }
   try {
     const bytes = CryptoJS.AES.decrypt(data, encryptionKey);
     const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+    // If decryption yields empty string, treat as failure without noisy stack
     if (!decryptedData) {
-      throw new Error('Failed to decrypt data. Invalid encryption key or corrupted data.');
+      // Common cause: data wasn't actually encrypted with this key or is malformed
+      return '';
     }
     return decryptedData;
-  } catch (error) {
-    console.error('Decryption error:', error);
-    return ''; // Return an empty string if decryption fails
+  } catch (_err) {
+    // Quietly return empty on malformed input (e.g. not proper ciphertext)
+    return '';
   }
 }

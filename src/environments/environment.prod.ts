@@ -4,6 +4,5 @@ export const environment = {
   disableRightClick: true,
   disableDevTools: true,
   apiUrl: 'https://api.vidyaroop.com',
-  // Replace with your Web application client ID for production
-  googleClientId: 'YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com'
+  googleAuthKey:'411656733323-2p348igl6kgfo7756i61ivng2b62fkov.apps.googleusercontent.com'
 };

@@ -37,7 +37,7 @@
               aria-controls="reviews" aria-selected="false">
         <i class="bi bi-star-fill me-2"></i>
         <span class="tab-text">Reviews</span>
-        <span class="badge bg-secondary ms-2">0</span>
+        <span class="badge bg-secondary ms-2">{{ reviewsCount || 0 }}</span>
       </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -46,7 +46,7 @@
               aria-controls="discussions" aria-selected="false">
         <i class="bi bi-chat-dots-fill me-2"></i>
         <span class="tab-text">Discussions</span>
-        <span class="badge bg-secondary ms-2">0</span>
+        <span class="badge bg-secondary ms-2">{{ discussionsCount || 0 }}</span>
       </button>
     </li>
   </ul>
@@ -122,7 +122,7 @@
       <div class="modules-grid">
         <ng-container *ngFor="let module of displayedModules; let i = index">
           <div class="module-card" [attr.data-module-index]="i">
-      <div style="color: #222e3c;" class="module-header custom-accordion-header" 
+          <div class="module-header custom-accordion-header" 
         [class.active]="expandedModuleIdx === i"
         (click)="toggleModule(i)">
               <div class="module-header-content">

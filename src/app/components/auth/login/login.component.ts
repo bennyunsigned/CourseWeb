@@ -20,6 +20,8 @@ import { LoadingService } from '../../../services/loading.service';
 export class LoginComponent implements OnInit {
   form: FormGroup;
   isSubmitted: boolean = false;
+  // expose the google auth key on the component so templates or tests can access it
+  googleAuthKey: string = environment.googleAuthKey;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -35,92 +37,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  // Load Google Identity script dynamically if not present and render button
-  
+   
+  ngOnInit(): void {    
 
-  // Click handler for the Google button: request ID token and send to backend
-  async signInWithGoogle(): Promise<void> {
-    const w: any = window as any;
-    // show global loader while Google flow starts
-    this.loadingService.show();
-    if (!w.google || !w.google.accounts || !w.google.accounts.id) {
-      console.error('Google Identity Services not loaded');
-      this.toastr.error('Google sign-in is not available right now');
-      this.loadingService.hide();
-      return;
-    }
-
-    try {
-      const client_id = (environment as any).googleClientId || (document.querySelector('meta[name="google-signin-client_id"]') as HTMLMetaElement)?.content;
-      if (!client_id) {
-        console.error('No google client id configured in environment');
-        this.toastr.error('Google client id not configured');
-        return;
-      }
-
-      // Initialize with callback to receive id_token
-      w.google.accounts.id.initialize({
-        client_id: client_id,
-        callback: async (resp: any) => {
-          try {
-            const id_token = resp?.credential;
-            if (!id_token) {
-              console.error('No id_token returned by Google');
-              this.toastr.error('Google sign-in failed');
-              return;
-            }
-            const profile: any = jwtDecode(id_token);
-            console.log('Decoded profile from id_token:', profile);
-
-            // POST to backend via AuthService and await response (backend returns app JWT)
-            try {
-              const res: any = await firstValueFrom(this.authService.googleCallback(id_token, { name: profile.name, email: profile.email, picture: profile.picture }));
-              console.log('Backend GoogleCallBack response:', res);
-
-              // backend expected to return new application JWT (e.g., access_token)
-              const appJwt = res?.access_token || res?.token || res?.accessToken || (res?.data && (res.data.access_token || res.data.token));
-              if (appJwt) {
-                // reuse previous JWT handling
-                this.handleAppJwt(appJwt);
-                this.loadingService.hide();
-              } else {
-                // fallback: store profile and notify
-                try {
-                  if (profile?.name) localStorage.setItem('user_name', encryptData(profile.name));
-                  if (profile?.email) localStorage.setItem('user_email', encryptData(profile.email));
-                } catch (e) {
-                  console.warn('Failed storing google profile', e);
-                }
-                this.ngZone.run(() => {
-                  this.toastr.success(`Signed in as ${profile?.name || profile?.email}`, 'Google', { timeOut: 3000 });
-                  this.router.navigate(['/dashboard']);
-                  this.loadingService.hide();
-                });
-              }
-            } catch (err) {
-              console.error('Google callback failed:', err);
-              this.ngZone.run(() => this.toastr.error('Google login failed on server'));
-              this.loadingService.hide();
-            }
-          } catch (e) {
-            console.error('Error processing Google credential', e);
-            this.toastr.error('Failed to process Google sign-in');
-            this.loadingService.hide();
-          }
-        }
-      });
-
-      // Show One-Tap / account chooser
-      w.google.accounts.id.prompt();
-    } catch (err) {
-      console.error('Google sign-in failed', err);
-      this.toastr.error('Google sign-in failed');
-      this.loadingService.hide();
-    }
-  }
-
-  ngOnInit(): void {
-    
     const token = localStorage.getItem('access_token');
     if (token) {
       this.setTokenTimeout(token); // Set token timeout if already logged in

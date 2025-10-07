@@ -1,0 +1,59 @@
+/* Auth layout: make page non-scrollable and center the auth card
+	 The main container uses full viewport height and the card scrolls internally when content exceeds available height */
+:host, main.d-flex.w-100.bg-panel, .container.d-flex.flex-column, .row.vh-100 {
+	height: 100vh !important;
+	overflow: hidden !important;
+}
+
+.d-table-cell.align-middle {
+	display: flex !important;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	padding: 20px 0;
+}
+
+.card.shadow-lg.border-0 {
+	max-height: calc(100vh - 120px);
+	overflow: auto;
+	width: 100%;
+	border-radius: 12px;
+}
+
+/* Make the login card visually match the signup card */
+.card.shadow-lg.border-0 {
+	background: var(--panel) !important;
+	color: var(--text) !important;
+	max-width: 650px;
+	margin: 0 auto;
+	border: 1px solid rgba(255,255,255,0.03) !important;
+}
+
+/* Title / lead adjustments to match signup look */
+.text-center h1.h2.fw-bold { color: var(--text) !important; }
+.text-center .lead.text-muted { color: var(--muted) !important; }
+
+/* Make validation error text strongly visible in red */
+.text-danger, .error-feedback, .error-feedback div {
+	color: #ff4d4f !important; /* vivid red */
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767.98px) {
+	.card.shadow-lg.border-0 { max-height: calc(100vh - 80px); }
+	.col-sm-10.col-md-8.col-lg-6.col-xl-5.mx-auto.d-table.h-100 { padding: 0 12px; }
+}
+
+/* Ensure signup shares the same stacking behavior (in case signup template uses same classes) */
+@media (min-width: 576px) {
+	.signupCard { margin-top: 8px; }
+}
+
+/* Ensure google button area doesn't overflow */
+.g_id_signin { display:flex; justify-content:center; width:100%; }
+.g_id_signin > div, .g_id_signin > div > div { width:100% !important; }
+.g_id_signin button, .g_id_signin .abcRioButton { width:100% !important; background: linear-gradient(90deg, #ef4444, #f97373) !important; border: none !important; color: #fff !important; box-shadow: 0 8px 28px rgba(239,68,68,0.08) !important; }
+

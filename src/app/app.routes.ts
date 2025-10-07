@@ -8,8 +8,6 @@ import { CourseMasterComponent } from './components/admin-panel/courses/course-m
 import { AuthGuard } from './authGuard/auth.guard';
 import { CourseModuleComponent } from './components/admin-panel/courses/course-module/course-module.component';
 import { CategoryMasterComponent } from './components/admin-panel/courses/category-master/category-master.component';
-import { YoutubePlayerComponent } from './components/admin-panel/courses/youtube-player/youtube-player.component';
-import { DailymotionPlayerComponent } from './components/admin-panel/courses/dailymotion-player/dailymotion-player.component';
 import { TicketsComponent } from './components/admin-panel/helpdesk/tickets/tickets.component';
 import { FaqComponent } from './components/admin-panel/helpdesk/faq/faq.component';
 import { ErrorReportComponent } from './components/admin-panel/reports/error-report/error-report.component';

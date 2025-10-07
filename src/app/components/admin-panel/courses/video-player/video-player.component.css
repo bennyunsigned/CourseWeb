@@ -5,9 +5,11 @@
 
 .video-player-wrapper {
 	position: relative;
-	background: #000;
+	background: var(--panel);
 	border-radius: 0.5rem;
 	overflow: hidden;
+	border: 1px solid var(--neon-yellow-04);
+	box-shadow: 0 8px 22px rgba(0,0,0,0.6), 0 0 10px var(--neon-yellow-04);
 }
 
 /* Responsive video sizing using aspect-ratio (16:9) with max-heights per device */
@@ -17,6 +19,7 @@
 	aspect-ratio: 16 / 9;
 	max-height: 480px; /* default for laptops/desktops */
 	display: block;
+	background: #000; /* fallback behind video */
 }
 
 /* Mobile: shorter max-height */

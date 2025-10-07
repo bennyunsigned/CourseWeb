@@ -10,6 +10,7 @@ import { Router } from '@angular/router'; // Import Router
 import { jwtDecode } from 'jwt-decode';
 import { encryptData } from '../../../utils/crypto-util';
 import { LoadingService } from '../../../services/loading.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-signup',
@@ -20,6 +21,7 @@ import { LoadingService } from '../../../services/loading.service';
 export class SignupComponent implements OnInit {
   form: FormGroup;
   isSubmitted: boolean = false;
+  googleAuthKey: string = environment.googleAuthKey;
 
   // Password match validator
   passwordMatchValidator: ValidatorFn = (control: AbstractControl) => {

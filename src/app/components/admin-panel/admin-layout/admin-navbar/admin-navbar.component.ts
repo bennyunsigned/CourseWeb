@@ -12,8 +12,8 @@ import { CommonModule } from '@angular/common';
 export class AdminNavbarComponent implements OnInit {
   constructor(private router: Router) {}
 
-  userName: string = decryptData(localStorage.getItem('user_name') ?? '');
-  userPicture: string = decryptData(localStorage.getItem('user_picture') ?? '');
+  userName: string = '';
+  userPicture: string = '';
 
   // internal display property (either the validated/encoded URL or fallback)
   private _displayPicture: string = '/img/avatars/avatar.jpg';
@@ -61,6 +61,20 @@ export class AdminNavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Decrypt user fields at init time (safer than during field initialization)
+    try {
+      const rawName = localStorage.getItem('user_name') ?? '';
+      const rawPic = localStorage.getItem('user_picture') ?? '';
+      const name = decryptData(rawName) || rawName || '';
+      const pic = decryptData(rawPic) || rawPic || '';
+      this.userName = name.trim();
+      this.userPicture = pic.trim();
+    } catch (e) {
+      // Soft fallback
+      this.userName = '';
+      this.userPicture = '';
+    }
+
     // Prepare the picture as soon as the component initializes
     this.prepareUserPicture();
   }

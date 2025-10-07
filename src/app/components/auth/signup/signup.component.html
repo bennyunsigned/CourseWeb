@@ -1,97 +1,93 @@
-<main class="d-flex w-100 bg-light">
-    <div class="container d-flex flex-column">
-        <div class="row vh-100">
-            <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto d-table h-100">
-                <div class="d-table-cell align-middle">
+<main class="auth-responsive bg-panel">
+    <section class="hero">
+        <div class="hero-bg" style="background-image: url('/img/photos/unsplash-2.jpg')"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="fw-bold">Create Your Account</h1>
+            <p class="lead">Get personalized course recommendations and connect with mentors.</p>
+        </div>
+    </section>
 
-                    <div class="text-center mt-4">
-                        <h1 class="h2 fw-bold">Create Your Account</h1>
-                        <p class="lead text-muted">
-                            Join us and start your journey to success!
-                        </p>
-                    </div>
-
-                    <div class="card shadow-lg border-0 signupCard">
-                        <div class="card-body p-4">
-                            <div class="m-sm-4">
-                                <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                                    <div class="row">
-                                        <div class="col-md-12 col-sm-12">
-                                            <label for="username">Name</label>
-                                            <input type="text" placeholder="Enter your Name" id="name" formControlName="name" class="form-control form-control-lg">
-                                            <div class="error-feedback" *ngIf="hasDisplayableError('name')">
-                                                <ng-container [ngSwitch]="form.controls['name'].errors | firstkey">
-                                                    <div *ngSwitchCase="'required'">Please enter your name.</div>
-                                                </ng-container>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-12">
-                                            <label for="email">Email</label>
-                                            <input type="email" placeholder="Enter your email" id="email" formControlName="email" class="form-control form-control-lg">
-                                            <div class="error-feedback" *ngIf="hasDisplayableError('email')">
-                                                <ng-container [ngSwitch]="form.controls['email'].errors | firstkey">
-                                                    <div *ngSwitchCase="'required'">Please enter your email.</div>
-                                                    <div *ngSwitchCase="'email'">Please enter a valid email.</div>
-                                                </ng-container>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-12">
-                                            <label for="phone">Phone</label>
-                                            <input type="text" placeholder="Enter your Phone" id="phone" formControlName="phone" class="form-control form-control-lg">
-                                            <div class="error-feedback" *ngIf="hasDisplayableError('phone')">
-                                                <ng-container [ngSwitch]="form.controls['phone'].errors | firstkey">
-                                                    <div *ngSwitchCase="'required'">Please enter your phone number.</div>
-                                                    <div *ngSwitchCase="'minlength'">Phone number must be 10 digits long.</div>
-                                                    <div *ngSwitchCase="'maxlength'">Phone number must be 10 digits long.</div>
-                                                    <div *ngSwitchCase="'pattern'">Phone number must be only digits.</div>
-                                                </ng-container>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-12">
-                                            <label for="password">Password</label>
-                                            <input type="password" placeholder="Enter your password" id="password" formControlName="password" class="form-control form-control-lg">
-                                            <div class="error-feedback" *ngIf="hasDisplayableError('password')">
-                                                <ng-container [ngSwitch]="form.controls['password'].errors | firstkey">
-                                                    <div *ngSwitchCase="'required'">Please enter your password.</div>
-                                                    <div *ngSwitchCase="'minlength'">Password must be at least 6 characters long.</div>
-                                                    <div *ngSwitchCase="'pattern'">Password must contain at least one special character.</div>
-                                                </ng-container>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-12">
-                                            <label for="password">Confirm Password</label>
-                                            <input type="password" placeholder="Re-enter your password" id="confirmpassword" formControlName="confirmPassword" class="form-control form-control-lg">
-                                            <div class="error-feedback" *ngIf="hasDisplayableError('confirmPassword')">
-                                                <ng-container [ngSwitch]="form.controls['confirmPassword'].errors | firstkey">
-                                                    <div *ngSwitchCase="'passwordMismatch'">Passwords do not match.</div>
-                                                </ng-container>
-                                            </div>
-                                        </div>
+    <section class="form-wrap">
+        <div class="form-card">
+            <div class="card floating-card shadow-lg border-0">
+                <div class="card-body">
+                    <div class="m-sm-2">
+                        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <label for="username">Name</label>
+                                    <input type="text" placeholder="Enter your Name" id="name" formControlName="name" class="form-control form-control-lg neon-input">
+                                    <div class="error-feedback" *ngIf="hasDisplayableError('name')">
+                                        <ng-container [ngSwitch]="form.controls['name'].errors | firstkey">
+                                            <div *ngSwitchCase="'required'">Please enter your name.</div>
+                                        </ng-container>
                                     </div>
-                                    <div class="d-grid gap-2 mt-4">
-                                        <button type="submit" class="btn btn-lg btn-primary fw-bold">Sign Up</button>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="email">Email</label>
+                                    <input type="email" placeholder="Enter your email" id="email" formControlName="email" class="form-control form-control-lg neon-input">
+                                    <div class="error-feedback" *ngIf="hasDisplayableError('email')">
+                                        <ng-container [ngSwitch]="form.controls['email'].errors | firstkey">
+                                            <div *ngSwitchCase="'required'">Please enter your email.</div>
+                                            <div *ngSwitchCase="'email'">Please enter a valid email.</div>
+                                        </ng-container>
                                     </div>
-                                </form>
-                                <div class="d-grid gap-2 mt-4">
-                                        <div id="g_id_onload" data-auto_prompt="false"
-                                            data-callback="handleCredentialResponse"
-                                            data-client_id="411656733323-2p348igl6kgfo7756i61ivng2b62fkov.apps.googleusercontent.com">
-                                        </div>
-                                        <!-- g_id_signin places the button on a page and supports customization -->
-                                        <div class="g_id_signin"></div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="phone">Phone</label>
+                                    <input type="text" placeholder="Enter your Phone" id="phone" formControlName="phone" class="form-control form-control-lg neon-input">
+                                    <div class="error-feedback" *ngIf="hasDisplayableError('phone')">
+                                        <ng-container [ngSwitch]="form.controls['phone'].errors | firstkey">
+                                            <div *ngSwitchCase="'required'">Please enter your phone number.</div>
+                                            <div *ngSwitchCase="'minlength'">Phone number must be 10 digits long.</div>
+                                            <div *ngSwitchCase="'maxlength'">Phone number must be 10 digits long.</div>
+                                            <div *ngSwitchCase="'pattern'">Phone number must be only digits.</div>
+                                        </ng-container>
                                     </div>
-                                <div class="text-center mt-4">
-                                    <p class="text-muted">
-                                        Already have an account? 
-                                        <a [routerLink]="'/login'" class="fw-bold text-primary">Log In</a>
-                                    </p>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="password">Password</label>
+                                    <input type="password" placeholder="Enter your password" id="password" formControlName="password" class="form-control form-control-lg neon-input">
+                                    <div class="error-feedback" *ngIf="hasDisplayableError('password')">
+                                        <ng-container [ngSwitch]="form.controls['password'].errors | firstkey">
+                                            <div *ngSwitchCase="'required'">Please enter your password.</div>
+                                            <div *ngSwitchCase="'minlength'">Password must be at least 6 characters long.</div>
+                                            <div *ngSwitchCase="'pattern'">Password must contain at least one special character.</div>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="password">Confirm Password</label>
+                                    <input type="password" placeholder="Re-enter your password" id="confirmpassword" formControlName="confirmPassword" class="form-control form-control-lg neon-input">
+                                    <div class="error-feedback" *ngIf="hasDisplayableError('confirmPassword')">
+                                        <ng-container [ngSwitch]="form.controls['confirmPassword'].errors | firstkey">
+                                            <div *ngSwitchCase="'passwordMismatch'">Passwords do not match.</div>
+                                        </ng-container>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-lg neon-btn fw-bold">Sign Up</button>
+                            </div>
+                        </form>
+                        <div class="g-signin-wrap d-grid gap-2 mt-4">
+                            <div id="g_id_onload" data-auto_prompt="false"
+                                data-callback="handleCredentialResponse"
+                                [attr.data-client_id]="googleAuthKey">
+                            </div>
+                            <!-- g_id_signin places the button on a page and supports customization -->
+                            <div class="g_id_signin"></div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <p class="text-muted">
+                                Already have an account? 
+                                <a [routerLink]="'/login'" class="fw-bold text-primary">Log In</a>
+                            </p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </main>

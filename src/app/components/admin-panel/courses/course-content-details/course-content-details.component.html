@@ -8,7 +8,7 @@
   <ng-container *ngIf="!loading && courseContent">
     <div class="row mb-4 align-items-center">
       <div class="col-md-5 text-center mb-3 mb-md-0">
-        <img [src]="courseContent.BannerImage" alt="Course Banner" class="img-fluid rounded-4 shadow" style="max-height:320px;object-fit:cover;">
+  <img [src]="getBannerUrl(courseContent.BannerImage)" alt="Course Banner" class="img-fluid rounded-4 shadow" style="max-height:320px;object-fit:cover;" (load)="onBannerLoad($event)" (error)="onBannerError($event)">
       </div>
       <div class="col-md-7 course-header-sm">
         <h2 class="fw-bold text-primary mb-2 fs-4">{{ courseContent.CourseName }}</h2>
@@ -72,7 +72,7 @@
           <ng-container *ngFor="let module of displayedModules; let mIdx = index">
             <div class="accordion-item rounded-3 shadow-sm mb-2 border-0">
               <h2 class="accordion-header" id="heading{{mIdx}}">
-                <button class="accordion-button bg-light fw-semibold d-flex align-items-center gap-2" type="button" data-bs-toggle="collapse"
+                <button class="accordion-button bg-panel fw-semibold d-flex align-items-center gap-2" type="button" data-bs-toggle="collapse"
                   [attr.data-bs-target]="'#collapse' + mIdx" [attr.aria-expanded]="mIdx === 0 ? 'true' : 'false'" [attr.aria-controls]="'collapse' + mIdx">
                   <i class="bi bi-collection-play text-primary fs-5"></i>
                   <span>{{ module.ModuleName }}</span>
@@ -80,7 +80,7 @@
                 </button>
               </h2>
               <div [id]="'collapse' + mIdx" class="accordion-collapse collapse" [class.show]="mIdx === 0" [attr.aria-labelledby]="'heading' + mIdx" data-bs-parent="#modulesAccordion">
-                <div class="accordion-body bg-white">
+                <div class="accordion-body bg-panel">
                   <div class="text-muted fst-italic">{{ module.ModuleDescription }}</div>
                 </div>
               </div>

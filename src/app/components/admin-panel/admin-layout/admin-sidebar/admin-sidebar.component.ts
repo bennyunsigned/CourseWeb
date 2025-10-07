@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, AfterViewInit, OnInit } from '@angular/core'; // <-- Add OnInit
 import { RouterLink, Router } from '@angular/router';
+import { decryptData } from '../../../../utils/crypto-util';
 
 // Extend the Window interface to include the feather and bootstrap properties
 declare global {
@@ -20,11 +21,32 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
   isCoursesMenuOpen = false;
   isHelpdeskMenuOpen = false;
   isReportsMenuOpen = false;
+  isSpecialUser = false; // when true show alternate submenus
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.setActiveMenuOnLoad(); // <-- Move here
+      try {
+        const stored = localStorage.getItem('user_email');
+        if (stored) {
+            
+            let email = decryptData(stored);
+            if (!email) {
+              email = stored;
+            }
+            const normalized = email.trim().toLowerCase();
+            console.log("Email check:" + normalized);
+            this.isSpecialUser = (normalized === 'bennyunsigned@gmail.com');
+            // debug - remove in production if noisy
+            console.log('admin-sidebar: resolved user email=', normalized, 'isSpecialUser=', this.isSpecialUser);
+        } else {
+          this.isSpecialUser = false;
+        }
+    } catch (e) {
+        console.warn('Failed to determine user email from localStorage:', e);
+        this.isSpecialUser = false;
+    }
   }
 
   ngAfterViewInit(): void {

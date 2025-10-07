@@ -1,12 +1,10 @@
 .dropdown-toggle::after {
-   
-    border-top: .3em transparent;
-   
+    /* caret uses currentColor so it adapts to dark/light themes */
+    border-top: .3em solid currentColor;
 }
 
 .dropdown .dropdown-menu.show {
     min-width: 300px;
-    /* Remove max-height and overflow-y to prevent double scrollbars */
     z-index: 9999;
 }
 
@@ -16,5 +14,38 @@
     top: 0;   
     z-index: 1000000000;
     width: -webkit-fill-available;
+    background: linear-gradient(180deg, var(--panel), rgba(17,21,27,0.98)) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+/* make toggler icons visible */
+.sidebar-toggle i, .nav-icon i, .navbar .feather, .navbar .bi {
+    color: var(--text) !important;
+    font-size: 1.25rem;
+}
+
+/* larger hamburger in navbar */
+.sidebar-hamburger {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text) !important;
+}
+
+/* dropdown menu adjustments: ensure text/icons visible */
+.custom-dropdown-menu, .dropdown-menu, .dropdown-menu .list-group-item {
+    /* Local dropdown styles mirror global dark overrides to avoid conflicts */
+    background: var(--panel) !important;
+    color: var(--text) !important;
+    border: 1px solid rgba(255,255,255,0.03) !important;
+    box-shadow: 0 8px 26px rgba(0,0,0,0.6), 0 0 10px rgba(255,212,0,0.03) !important;
+}
+
+/* notification indicator accent */
+.nav-icon .indicator { background: var(--neon-yellow); color: #111; }
+
+/* username in navbar should follow theme */
+.navbar-username {
+    color: var(--text) !important;
+    font-weight: 600;
 }
 

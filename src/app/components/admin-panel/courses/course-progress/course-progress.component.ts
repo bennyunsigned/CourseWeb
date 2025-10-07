@@ -43,6 +43,8 @@ export class CourseProgressComponent implements OnInit {
   totalPages = 0;
   isLoading = false;
   searchTerm = '';
+  reviewsCount: number = 0;
+  discussionsCount: number = 0;
 
   @ViewChildren(VideoPlayerComponent) videoPlayers!: QueryList<VideoPlayerComponent>;
   expandedModuleIdx: number | null = null;
