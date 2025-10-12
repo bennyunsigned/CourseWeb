@@ -281,6 +281,7 @@
     --surface-strong: rgba(255,255,255,0.04);
     --glass: rgba(255,255,255,0.02);
     --table-border: rgba(255,255,255,0.06);
+    --auth-control-height: 42px; /* global default for auth inputs/buttons */
 }
 
 /* Neon palette */

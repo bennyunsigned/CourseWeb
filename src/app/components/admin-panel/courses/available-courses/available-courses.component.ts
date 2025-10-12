@@ -4,9 +4,11 @@ import { CourseProgressService } from '../../../../services/course-progress.serv
 import { CommonModule } from '@angular/common';
 import { AllCourseContent } from '../../../../models/allPublicCourseContentModel';
 import { DurationFormatPipe } from '../../../../pipes/duration-format.pipe';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PaymentService } from '../../../../services/payment.service';
-import { decryptData } from '../../../../utils/crypto-util';
+import { CartService } from '../../../../services/cart.service';
+import { decryptData, encryptData } from '../../../../utils/crypto-util';
+import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 
@@ -40,8 +42,11 @@ export class AvailableCoursesComponent implements OnInit {
   constructor(
     private categoryService: CategoryMasterService,
     private courseProgressService: CourseProgressService,
-    private router: Router,
-    private paymentService: PaymentService
+  private router: Router,
+  private activatedRoute: ActivatedRoute,
+    private paymentService: PaymentService,
+    private cartService: CartService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +59,22 @@ export class AvailableCoursesComponent implements OnInit {
         this.categories = [{ CategoryId: 0, CategoryName: 'All' }];
       }
     });
+
+    // If navigation included a focus query param, handle it after a short delay to allow view init
+    try {
+      const focus = this.activatedRoute.snapshot.queryParamMap.get('focus');
+      if (focus === 'search') {
+        // Wait for view to initialize
+        setTimeout(() => {
+          try {
+            this.searchInput?.nativeElement?.focus();
+            this.searchInput?.nativeElement?.select();
+          } catch (e) { /* ignore */ }
+        }, 120);
+      }
+    } catch (e) {
+      // ignore if activatedRoute not available for some reason
+    }
   }
 
   onCategoryTabClick(categoryId: number) {
@@ -321,7 +342,13 @@ export class AvailableCoursesComponent implements OnInit {
 
   onCardClick(courseId: number) {
     console.log('Navigating to course:', courseId);
-    this.router.navigate(['/course/course-content', courseId]);
+    try {
+      const enc = encodeURIComponent(encryptData(String(courseId)));
+      this.router.navigate(['/course/course-content'], { queryParams: { cid: enc } });
+    } catch (e) {
+      // fallback to old numeric route param
+      this.router.navigate(['/course/course-content', courseId]);
+    }
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -344,8 +371,9 @@ export class AvailableCoursesComponent implements OnInit {
     const userId = Number(userIdStr) || null;
 
     if (!userId) {
-      alert('Please login to purchase the course.');
-      this.router.navigate(['/login']);
+      // Show toast and redirect to login after it disappears
+      this.toastr.info('Please login to purchase the course.', 'Login required', { timeOut: 3000, closeButton: true });
+      setTimeout(() => this.router.navigate(['/login']), 3200);
       return;
     }
 
@@ -354,7 +382,7 @@ export class AvailableCoursesComponent implements OnInit {
       Object.values(this.categoryCourses).flat().find((c: any) => c.CourseId === courseId);
 
     if (!course) {
-      alert('Course not found');
+      this.toastr.error('Course not found', 'Error', { timeOut: 3000 });
       return;
     }
 
@@ -372,8 +400,25 @@ export class AvailableCoursesComponent implements OnInit {
       redirect_url: redirectWithParams,
       payment_type: 'individual' as const,
       user_id: userId,
-      // NOTE: do not send course_id in create payload — backend create may not have this column
+      // Send course_id as string to support single-course purchase
+      course_id: String(courseId),
     };
+
+    // Try to pre-fill buyer details from localStorage (values are stored encrypted)
+    try {
+      const rawName = localStorage.getItem('user_name') || '';
+      const rawEmail = localStorage.getItem('user_email') || '';
+      const rawPhone = localStorage.getItem('user_phone') || '';
+      const name = decryptData(rawName) || rawName || '';
+      const email = decryptData(rawEmail) || rawEmail || '';
+      const phone = decryptData(rawPhone) || rawPhone || '';
+      if (name) payload.buyer_name = name;
+      if (email) payload.email = email;
+      if (phone) payload.phone = phone;
+    } catch (e) {
+      // don't block payment creation if decryption/read fails
+      console.warn('Failed to read buyer details from localStorage', e);
+    }
 
     this.paymentService.createPayment(payload).subscribe({
       next: (res: any) => {
@@ -381,20 +426,20 @@ export class AvailableCoursesComponent implements OnInit {
         if (redirect) {
           // persist pending payment info so we can confirm after redirect
           try {
-            const pending = { user_id: userId, course_id: courseId, amount, payment_request_id: res?.payment_request?.id || res?.id || null };
+            const pending = { user_id: userId, course_id: String(courseId), amount, payment_request_id: res?.payment_request?.id || res?.id || null };
             localStorage.setItem('pending_payment', JSON.stringify(pending));
           } catch (e) {
             console.warn('Failed to save pending payment info', e);
           }
           window.location.href = redirect;
         } else {
-          alert('Unable to start payment.');
+          this.toastr.error('Unable to start payment.', 'Payment error', { timeOut: 4000 });
           console.error('Unexpected create payment response', res);
         }
       },
       error: (err) => {
         console.error('Payment create error', err);
-        alert('Failed to create payment. Please try again.');
+        this.toastr.error('Failed to create payment. Please try again.', 'Payment error', { timeOut: 4000 });
       }
     });
   }
@@ -408,6 +453,26 @@ export class AvailableCoursesComponent implements OnInit {
         setTimeout(() => btn.classList.remove('btn-pulse'), 360);
       }
     } catch (e) { /* ignore */ }
-    alert('Add to Cart clicked for courseId: ' + courseId);
+
+    // Require login
+    const encUserId = localStorage.getItem('user_id') || '';
+    const userIdStr = decryptData(encUserId);
+    const userId = Number(userIdStr) || null;
+    if (!userId) {
+      this.toastr.info('Please login to add items to cart', 'Login required', { timeOut: 3000 });
+      setTimeout(() => this.router.navigate(['/login']), 3200);
+      return;
+    }
+
+    // Call API to add to cart (server expects { course_id } and derives user from JWT)
+    this.cartService.addToCart({ course_id: courseId }).subscribe({
+      next: () => {
+        this.toastr.success('Added to cart', 'Cart', { timeOut: 2000 });
+      },
+      error: (err) => {
+        console.error('Add to cart failed', err);
+        this.toastr.error('Failed to add to cart', 'Cart');
+      }
+    });
   }
 }

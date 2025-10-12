@@ -64,13 +64,32 @@
                                 <span class="align-middle">All Courses</span>
                             </a>
                         </li>
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/premium-courses')}">
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/my-courses')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/my-courses'" (click)="activateSubmenu('courses')">
+                                <i class="align-middle me-2 bi bi-journal-bookmark"></i>
+                                <span class="align-middle">My Courses</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/course-subscription')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/course-subscription'" (click)="activateSubmenu('courses')">
+                                <i class="align-middle me-2 bi bi-credit-card-2-front"></i>
+                                <span class="align-middle">Subscriptions</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/cart')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/cart'" (click)="activateSubmenu('courses')">
+                                <i class="align-middle me-2 bi bi-cart3"></i>
+                                <span class="align-middle">My Cart</span>
+                                <span class="badge bg-primary ms-2" *ngIf="cartCount > 0">{{cartCount}}</span>
+                            </a>
+                        </li>
+                        <!-- <li class="sidebar-item" [ngClass]="{'active': isActive('/course/premium-courses')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/premium-courses'"
                                 (click)="activateSubmenu('courses')">
                                 <i class="align-middle me-2 bi bi-gem"></i>
                                 <span class="align-middle">My Courses</span>
                             </a>
-                        </li>
+                        </li> -->
                     </ng-container>
                 </ul>
             </li>

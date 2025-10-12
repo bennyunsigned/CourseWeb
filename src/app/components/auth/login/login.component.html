@@ -12,13 +12,12 @@
         <div class="form-card">
             <div class="card floating-card shadow-lg border-0">
                 <div class="card-body">
-                    <div class="m-sm-2">
+                    <div class="m-sm-1">
                         <form [formGroup]="form" (ngSubmit)="onSubmit()">
                             <div class="row">
                                 <div class="col-12 mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" placeholder="Enter your email" id="email" formControlName="email"
-                                        class="form-control form-control-lg neon-input">
+                                    <input type="email" placeholder="Email" id="email" formControlName="email" aria-label="Email"
+                                        class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('email')">
                                         <ng-container [ngSwitch]="form.controls['email'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your email.</div>
@@ -28,9 +27,8 @@
                                 </div>
 
                                 <div class="col-12 mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" placeholder="Enter your password" id="password" formControlName="password"
-                                        class="form-control form-control-lg neon-input">
+                                    <input type="password" placeholder="Password" id="password" formControlName="password" aria-label="Password"
+                                        class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('password')">
                                         <ng-container [ngSwitch]="form.controls['password'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your password.</div>
@@ -49,28 +47,32 @@
                                 </div>
 
                                 <div class="col-12 d-grid gap-2 mt-2">
-                                    <button type="submit" class="btn btn-lg neon-btn fw-bold">Sign In</button>
+                                    <button type="submit" class="btn neon-btn fw-bold">Sign In</button>
                                 </div>
                             </div>
                         </form>
 
-                        <div class="g-signin-wrap d-grid gap-2 mt-4">
+                        <div class="g-signin-wrap d-grid gap-2 mt-3">
                             <div id="g_id_onload" data-auto_prompt="false" data-callback="handleCredentialResponse"
                                 [attr.data-client_id]="googleAuthKey">
                             </div>
                             <div class="g_id_signin"></div>
                         </div>
 
-                        <div class="text-center mt-4">
+                        <div class="text-center mt-3">
                             <p class="text-muted">
                                 Don't have an account?
                                 <a routerLink="/signup" class="fw-bold text-primary">Sign Up</a>
                             </p>
+                            <div class="mt-2">
+                                <a routerLink="/" class="text-muted small">← Back to home</a>
+                            </div>
                         </div>
 
                     </div>
                 </div>
             </div>
         </div>
+        
     </section>
 </main>

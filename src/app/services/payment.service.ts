@@ -12,7 +12,7 @@ export interface CreatePaymentPayload {
   redirect_url?: string;
   payment_type: 'individual' | 'subscription';
   user_id: number;
-  course_id?: number;
+  course_id?: string;
   subscription_type?: string;
 }
 

@@ -5,70 +5,40 @@
             Select the plan that best suits your learning needs. Whether you're looking for a single course or lifetime access, we've got you covered.
         </p>
         <div class="row g-4">
-            <!-- Single Course -->
-            <div class="col-md-3">
-                <div class="flip-card card-1">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front d-flex flex-column justify-content-center align-items-center p-4">
-                            <h4 class="fw-bold" style="color: powderblue;">Single Course</h4>
-                            <p class="text-muted" style="font-size:x-large;font-weight: 900;">Rs. 199/-</p>
-                        </div>
-                        <div class="flip-card-back d-flex flex-column justify-content-center align-items-center p-4">
-                            <h5 class="fw-bold">Single Course</h5>
-                            <p class="text-muted">Access to one course of your choice. Perfect for focused learning.</p>
-                            <button class="btn btn-primary">Buy Now</button>
-                        </div>
-                    </div>
-                </div>
+      <!-- Single Course -->
+      <div class="col-md-3">
+        <div class="flip-card card-1">
+          <div class="flip-card-inner">
+            <div class="flip-card-front d-flex flex-column justify-content-center align-items-center p-4">
+              <h4 class="fw-bold" style="color: powderblue;">Single Course</h4>
+              <p class="text-muted" style="font-size:x-large;font-weight: 900;">Rs. 199/-</p>
             </div>
-            <!-- Bundle Course -->
-            <div class="col-md-3">
-                <div class="flip-card card-2">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front d-flex flex-column justify-content-center align-items-center p-4">
-                            <h4 class="fw-bold" style="color: powderblue;">Bundle Course</h4>
-                            <p class="text-muted" style="font-size:x-large;font-weight: 900;">Rs. 999/-</p>
-                        </div>
-                        <div class="flip-card-back d-flex flex-column justify-content-center align-items-center p-4">
-                            <h5 class="fw-bold">Bundle Course</h5>
-                            <p class="text-muted">Access to a curated bundle of courses. Great for comprehensive learning.</p>
-                            <button class="btn btn-primary">Buy Now</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="flip-card-back d-flex flex-column justify-content-center align-items-center p-4">
+              <h5 class="fw-bold">Single Course</h5>
+              <p class="text-muted">Access to one course of your choice. Perfect for focused learning.</p>
+              <button type="button" class="btn btn-primary" (click)="goToAvailableCourses()">Buy Now</button>
             </div>
-            <!-- 2 Year Subscription -->
-            <div class="col-md-3">
-                <div class="flip-card card-3">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front d-flex flex-column justify-content-center align-items-center p-4">
-                            <h4 class="fw-bold">2 Year Subscription</h4>
-                            <p class="text-muted" style="font-size:x-large;font-weight: 900;">Rs. 1999/-</p>
-                        </div>
-                        <div class="flip-card-back d-flex flex-column justify-content-center align-items-center p-4">
-                            <h5 class="fw-bold" style="color: powderblue;">2 Year Subscription</h5>
-                            <p class="text-muted">Unlimited access to all courses for 2 years. Best for long-term learners.</p>
-                            <button class="btn btn-primary">Buy Now</button>
-                        </div>
+          </div>
+        </div>
+      </div>
+            <!-- Subscriptions rendered from component data -->
+            <ng-container *ngFor="let s of subscriptions; let i = index">
+              <div class="col-md-3">
+                <div class="flip-card" [ngClass]="'card-' + (i + 2)">
+                  <div class="flip-card-inner">
+                    <div class="flip-card-front d-flex flex-column justify-content-center align-items-center p-4">
+                      <h4 class="fw-bold" [style.color]="i === 0 ? 'powderblue' : ''">{{ s.SubscriptionName }}</h4>
+                      <p class="text-muted" style="font-size:x-large;font-weight: 900;">{{ formatPrice(s.SubscriptionPrice) }}</p>
                     </div>
-                </div>
-            </div>
-            <!-- Lifetime Access -->
-            <div class="col-md-3">
-                <div class="flip-card card-4">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front d-flex flex-column justify-content-center align-items-center p-4">
-                            <h4 class="fw-bold">Lifetime Access</h4>
-                            <p class="text-muted" style="font-size:x-large;font-weight: 900;">Rs. 4999/-</p>
-                        </div>
-                        <div class="flip-card-back d-flex flex-column justify-content-center align-items-center p-4">
-                            <h5 class="fw-bold">Lifetime Access</h5>
-                            <p class="text-muted" style="color: powderblue;">Lifetime access to all courses. The ultimate plan for lifelong learners.</p>
-                            <button class="btn btn-primary">Buy Now</button>
-                        </div>
+                      <div class="flip-card-back d-flex flex-column justify-content-center align-items-center p-4">
+                      <h5 class="fw-bold">{{ s.SubscriptionName }}</h5>
+                      <p class="text-muted" [style.color]="s.SubscriptionColor ? s.SubscriptionColor : null">{{ s.SubscriptionDescription }}</p>
+                      <button type="button" class="btn btn-primary" (click)="buySubscription(s)">Buy Now</button>
                     </div>
+                  </div>
                 </div>
-            </div>
+              </div>
+            </ng-container>
         </div>
     </div>
 </section>

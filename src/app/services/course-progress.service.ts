@@ -15,6 +15,18 @@ export class CourseProgressService {
 
   constructor(private http: HttpClient) {}
 
+  // Check whether current user has an active subscription
+  hasActiveSubscription(): Observable<{ has_active_subscription: boolean }> {
+    const url = `${this.apiUrl}/user/has-active-subscription/`;
+    return this.http.get<{ has_active_subscription: boolean }>(url);
+  }
+
+  // Get list of purchased course IDs for the current user
+  getPurchasedCourses(): Observable<{ purchased_courses: number[] }> {
+    const url = `${this.apiUrl}/user/purchased-courses/`;
+    return this.http.get<{ purchased_courses: number[] }>(url);
+  }
+
   getCourseProgress(courseId: number): Observable<CourseProgress[]> {
     const url = `${this.apiUrl}/course-progress/?course_id=${courseId}`;
     return this.http.get<CourseProgress[]>(url);

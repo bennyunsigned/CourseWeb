@@ -62,38 +62,47 @@ export class PaymentSuccessComponent implements OnInit {
     // Backend endpoint to finalize payment and insert records
     const url = `${environment.apiUrl}/instamojo/payment/confirm`;
 
-    // Backend confirm expects body fields defined in original backend: payment_id, payment_type, user_id, course_id, subscription_type, amount
-    // Try to extract user-defined fields from the redirect parameters if available
-    const body: any = {
-      payment_id: paymentRequestId,
-      payment_type: 'individual'
-    };
+    // Backend confirm expects body fields: payment_id, payment_type, user_id, course_id, subscription_type, amount
+    // Build the payload from query params first, then fall back to pending_payment stored before redirect
+    const query = this.route.snapshot.queryParamMap;
+    const body: any = { payment_id: paymentRequestId };
 
-    // If backend can infer user and course from DB or session, that's fine. Otherwise, try to extract from query params
-    const userId = this.route.snapshot.queryParamMap.get('user_id');
-    const courseId = this.route.snapshot.queryParamMap.get('course_id');
-    const amount = this.route.snapshot.queryParamMap.get('amount');
-    if (userId) {
-      body.user_id = Number(userId);
-    }
-    if (courseId) {
-      body.course_id = Number(courseId);
-    }
-    if (amount) {
-      body.amount = Number(amount);
-    }
+    // payment_type may be provided by redirect; otherwise we'll infer it from pending data
+    const qPaymentType = query.get('payment_type');
+    if (qPaymentType) body.payment_type = qPaymentType;
+
+    const qUserId = query.get('user_id');
+    const qCourseId = query.get('course_id');
+    const qSubscriptionType = query.get('subscription_type');
+    const qAmount = query.get('amount');
+
+    if (qUserId) body.user_id = Number(qUserId);
+    if (qCourseId) body.course_id = qCourseId; // keep as string to preserve CSVs
+    if (qSubscriptionType) body.subscription_type = qSubscriptionType;
+    if (qAmount) body.amount = Number(qAmount);
 
     // If missing, try to read pending_payment saved before redirect
     try {
       const pendingRaw = localStorage.getItem('pending_payment');
-      if (pendingRaw) {
+        if (pendingRaw) {
         const pending = JSON.parse(pendingRaw);
         if (!body.user_id && pending.user_id) body.user_id = Number(pending.user_id);
-        if (!body.course_id && pending.course_id) body.course_id = Number(pending.course_id);
+        // If pending contains CSVs or string course ids, prefer them. Do not coerce to Number.
+        if (!body.course_id && pending.course_id) body.course_id = String(pending.course_id);
+        if (!body.course_id && pending.course_ids_csv) body.course_id = String(pending.course_ids_csv);
         if (!body.amount && pending.amount) body.amount = Number(pending.amount);
         // include payment_request id if available
         if (pending.payment_request_id) {
           body.payment_request_id = pending.payment_request_id;
+        }
+        // subscription payments: pending may include subscription_id
+        if (!body.subscription_type && pending.subscription_id) {
+          body.subscription_type = String(pending.subscription_id);
+        }
+        // If payment_type not present, infer from pending
+        if (!body.payment_type) {
+          if (body.subscription_type) body.payment_type = 'subscription';
+          else body.payment_type = 'individual';
         }
         // clear pending
         localStorage.removeItem('pending_payment');
@@ -101,8 +110,14 @@ export class PaymentSuccessComponent implements OnInit {
     } catch (e) {
       console.warn('Failed to parse pending payment info', e);
     }
-    if (courseId) body.course_id = Number(courseId);
-    if (amount) body.amount = Number(amount);
+    // If redirect contained explicit params, ensure numeric conversions where appropriate
+    if (qCourseId && !body.course_id) body.course_id = qCourseId;
+    if (qAmount && !body.amount) body.amount = Number(qAmount);
+    if (qSubscriptionType && !body.subscription_type) body.subscription_type = qSubscriptionType;
+    if (!body.payment_type) {
+      // final fallback
+      body.payment_type = body.subscription_type ? 'subscription' : 'individual';
+    }
 
     this.paymentService.confirmPayment(body).subscribe({
       next: (res: any) => {

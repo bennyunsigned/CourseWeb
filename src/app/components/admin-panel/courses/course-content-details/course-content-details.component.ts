@@ -4,7 +4,11 @@ import { DurationFormatPipe } from '../../../../pipes/duration-format.pipe';
 import { CourseProgressService } from '../../../../services/course-progress.service';
 import { environment } from '../../../../../environments/environment';
 import { PublicCourseContent } from '../../../../models/publicCourseContentModel';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PaymentService } from '../../../../services/payment.service';
+import { CartService } from '../../../../services/cart.service';
+import { decryptData } from '../../../../utils/crypto-util';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-course-content-details',
@@ -27,13 +31,144 @@ export class CourseContentDetailsComponent implements OnInit {
   visiblePages: number[] = [];
 
   ngOnInit(): void {
-    this.courseId = Number(this.route.snapshot.paramMap.get('courseId'));
+    // Prefer encrypted query param 'cid' (like course-progress). Fall back to route param ':courseId'.
+    try {
+      const enc = this.route.snapshot.queryParamMap.get('cid') || '';
+      if (enc) {
+        const decoded = decodeURIComponent(enc);
+        const decrypted = decryptData(decoded);
+        const id = Number(decrypted) || null;
+        if (id) {
+          this.courseId = id;
+        } else {
+          this.courseId = Number(this.route.snapshot.paramMap.get('courseId'));
+        }
+      } else {
+        this.courseId = Number(this.route.snapshot.paramMap.get('courseId'));
+      }
+    } catch (e) {
+      // fallback to numeric route param
+      this.courseId = Number(this.route.snapshot.paramMap.get('courseId'));
+    }
     this.fetchCourseContent();
+  }
+
+  buyNow(courseId: number) {
+    // Get logged in user id (stored encrypted in localStorage)
+    const encUserId = localStorage.getItem('user_id') || '';
+    const userIdStr = decryptData(encUserId);
+    const userId = Number(userIdStr) || null;
+
+    if (!userId) {
+      // Show toast and redirect to login after it disappears
+      this.toastr.info('Please login to purchase the course.', 'Login required', { timeOut: 3000, closeButton: true });
+      setTimeout(() => this.router.navigate(['/login']), 3200);
+      return;
+    }
+
+    // Use the loaded course content to compute price
+    const course = this.courseContent as any;
+    if (!course) {
+      this.toastr.error('Course not found', 'Error', { timeOut: 3000 });
+      return;
+    }
+
+    const amount = course.DiscountedPrice && course.DiscountedPrice > 0 ? course.DiscountedPrice : course.ActualPrice;
+
+    // include user and course info in redirect url so the success page can read them after redirect
+    const redirectWithParams = `${window.location.origin}/course/payment-success`;
+
+    const payload: any = {
+      amount: amount,
+      purpose: `Purchase Course: ${course.CourseName}`,
+      buyer_name: '',
+      email: '',
+      phone: '',
+      redirect_url: redirectWithParams,
+      payment_type: 'individual' as const,
+      user_id: userId,
+      course_id: String(courseId),
+    };
+
+    // Try to pre-fill buyer details from localStorage (values are stored encrypted)
+    try {
+      const rawName = localStorage.getItem('user_name') || '';
+      const rawEmail = localStorage.getItem('user_email') || '';
+      const rawPhone = localStorage.getItem('user_phone') || '';
+      const name = decryptData(rawName) || rawName || '';
+      const email = decryptData(rawEmail) || rawEmail || '';
+      const phone = decryptData(rawPhone) || rawPhone || '';
+      if (name) payload.buyer_name = name;
+      if (email) payload.email = email;
+      if (phone) payload.phone = phone;
+    } catch (e) {
+      // don't block payment creation if decryption/read fails
+      console.warn('Failed to read buyer details from localStorage', e);
+    }
+
+    this.paymentService.createPayment(payload).subscribe({
+      next: (res: any) => {
+        const redirect = res?.payment_request?.longurl || res?.payment_request?.payment_url || res?.longurl;
+        if (redirect) {
+          // persist pending payment info so we can confirm after redirect
+          try {
+            const pending = { user_id: userId, course_id: String(courseId), amount, payment_request_id: res?.payment_request?.id || res?.id || null };
+            localStorage.setItem('pending_payment', JSON.stringify(pending));
+          } catch (e) {
+            console.warn('Failed to save pending payment info', e);
+          }
+          window.location.href = redirect;
+        } else {
+          this.toastr.error('Unable to start payment.', 'Payment error', { timeOut: 4000 });
+          console.error('Unexpected create payment response', res);
+        }
+      },
+      error: (err) => {
+        console.error('Payment create error', err);
+        this.toastr.error('Failed to create payment. Please try again.', 'Payment error', { timeOut: 4000 });
+      }
+    });
+  }
+
+  addToCart(courseId: number, event?: Event) {
+    // brief visual pulse on the clicked button
+    try {
+      const btn = event?.currentTarget as HTMLElement | null;
+      if (btn) {
+        btn.classList.add('btn-pulse');
+        setTimeout(() => btn.classList.remove('btn-pulse'), 360);
+      }
+    } catch (e) { /* ignore */ }
+
+    // Require login
+    const encUserId = localStorage.getItem('user_id') || '';
+    const userIdStr = decryptData(encUserId);
+    const userId = Number(userIdStr) || null;
+    if (!userId) {
+      this.toastr.info('Please login to add items to cart', 'Login required', { timeOut: 3000 });
+      setTimeout(() => this.router.navigate(['/login']), 3200);
+      return;
+    }
+
+    // Call API to add to cart (server expects { course_id } and derives user from JWT)
+    this.cartService.addToCart({ course_id: courseId }).subscribe({
+      next: () => {
+        this.toastr.success('Added to cart', 'Cart', { timeOut: 2000 });
+      },
+      error: (err) => {
+        console.error('Add to cart failed', err);
+        this.toastr.error('Failed to add to cart', 'Cart');
+      }
+    });
   }
 
   constructor(
     private courseProgressService: CourseProgressService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private paymentService: PaymentService,
+    private cartService: CartService,
+    private toastr: ToastrService
   ) {}
 
   fetchCourseContent() {
@@ -225,5 +360,11 @@ export class CourseContentDetailsComponent implements OnInit {
     } catch (e) {
       console.error('[CourseContent] error in onBannerLoad handler', e);
     }
+  }
+
+  getBannerStyle(raw: string | undefined | null): string {
+    const url = this.getBannerUrl(raw);
+    const safe = String(url).replace(/'/g, "\\'");
+    return `url('${safe}')`;
   }
 }

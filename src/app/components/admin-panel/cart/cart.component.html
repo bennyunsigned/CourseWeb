@@ -1,0 +1,45 @@
+<div class="cart-container">
+  <div *ngIf="loading" class="p-3">Loading cart...</div>
+  <div *ngIf="!loading && items.length === 0" class="p-3 empty-state">
+    <div class="empty-card">
+      <div class="empty-illustration" aria-hidden="true">🛒</div>
+      <h4>Your cart is empty</h4>
+      <p class="muted">Looks like you haven't added any courses yet. Browse our catalogue and add courses you like.</p>
+      <div class="mt-3">
+        <a class="btn btn-theme" role="button" href="/course/available-course">Browse Courses</a>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!loading && items.length > 0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" (change)="toggleSelectAll($event)" [attr.aria-label]="'Select all'" /></th>
+          <th></th>
+          <th>Course</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let it of items">
+          <td style="width:40px;">
+            <input type="checkbox" [checked]="isSelected(it)" (change)="toggleSelect(it, $event)" [attr.aria-label]="'Select ' + it.CourseName" />
+          </td>
+          <td style="width:80px;">
+            <img [src]="it.BannerImageUrl || getBannerUrl(it.BannerImage)" (error)="onBannerError($event)" alt="banner" style="width:72px;height:48px;object-fit:cover;border-radius:4px;" />
+          </td>
+          <td>{{it.CourseName}}</td>
+          <td>₹{{ (it.DiscountedPrice && it.DiscountedPrice > 0 ? it.DiscountedPrice : it.ActualPrice) | number:'1.2-2' }}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="removeItem(it)">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
+  <div><strong>Total:</strong> ₹{{ selectedTotal | number:'1.2-2' }}</div>
+      <button class="btn btn-primary" (click)="checkout()">Checkout</button>
+    </div>
+  </div>
+</div>

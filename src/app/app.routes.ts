@@ -17,6 +17,7 @@ import { UserReportComponent } from './components/admin-panel/reports/user-repor
 import { CourseProgressComponent } from './components/admin-panel/courses/course-progress/course-progress.component';
 import { CourseContentDetailsComponent } from './components/admin-panel/courses/course-content-details/course-content-details.component';
 import { AvailableCoursesComponent } from './components/admin-panel/courses/available-courses/available-courses.component';
+import { CartComponent } from './components/admin-panel/cart/cart.component';
 import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
 import { WebsiteRefundCancellationPolicyComponent } from './components/website/website-refund-cancellation-policy/website-refund-cancellation-policy.component';
 import { WebsiteTermsComponent } from './components/website/website-terms/website-terms.component';
@@ -31,6 +32,7 @@ export const routes: Routes = [
         path: 'available-course',
         component: AvailableCoursesComponent
     },
+    
     {
         path: 'login',
         component: LoginComponent,
@@ -68,8 +70,12 @@ export const routes: Routes = [
             { path: 'course-master', component: CourseMasterComponent, canActivate: [AuthGuard] },
             { path: 'module-master', component: CourseModuleComponent, canActivate: [AuthGuard] },
             { path: 'course-progress', component: CourseProgressComponent, canActivate: [AuthGuard] },
+            { path: 'course-content', component: CourseContentDetailsComponent },
             { path: 'course-content/:courseId', component: CourseContentDetailsComponent },
             { path: 'available-course', component: AvailableCoursesComponent},
+            { path: 'my-courses', loadComponent: () => import('./components/admin-panel/courses/my-courses/my-courses.component').then(m => m.MyCoursesComponent) },
+            { path: 'course-subscription', loadComponent: () => import('./components/admin-panel/courses/course-subscription/course-subscription.component').then(m => m.CourseSubscriptionComponent) },
+            { path: 'cart', component: CartComponent, canActivate: [AuthGuard] },
             { path: 'payment-success', component: PaymentSuccessComponent },
             
             

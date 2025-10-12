@@ -1,0 +1,106 @@
+<div class="aw-available-courses mt-2">
+  <div class="category-tabs-container mb-4">
+  <div class="d-flex flex-row flex-wrap">
+    <button
+      *ngFor="let cat of categories"
+      class="category-tab-btn me-2 mb-2"
+      [class.active]="cat.CategoryId === selectedCategoryId"
+      (click)="onCategoryTabClick(cat.CategoryId)">
+      {{ cat.CategoryName }}
+    </button>
+  </div>
+  </div>
+
+<!-- Search Bar -->
+<div class="mb-3" style="max-width: 400px;">
+  <div class="search-input">
+    <span class="search-icon">
+      <i class="bi bi-search"></i>
+    </span>
+    <input
+      #searchInput
+      type="text"
+      class="search-field"
+      placeholder="Search courses..."
+      [(ngModel)]="searchText"
+      (ngModelChange)="onSearchTextChange()"
+    />
+  </div>
+</div>
+
+  <div class="aw-row mb-4">
+    <div *ngFor="let course of displayedCourses" class="aw-col mb-4">
+      <div class="aw-card course-card h-100 position-relative" (click)="onCardClick(course.CourseId)">
+        <div class="course-banner" [style.backgroundImage]="getBannerStyle(course.BannerImage)">
+          <img class="course-banner-img" [src]="getBannerUrl(course.BannerImage)"
+                  (error)="onBannerError($event)" alt="{{course.CourseName}} banner" />
+          <div class="badge-row">
+            <span *ngIf="course.IsBestSeller" class="aw-badge aw-badge-best-seller">Best Seller</span>
+            <span *ngIf="course.IsPremium" class="aw-badge aw-badge-premium">Premium</span>
+            <span class="aw-badge aw-badge-duration">{{ course.TotalDurationPerCourse | durationFormat }}</span>
+          </div>
+        </div>
+        <div class="aw-card-body d-flex flex-column">
+          <h5 class="aw-card-title text-truncate mb-2" title="{{ course.CourseName }}">{{ course.CourseName }}</h5>
+          <ul class="aw-list-group mb-2">
+            <li class="aw-list-item py-1 px-0 border-0">
+              <strong>Description:</strong>
+              <div class="text-muted small course-desc" title="{{ course.CourseDescription }}">
+                {{ course.CourseDescription || 'No description available.' }}
+              </div>
+            </li>
+          </ul>
+          <!-- No action buttons here for My Courses -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state when there are no courses to show -->
+  <div *ngIf="!displayedCourses || displayedCourses.length === 0" class="empty-state mt-5 text-center">
+    <div style="max-width:640px;margin:0 auto;padding:3rem 1rem;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04)">
+      <h3 style="margin-bottom:0.5rem;color:var(--text)">You don't have any courses yet</h3>
+      <p style="color:var(--muted);margin-bottom:1.25rem">Purchase courses from All Courses or subscribe to access everything.</p>
+      <div>
+        <a class="btn btn-primary" [routerLink]="['/course/available-course']">Browse All Courses</a>
+        <a style="margin-left:0.75rem" class="btn btn-outline-secondary" [routerLink]="['/course/course-subscription']">View Subscriptions</a>
+      </div>
+    </div>
+  </div>
+
+<!-- Pagination Controls -->
+<div *ngIf="visiblePages.length > 1" class="bottom-pagination mt-3">
+  <nav aria-label="Courses pagination">
+    <ul class="pagination pagination-modern justify-content-center">
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
+        <button class="page-link" (click)="goToPage(0)" [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="First page">
+          <i class="bi bi-chevron-double-left"></i>
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
+        <button class="page-link" (click)="previousPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="Previous page">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </li>
+      <ng-container *ngFor="let p of visiblePages">
+        <li class="page-item" [class.active]="p === categoryPagination[selectedCategoryId].currentPage">
+          <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
+            {{ p + 1 }}
+          </button>
+        </li>
+      </ng-container>
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
+        <button class="page-link" (click)="nextPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)" title="Next page">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
+        <button class="page-link" (click)="goToPage(categoryPagination[selectedCategoryId].totalPages - 1)" [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)" title="Last page">
+          <i class="bi bi-chevron-double-right"></i>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+</div>

@@ -1,0 +1,116 @@
+/* Use the same styling as available-courses to ensure My Courses matches design */
+
+.category-tabs-container {
+	margin-bottom: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 80px;
+}
+.search-input {
+	border-radius: 28px;
+	background: rgba(255,255,255,0.02);
+	border: 1px solid rgba(255,255,255,0.04);
+	padding: 6px 10px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	max-width: 400px;
+	height: 44px;
+	overflow: hidden;
+}
+.search-icon {
+	background: transparent;
+	border: none;
+	color: rgba(255,255,255,0.55);
+	font-size: 1.05rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 10px;
+}
+.search-field { background: transparent !important; border: none !important; color: var(--text); font-size: 0.98rem; padding: 8px 12px !important; outline: none; width: 100%; height: 100%; line-height: 1; }
+.search-field::placeholder { color: rgba(255,255,255,0.45); }
+.search-input:focus-within { box-shadow: 0 6px 28px rgba(120,90,255,0.06), 0 0 0 3px rgba(120,90,255,0.03) inset; border-color: rgba(120,90,255,0.14); }
+.category-tab-btn { background: rgba(255,255,255,0.02); color: var(--text); border: 1px solid rgba(255,255,255,0.04); border-radius: 2rem; padding: 0.4rem 1.2rem; font-size: 1rem; font-weight: 500; min-width: 90px; transition: background 0.2s, color 0.2s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; }
+.category-tab-btn.active, .category-tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: rgba(255,255,255,0.08); box-shadow: 0 0.6rem 1.6rem rgba(0,0,0,0.6); transform: translateY(-2px); }
+
+.aw-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; align-items: start; }
+.aw-col { display: flex; }
+.aw-card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius: 10px; overflow: hidden; box-shadow: 0 6px 22px rgba(2,6,23,0.45); display: flex; flex-direction: column; width: 100%; }
+.aw-card-body { padding: 0.7rem; display: flex; flex-direction: column; }
+.aw-card-title { font-size: 0.98rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; }
+.aw-list-group { list-style: none; padding: 0; margin: 0 0 0.75rem 0; }
+.aw-list-item { padding: 0; margin: 0; color: var(--text); }
+.price-old {
+	color: rgba(255,255,255,0.55);
+	text-decoration: line-through;
+	margin-right: 0.5rem;
+	font-size: 0.95rem;
+}
+.price-new {
+	color: var(--neon-yellow);
+	font-weight: 800;
+	font-size: 1.02rem;
+}
+
+@media (max-width: 1200px) { .aw-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 768px) { .aw-row { grid-template-columns: 1fr; } }
+
+.aw-col .aw-card { flex: 1 1 auto; display: flex; flex-direction: column; }
+.aw-card .aw-card-body { display: flex; flex-direction: column; flex: 1 1 auto; }
+
+.course-banner { position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 120px; background-size: cover; background-position: center; background-repeat: no-repeat; border-bottom: 1px solid rgba(255,255,255,0.04); border-radius: 8px 8px 0 0; overflow: hidden; }
+.course-banner-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: block; }
+.badge-row { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; gap: 8px; z-index: 4; pointer-events: none; }
+.aw-badge { display: inline-flex; align-items: center; justify-content: center; padding: 0 10px; height: 28px; min-width: 48px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; box-shadow: 0 8px 22px rgba(2,6,23,0.45); text-shadow: 0 1px 0 rgba(255,255,255,0.06); }
+.aw-badge-best-seller { background: linear-gradient(90deg,#ffd54a,#ffb300) !important; color: #111 !important; }
+.aw-badge-premium { background: linear-gradient(90deg,#7c4dff,#6156f6) !important; color: #fff !important; }
+.aw-badge-duration { background: linear-gradient(90deg,#06b6d4,#0891b2) !important; color: #042028 !important; }
+
+/* Ensure badges remain visible when global theme tries to override colors */
+.aw-available-courses .course-banner .badge-row .aw-badge { box-shadow: 0 8px 26px rgba(0,0,0,0.35) !important; }
+
+@media (max-width: 576px) {
+	.aw-badge { height: 24px; padding: 0 8px; font-size: 0.72rem; }
+}
+
+/* Clamp course description to 2 lines to preserve card height */
+
+.course-desc {
+	display: -webkit-box;
+	line-clamp: 2;
+	-webkit-line-clamp: 2; /* number of lines to show */
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-height: 3.2rem; /* approx 2 lines */
+	line-height: 1.6rem;
+}
+
+@media (max-width: 480px) {
+	.course-desc { line-clamp: 3; -webkit-line-clamp: 3; max-height: 4.8rem; }
+}
+
+.course-card { cursor: pointer; border-radius: 8px; transition: transform .18s ease; border: 1px solid rgba(0,0,0,0.06); }
+.course-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+
+.bottom-pagination { margin-top: 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center; }
+.pagination-modern { background: #fff; border-radius: 1rem; box-shadow: 0 2px 8px rgba(34,46,60,0.06); padding: 0.3rem 0.7rem; gap: 0.2rem; }
+.page-link { color: #222e3c; background: #f8fafc; border: 1px solid #e3e6ea; border-radius: 0.5rem; padding: 0.35rem 0.85rem; font-size: 1rem; font-weight: 500; }
+.page-link:hover { background: linear-gradient(90deg, #f59e0b 0%, #f8b500 100%); color: #fff; }
+
+@media (max-width: 992px) { .aw-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 576px) { .aw-row { grid-template-columns: 1fr; } }
+
+/* ensure spacing similar to available-courses */
+.aw-available-courses .search-input { height: 44px !important; }
+.aw-available-courses .search-field { height: 100% !important; }
+
+/* Small screen tweaks */
+@media (max-width: 480px) { .aw-available-courses .aw-card-title { font-size: 0.95rem; } }
+
+/* keep other admin scoped helper styles minimal */
+.category-tabs-container > .d-flex { justify-content: center !important; align-items: center !important; }

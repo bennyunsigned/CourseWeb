@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { CourseProgressService } from '../../../../services/course-progress.service';
+import { ActivatedRoute } from '@angular/router';
+import { decryptData } from '../../../../utils/crypto-util';
 import {CourseProgress} from '../../../../models/courseProgressModel';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { FormsModule } from '@angular/forms';
@@ -64,10 +66,22 @@ export class CourseProgressComponent implements OnInit {
     });
   }
 
-  constructor(private courseProgressService: CourseProgressService) {}
+  constructor(private courseProgressService: CourseProgressService, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.expandedModuleIdx = null; // Ensure all accordions are collapsed on init
+    // If query param 'cid' exists (encrypted course id), decrypt and use it
+    try {
+      const enc = this.activatedRoute.snapshot.queryParamMap.get('cid') || '';
+      if (enc) {
+        const decoded = decodeURIComponent(enc);
+        const decrypted = decryptData(decoded);
+        const id = Number(decrypted) || null;
+        if (id) this.courseId = id;
+      }
+    } catch (e) {
+      // ignore and fallback to default
+    }
     this.loadCourseProgress();
   }
 

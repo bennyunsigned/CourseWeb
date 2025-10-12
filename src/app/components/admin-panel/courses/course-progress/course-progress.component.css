@@ -897,6 +897,21 @@
   border-top: 1px solid rgba(226, 232, 240, 0.5);
 }
 
+/* Responsive pagination: desktop full + mobile compact */
+.bottom-pagination { /* keep natural flow, center pagination */ width: 100%; }
+.bottom-pagination > nav { width: 100%; }
+
+/* Mobile rules: hide desktop, show compact mobile block */
+@media (max-width: 480px) {
+  .pagination-desktop { display: none !important; }
+  .pagination-mobile { display: flex !important; justify-content: center; gap: 0.75rem; }
+  .pagination-mobile .btn { padding: 6px 10px; border-radius: 8px; font-size: 0.95rem; }
+}
+@media (min-width: 481px) {
+  .pagination-desktop { display: flex !important; }
+  .pagination-mobile { display: none !important; }
+}
+
 .pagination-wrapper {
   border-radius: 20px;
   padding: 1.5rem;

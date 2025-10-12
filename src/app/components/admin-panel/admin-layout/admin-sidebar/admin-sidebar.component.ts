@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, AfterViewInit, OnInit } from '@angular/core'; // <-- Add OnInit
 import { RouterLink, Router } from '@angular/router';
+import { CartService } from '../../../../services/cart.service';
+import { Subscription } from 'rxjs';
 import { decryptData } from '../../../../utils/crypto-util';
 
 // Extend the Window interface to include the feather and bootstrap properties
@@ -22,8 +24,10 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
   isHelpdeskMenuOpen = false;
   isReportsMenuOpen = false;
   isSpecialUser = false; // when true show alternate submenus
+  cartCount = 0;
+  private _subs: Subscription[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cartService: CartService) {}
 
   ngOnInit(): void {
     this.setActiveMenuOnLoad(); // <-- Move here
@@ -47,6 +51,12 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
         console.warn('Failed to determine user email from localStorage:', e);
         this.isSpecialUser = false;
     }
+
+    // Subscribe to cart count if logged in
+    try {
+      this._subs.push(this.cartService.cartCount$.subscribe(c => this.cartCount = c));
+      this.cartService.refreshCount();
+    } catch (e) { /* ignore */ }
   }
 
   ngAfterViewInit(): void {
@@ -59,6 +69,10 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
     this.reinitializeBootstrapComponents();
 
     // REMOVE this.setActiveMenuOnLoad();
+  }
+
+  ngOnDestroy(): void {
+    this._subs.forEach(s => s.unsubscribe());
   }
 
   setActiveMenuOnLoad(): void {

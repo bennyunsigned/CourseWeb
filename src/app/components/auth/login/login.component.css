@@ -57,3 +57,26 @@
 .g_id_signin > div, .g_id_signin > div > div { width:100% !important; }
 .g_id_signin button, .g_id_signin .abcRioButton { width:100% !important; background: linear-gradient(90deg, #ef4444, #f97373) !important; border: none !important; color: #fff !important; box-shadow: 0 8px 28px rgba(239,68,68,0.08) !important; }
 
+
+/* Ensure inputs and primary buttons have matching heights inside auth card */
+/* auth-control-height is inherited from global styles.css */
+
+:host .card-body .form-control,
+:host .card-body .btn {
+	min-height: var(--auth-control-height);
+	height: var(--auth-control-height);
+	padding-top: 0.375rem;
+	padding-bottom: 0.375rem;
+	display: inline-flex;
+	align-items: center;
+}
+
+/* Make sure small variant keeps consistent appearance */
+:host .card-body .form-control.form-control-sm { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+
+/* Center button text */
+:host .card-body .btn {
+	justify-content: center;
+	text-align: center;
+}
+

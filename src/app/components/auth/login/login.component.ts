@@ -75,8 +75,10 @@ export class LoginComponent implements OnInit {
                 console.warn('Failed storing google profile', e);
               }
               this.toastr.success(`Signed in as ${profile?.name || profile?.email}`, 'Google', { timeOut: 3000 });
-              this.router.navigate(['/dashboard']);
-              this.loadingService.hide();
+              this.ngZone.run(() => {
+                this.router.navigate(['/dashboard']);
+                this.loadingService.hide();
+              });
             },
             error: (err: any) => {
               console.error('Google callback failed:', err);
@@ -137,9 +139,10 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('user_role', encryptData(userRole));
 
           this.setTokenTimeout(token); // Set token timeout after login
-          this.router.navigate(['/dashboard']); // Correct path
-          this.toastr.success('Logged in successfully!', 'Success', {
-            timeOut: 3000
+          this.setTokenTimeout(token); // Set token timeout after login
+          this.ngZone.run(() => {
+            this.router.navigate(['/dashboard']); // Correct path
+            this.toastr.success('Logged in successfully!', 'Success', { timeOut: 3000 });
           });
         },
         error: (err: any) => {

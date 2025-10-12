@@ -12,21 +12,22 @@
         <div class="form-card">
             <div class="card floating-card shadow-lg border-0">
                 <div class="card-body">
-                    <div class="m-sm-2">
+                    <div class="m-sm-1">
                         <form [formGroup]="form" (ngSubmit)="onSubmit()">
                             <div class="row">
-                                <div class="col-md-12 col-sm-12">
-                                    <label for="username">Name</label>
-                                    <input type="text" placeholder="Enter your Name" id="name" formControlName="name" class="form-control form-control-lg neon-input">
+                                <div class="col-12 mb-3">
+                                    <input type="text" placeholder="Name" id="name" formControlName="name" aria-label="Name"
+                                        class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('name')">
                                         <ng-container [ngSwitch]="form.controls['name'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your name.</div>
                                         </ng-container>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <label for="email">Email</label>
-                                    <input type="email" placeholder="Enter your email" id="email" formControlName="email" class="form-control form-control-lg neon-input">
+
+                                <div class="col-12 mb-3">
+                                    <input type="email" placeholder="Email" id="email" formControlName="email" aria-label="Email"
+                                        class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('email')">
                                         <ng-container [ngSwitch]="form.controls['email'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your email.</div>
@@ -34,60 +35,61 @@
                                         </ng-container>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <label for="phone">Phone</label>
-                                    <input type="text" placeholder="Enter your Phone" id="phone" formControlName="phone" class="form-control form-control-lg neon-input">
-                                    <div class="error-feedback" *ngIf="hasDisplayableError('phone')">
-                                        <ng-container [ngSwitch]="form.controls['phone'].errors | firstkey">
-                                            <div *ngSwitchCase="'required'">Please enter your phone number.</div>
-                                            <div *ngSwitchCase="'minlength'">Phone number must be 10 digits long.</div>
-                                            <div *ngSwitchCase="'maxlength'">Phone number must be 10 digits long.</div>
-                                            <div *ngSwitchCase="'pattern'">Phone number must be only digits.</div>
-                                        </ng-container>
-                                    </div>
+
+                                <!-- hidden phone field: kept for backend but not visible to user -->
+                                <div class="col-12 mb-3" style="display:none !important;">
+                                    <input type="text" placeholder="Phone" id="phone" formControlName="phone" aria-label="Phone"
+                                        class="form-control form-control-sm neon-input" value="0000000000">
                                 </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <label for="password">Password</label>
-                                    <input type="password" placeholder="Enter your password" id="password" formControlName="password" class="form-control form-control-lg neon-input">
+
+                                <div class="col-12 mb-3">
+                                    <input type="password" placeholder="Password" id="password" formControlName="password" aria-label="Password"
+                                        class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('password')">
                                         <ng-container [ngSwitch]="form.controls['password'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your password.</div>
-                                            <div *ngSwitchCase="'minlength'">Password must be at least 6 characters long.</div>
-                                            <div *ngSwitchCase="'pattern'">Password must contain at least one special character.</div>
+                                            <div *ngSwitchCase="'minlength'">Password must be at least 6 characters.</div>
                                         </ng-container>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <label for="password">Confirm Password</label>
-                                    <input type="password" placeholder="Re-enter your password" id="confirmpassword" formControlName="confirmPassword" class="form-control form-control-lg neon-input">
+
+                                <div class="col-12 mb-3">
+                                    <input type="password" placeholder="Confirm Password" id="confirmpassword" formControlName="confirmPassword" aria-label="Confirm Password"
+                                        class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('confirmPassword')">
                                         <ng-container [ngSwitch]="form.controls['confirmPassword'].errors | firstkey">
                                             <div *ngSwitchCase="'passwordMismatch'">Passwords do not match.</div>
                                         </ng-container>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="d-grid gap-2 mt-4">
-                                <button type="submit" class="btn btn-lg neon-btn fw-bold">Sign Up</button>
+
+                                <div class="col-12 d-grid gap-2 mt-2">
+                                    <button type="submit" class="btn neon-btn fw-bold">Sign Up</button>
+                                </div>
                             </div>
                         </form>
-                        <div class="g-signin-wrap d-grid gap-2 mt-4">
-                            <div id="g_id_onload" data-auto_prompt="false"
-                                data-callback="handleCredentialResponse"
+
+                        <div class="g-signin-wrap d-grid gap-2 mt-3">
+                            <div id="g_id_onload" data-auto_prompt="false" data-callback="handleCredentialResponse"
                                 [attr.data-client_id]="googleAuthKey">
                             </div>
-                            <!-- g_id_signin places the button on a page and supports customization -->
                             <div class="g_id_signin"></div>
                         </div>
-                        <div class="text-center mt-4">
+
+                        <div class="text-center mt-3">
                             <p class="text-muted">
-                                Already have an account? 
-                                <a [routerLink]="'/login'" class="fw-bold text-primary">Log In</a>
+                                Already have an account?
+                                <a routerLink="/login" class="fw-bold text-primary">Log In</a>
                             </p>
+                            <div class="mt-2">
+                                <a routerLink="/" class="text-muted small">← Back to home</a>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
+        
     </section>
 </main>

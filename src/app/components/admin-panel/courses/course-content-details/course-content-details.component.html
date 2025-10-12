@@ -1,4 +1,4 @@
-<div class="container py-4">
+
   <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="min-height:300px;">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
@@ -6,57 +6,63 @@
   </div>
   <div *ngIf="error" class="alert alert-danger mt-4">{{ error }}</div>
   <ng-container *ngIf="!loading && courseContent">
-    <div class="row mb-4 align-items-center">
-      <div class="col-md-5 text-center mb-3 mb-md-0">
-  <img [src]="getBannerUrl(courseContent.BannerImage)" alt="Course Banner" class="img-fluid rounded-4 shadow" style="max-height:320px;object-fit:cover;" (load)="onBannerLoad($event)" (error)="onBannerError($event)">
-      </div>
-      <div class="col-md-7 course-header-sm">
-        <h2 class="fw-bold text-primary mb-2 fs-4">{{ courseContent.CourseName }}</h2>
-        <div class="mb-2 text-secondary fs-8">{{ courseContent.CourseDescription }}</div>
-        <div class="mb-2 d-flex flex-wrap align-items-center gap-2">
-          <span class="badge bg-info text-dark">{{ courseContent.CourseLanguage }}</span>
-          <span class="badge bg-success">{{ courseContent.IsPremium ? 'Premium' : 'Free' }}</span>
-          <span class="badge bg-warning text-dark">Rating: {{ courseContent.Rating }}/5</span>
-          <span *ngIf="courseContent.IsBestSeller" class="badge bg-danger"><i class="bi bi-star-fill me-1"></i>Best Seller</span>
+    <div class="aw-available-courses mb-4">
+      <div class="aw-card d-flex p-0">
+        <div class="course-banner" [style.backgroundImage]="getBannerStyle(courseContent.BannerImage)" style="flex:0 0 45%;min-height:220px;">
+          <img class="course-banner-img" [src]="getBannerUrl(courseContent.BannerImage)" (load)="onBannerLoad($event)" (error)="onBannerError($event)" alt="{{ courseContent.CourseName }} banner" />
+          <div class="course-meta mt-2 p-3">
+            <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
+              <span class="badge bg-info text-dark">{{ courseContent.CourseLanguage }}</span>
+              <span class="badge" [ngClass]="courseContent.IsPremium ? 'bg-warning text-dark' : 'bg-success'">{{ courseContent.IsPremium ? 'Premium' : 'Free' }}</span>
+              <span class="badge bg-secondary">Rating: {{ courseContent.Rating }}/5</span>
+              <span *ngIf="courseContent.IsBestSeller" class="badge bg-danger">Best Seller</span>
+              <span class="badge bg-primary">{{ courseContent.TotalDurationPerCourse | durationFormat }}</span>
+            </div>
+            <div class="author small text-muted">Author: {{ courseContent.Author }}</div>
+          </div>
         </div>
-        <div class="mb-2">
-          <span class="fw-semibold text-muted">Author:</span> {{ courseContent.Author }}
-        </div>
-        <div class="mb-2">
-          <span class="fw-semibold text-muted">Total Duration:</span> 
-          {{ courseContent.TotalDurationPerCourse | durationFormat }}
-        </div>
-        <div class="mb-2">
-          <span class="fw-semibold text-muted">Price:</span>
-          <span *ngIf="(courseContent.DiscountedPrice ?? 0) < (courseContent.ActualPrice ?? 0)" class="text-decoration-line-through text-danger me-2">₹{{ courseContent.ActualPrice }}</span>
-          <span class="fw-bold text-success">₹{{ courseContent.DiscountedPrice }}</span>
-        </div>
-        <div class="d-flex flex-wrap gap-2 mt-3">
-          <button class="btn-add-cart d-flex align-items-center gap-2" type="button">
-            <i class="bi bi-cart-plus fs-5"></i> Add to Cart
-          </button>
-          <button class="btn-buy-now d-flex align-items-center gap-2" type="button">
-            <i class="bi bi-lightning-charge-fill fs-5"></i> Buy Now
-          </button>
+        <div class="aw-card-body" style="flex:1;padding:1rem;">
+          <h2 class="aw-card-title mb-2">{{ courseContent.CourseName }}</h2>
+          <div class="text-muted mb-2">{{ courseContent.CourseDescription }}</div>
+          <!-- badges and author moved to the banner column to appear below the image -->
+          <div class="mb-2">
+            <div class="price-panel d-flex align-items-center gap-3">
+              <div class="price-label text-muted"><b>Price</b></div>
+              <div class="price-values d-flex align-items-baseline gap-2">
+                <span class="price-old" *ngIf="courseContent.DiscountedPrice < courseContent.ActualPrice">₹{{ courseContent.ActualPrice }}</span>
+                <span class="price-new">₹{{ (courseContent.DiscountedPrice < courseContent.ActualPrice ? courseContent.DiscountedPrice : courseContent.ActualPrice) }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 d-flex gap-2 action-row cc-action-row">
+            <button class="action-btn buy cc-action-btn" (click)="buyNow(courseContent.CourseId); $event.stopPropagation();" aria-label="Buy now">
+              <i class="bi bi-bag-check"></i>
+              <span class="btn-text">Buy Now</span>
+            </button>
+            <button class="action-btn cart cc-action-btn" (click)="addToCart(courseContent.CourseId, $event); $event.stopPropagation();" title="Add to cart" aria-label="Add to cart">
+              <i class="bi bi-cart-plus"></i>
+              <span class="cart-text">Add to Cart</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
     <!-- Tabs for Course Modules and Reviews -->
     <div class="course-tabs-container mb-4">
-      <ul class="nav nav-pills course-tabs" id="courseContentTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="modules-tab" data-bs-toggle="pill"
-                  data-bs-target="#modules" type="button" role="tab"
-                  aria-controls="modules" aria-selected="true">
+          <ul class="nav nav-pills course-tabs" id="courseContentTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="modules-tab" data-tab="modules" data-bs-toggle="pill"
+      data-bs-target="#modules" type="button" role="tab"
+      aria-controls="modules" aria-selected="true">
             <i class="bi bi-collection-play me-2"></i>
             <span class="tab-text">Course Modules</span>
             <span class="badge bg-primary ms-2 module-count">{{ courseContent && courseContent.Modules ? courseContent.Modules.length : 0 }}</span>
           </button>
         </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="reviews-tab" data-bs-toggle="pill"
-                  data-bs-target="#reviews" type="button" role="tab"
-                  aria-controls="reviews" aria-selected="false">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="reviews-tab" data-tab="reviews" data-bs-toggle="pill"
+      data-bs-target="#reviews" type="button" role="tab"
+      aria-controls="reviews" aria-selected="false">
             <i class="bi bi-star-fill me-2"></i>
             <span class="tab-text">Reviews</span>
             <span class="badge bg-secondary ms-2">0</span>
@@ -90,7 +96,8 @@
         <!-- Pagination -->
   <div *ngIf="(courseContent?.Modules?.length ?? 0) > modulesPerPage" class="bottom-pagination mt-3">
           <nav aria-label="Course modules pagination">
-            <ul class="pagination pagination-modern justify-content-center">
+            <!-- Desktop / tablet: full pagination (hidden on xs) -->
+            <ul class="pagination pagination-modern justify-content-center pagination-desktop d-none d-sm-flex">
               <li class="page-item" [class.disabled]="currentPage === 0">
                 <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0" title="First page">
                   <i class="bi bi-chevron-double-left"></i>
@@ -119,6 +126,17 @@
                 </button>
               </li>
             </ul>
+
+            <!-- Mobile: compact pagination (visible only on xs) -->
+            <div class="d-flex d-sm-none justify-content-between align-items-center pagination-mobile">
+              <button class="btn btn-outline-light" (click)="previousPage()" [disabled]="currentPage === 0" aria-label="Previous page">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <div class="text-center small text-muted">Page {{ currentPage + 1 }} / {{ totalPages || 1 }}</div>
+              <button class="btn btn-outline-light" (click)="nextPage()" [disabled]="currentPage >= (totalPages - 1)" aria-label="Next page">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
           </nav>
         </div>
       </div>
@@ -139,4 +157,4 @@
       </div>
     </div>
   </ng-container>
-</div>
+

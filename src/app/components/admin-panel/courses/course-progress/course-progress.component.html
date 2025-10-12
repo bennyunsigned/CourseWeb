@@ -186,23 +186,21 @@
         </ng-container>
       </div>
 
-      <!-- Simple Pagination -->
+      <!-- Responsive Pagination: desktop full + mobile compact -->
   <div *ngIf="!isLoading && allModules.length > 0" class="bottom-pagination">
         <nav aria-label="Course modules pagination">
-          <ul class="pagination pagination-modern justify-content-center">
-            <!-- First Page -->
+          <!-- Desktop / tablet: full pagination (hidden on xs) -->
+          <ul class="pagination pagination-modern justify-content-center pagination-desktop d-none d-sm-flex">
             <li class="page-item" [class.disabled]="currentPage === 0 || modulesPerPage === filteredModules.length">
               <button class="page-link" (click)="goToPage(0)" [disabled]="currentPage === 0 || modulesPerPage === filteredModules.length" title="First page">
                 <i class="bi bi-chevron-double-left"></i>
               </button>
             </li>
-            <!-- Previous Page -->
             <li class="page-item" [class.disabled]="currentPage === 0 || modulesPerPage === filteredModules.length">
               <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0 || modulesPerPage === filteredModules.length" title="Previous page">
                 <i class="bi bi-chevron-left"></i>
               </button>
             </li>
-            <!-- Page Numbers -->
             <ng-container *ngFor="let p of visiblePages">
               <li class="page-item" [class.active]="p === currentPage || modulesPerPage === filteredModules.length">
                 <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)" [disabled]="modulesPerPage === filteredModules.length">
@@ -210,19 +208,28 @@
                 </button>
               </li>
             </ng-container>
-            <!-- Next Page -->
             <li class="page-item" [class.disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length">
               <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length" title="Next page">
                 <i class="bi bi-chevron-right"></i>
               </button>
             </li>
-            <!-- Last Page -->
             <li class="page-item" [class.disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length">
               <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="currentPage === totalPages - 1 || modulesPerPage === filteredModules.length" title="Last page">
                 <i class="bi bi-chevron-double-right"></i>
               </button>
             </li>
           </ul>
+
+          <!-- Mobile: compact pagination (visible only on xs) -->
+          <div class="d-flex d-sm-none justify-content-between align-items-center pagination-mobile">
+            <button class="btn btn-outline-light" (click)="previousPage()" [disabled]="currentPage === 0 || modulesPerPage === filteredModules.length" aria-label="Previous page">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <div class="text-center small text-muted">Page {{ currentPage + 1 }} / {{ totalPages || 1 }}</div>
+            <button class="btn btn-outline-light" (click)="nextPage()" [disabled]="currentPage >= (totalPages - 1) || modulesPerPage === filteredModules.length" aria-label="Next page">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
         </nav>
       </div>
     </div>

@@ -19,3 +19,50 @@
 .logo:hover {
   transform: scale(1.05);
 }
+
+/* Gradient buttons for Login / Sign Up in website navbar */
+/* Use a purple->cyan gradient and white text for better contrast on dark navbar */
+.navbar .btn-outline-light {
+  /* Make Login a filled gradient like Sign Up (no transparency) */
+  background-image: linear-gradient(90deg, #7b5cff 0%, #26d0ce 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  padding: 0.35rem 0.9rem !important;
+  box-shadow: 0 6px 18px rgba(38,208,206,0.12), 0 0 12px rgba(123,92,255,0.12);
+  transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.navbar .btn-outline-light:hover,
+.navbar .btn-outline-light:focus{
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 26px rgba(38,208,206,0.16), 0 0 22px rgba(123,92,255,0.16);
+  color: #fff !important;
+}
+
+/* Sign Up primary button -> solid gradient with white text */
+.navbar .btn-primary{
+  background-image: linear-gradient(90deg, #7b5cff 0%, #26d0ce 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 6px 18px rgba(38,208,206,0.12), 0 0 12px rgba(123,92,255,0.12);
+  transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.navbar .btn-primary:hover,
+.navbar .btn-primary:focus{
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 26px rgba(38,208,206,0.16), 0 0 22px rgba(123,92,255,0.16);
+  color: #fff !important;
+}
+
+/* Small screens: reduce padding so buttons fit in navbar */
+@media (max-width: 576px) {
+  .navbar .btn {
+    padding: 0.375rem 0.6rem;
+    font-size: 0.9rem;
+  }
+}

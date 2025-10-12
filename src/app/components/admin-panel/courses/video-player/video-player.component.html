@@ -1,6 +1,6 @@
 <div class="video-player-container">
   <div class="video-player-wrapper">
-        <video #videoRef class="video-element" preload="none" playsinline controls>
+        <video #videoRef class="video-element" preload="none" playsinline controls controlsList="nodownload" (contextmenu)="$event.preventDefault()">
       <source [attr.src]="videoSrc" type="video/mp4" />
       Your browser does not support HTML5 video.
     </video>
