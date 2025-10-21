@@ -1,6 +1,152 @@
-<div class="dashboard-center">
-  <div>
-    <div class="dashboard-heading">Welcome to {{appName}}</div>
-    <div class="dashboard-subheading">Your personal learning platform</div>
+<div class="container py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <div class="dashboard-heading">Welcome to {{appName}}</div>
+      <div class="dashboard-subheading" *ngIf="userEmail">Signed in as {{ userEmail }}</div>
+    </div>
   </div>
+
+  <!-- Admin view -->
+  <ng-container *ngIf="isAdmin; else userView">
+    <div class="payments-section">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+      <h5 class="mb-0 text-white">Payments Overview</h5>
+      <div>
+        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#filtersModal">
+          <i class="bi bi-funnel"></i>
+          <span class="ms-1">Filters</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters Modal (centered vertically and horizontally) -->
+    <div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="filtersModalLabel">Payments Filters</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="fw-semibold small mb-2">Quick ranges</div>
+            <div class="list-group mb-3">
+              <button class="list-group-item list-group-item-action d-flex align-items-center" type="button" [class.active]="selectedPreset==='today'" (click)="applyPreset('today')" data-bs-dismiss="modal">
+                <i class="bi bi-calendar-day me-2"></i> Today
+              </button>
+              <button class="list-group-item list-group-item-action d-flex align-items-center" type="button" [class.active]="selectedPreset==='last7'" (click)="applyPreset('last7')" data-bs-dismiss="modal">
+                <i class="bi bi-calendar-week me-2"></i> Last 7 days
+              </button>
+              <button class="list-group-item list-group-item-action d-flex align-items-center" type="button" [class.active]="selectedPreset==='month'" (click)="applyPreset('month')" data-bs-dismiss="modal">
+                <i class="bi bi-calendar2-month me-2"></i> This month
+              </button>
+              <button class="list-group-item list-group-item-action d-flex align-items-center" type="button" [class.active]="selectedPreset==='lastMonth'" (click)="applyPreset('lastMonth')" data-bs-dismiss="modal">
+                <i class="bi bi-calendar3 me-2"></i> Last month
+              </button>
+              <button class="list-group-item list-group-item-action d-flex align-items-center" type="button" [class.active]="selectedPreset==='ytd'" (click)="applyPreset('ytd')" data-bs-dismiss="modal">
+                <i class="bi bi-calendar-range me-2"></i> YTD
+              </button>
+            </div>
+
+            <div class="fw-semibold small mb-2">Custom range</div>
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="form-label small mb-1">Start date</label>
+                <input class="form-control form-control-sm" [class.is-invalid]="validationErrors.start" type="date" [(ngModel)]="startDate" (change)="onDateChange()" name="startDate" [max]="todayYMD" />
+                <div class="invalid-feedback d-block" *ngIf="validationErrors.start">{{ validationErrors.start }}</div>
+              </div>
+              <div class="col-12">
+                <label class="form-label small mb-1">End date</label>
+                <input class="form-control form-control-sm" [class.is-invalid]="validationErrors.end" type="date" [(ngModel)]="endDate" (change)="onDateChange()" name="endDate" [max]="todayYMD" />
+                <div class="invalid-feedback d-block" *ngIf="validationErrors.end">{{ validationErrors.end }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div *ngIf="error" class="alert alert-danger py-2 mt-2">{{ error }}</div>
+
+    <!-- Stats strip under toolbar -->
+    <div *ngIf="adminData" class="stats-strip d-flex flex-wrap align-items-center gap-3 mb-2 small text-white">
+      <span class="stat-item"><span class="label">Total:</span> <span class="value">Rs-{{ adminData.total | number:'1.0-2' }}</span></span>
+      <span class="stat-item"><span class="label">Count:</span> <span class="value">{{ adminData.count | number }}</span></span>
+      <span class="stat-item"><span class="label">Types:</span> <span class="value">{{ adminData?.breakdown?.length || 0 }}</span></span>
+      <span class="stat-item"><span class="label">Range:</span> <span class="value">{{ startDate }} → {{ endDate }}</span></span>
+    </div>
+
+    <!-- Two charts side-by-side -->
+    <div class="row g-3 align-items-stretch mt-1" *ngIf="adminData">
+      <!-- Primary chart card -->
+      <div class="col-12 col-lg-6">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center py-2 text-white">
+            <strong class="text-white">By Payment Type</strong>
+            <small class="text-white">Amounts & Counts</small>
+          </div>
+          <div class="card-body p-2">
+            <ng-container *ngIf="(adminData?.breakdown?.length || 0) > 0; else noDataPrimary">
+              <highcharts-chart
+                [options]="chartOptions"
+                [(update)]="chartUpdateFlag"
+                style="width: 100%; display: block; height: 320px;">
+              </highcharts-chart>
+            </ng-container>
+            <ng-template #noDataPrimary>
+              <div class="text-center text-white py-5">No breakdown data.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary chart card -->
+      <div class="col-12 col-lg-6">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center py-2 text-white">
+            <strong class="text-white">{{ hasDailySeries ? 'Daily Totals' : 'Counts by Type' }}</strong>
+            <small class="text-white">{{ startDate }} → {{ endDate }}</small>
+          </div>
+          <div class="card-body p-2">
+            <ng-container *ngIf="hasDailySeries; else noDataSecondary">
+              <highcharts-chart
+                [options]="chartOptionsDaily"
+                [(update)]="chartUpdateFlagDaily"
+                style="width: 100%; display: block; height: 320px;">
+              </highcharts-chart>
+            </ng-container>
+            <ng-template #noDataSecondary>
+              <div class="text-center text-white py-5">No secondary data.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-page-loader></app-page-loader>
+    </div>
+  </ng-container>
+
+  <!-- User view -->
+  <ng-template #userView>
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="card kpi-card h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <div class="kpi-label">Total Courses Covered</div>
+                <div class="kpi-value">{{ totalCoursesCovered | number }}</div>
+              </div>
+              <i class="bi bi-journal-check kpi-icon text-info"></i>
+            </div>
+            <div class="text-muted small mt-2" *ngIf="hasSubscription">Includes all courses in your subscription.</div>
+            <div class="text-muted small mt-2" *ngIf="!hasSubscription">Counts only courses you've purchased.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-page-loader></app-page-loader>
+  </ng-template>
 </div>

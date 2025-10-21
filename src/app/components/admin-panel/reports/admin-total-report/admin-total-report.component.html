@@ -1,0 +1,116 @@
+<div class="report-panel p-3">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h4 class="mb-0">Admin Total Report</h4>
+    <div class="preset-toolbar chip-bar d-flex flex-wrap gap-2 p-2 px-3 rounded-3" role="tablist" aria-label="Quick ranges">
+      <button type="button" class="btn btn-sm preset-btn" [class.active]="selectedPreset==='today'" (click)="applyPreset('today')" role="tab" [attr.aria-selected]="selectedPreset==='today'" title="Today">
+        <i class="bi bi-calendar-day me-1"></i>
+        <span>Today</span>
+        <i class="bi bi-check-lg ms-1" *ngIf="selectedPreset==='today'"></i>
+      </button>
+      <button type="button" class="btn btn-sm preset-btn" [class.active]="selectedPreset==='last7'" (click)="applyPreset('last7')" role="tab" [attr.aria-selected]="selectedPreset==='last7'" title="Last 7 days">
+        <i class="bi bi-calendar-week me-1"></i>
+        <span>Last 7 days</span>
+        <i class="bi bi-check-lg ms-1" *ngIf="selectedPreset==='last7'"></i>
+      </button>
+      <button type="button" class="btn btn-sm preset-btn" [class.active]="selectedPreset==='month'" (click)="applyPreset('month')" role="tab" [attr.aria-selected]="selectedPreset==='month'" title="This month">
+        <i class="bi bi-calendar2-month me-1"></i>
+        <span>This month</span>
+        <i class="bi bi-check-lg ms-1" *ngIf="selectedPreset==='month'"></i>
+      </button>
+      <button type="button" class="btn btn-sm preset-btn" [class.active]="selectedPreset==='lastMonth'" (click)="applyPreset('lastMonth')" role="tab" [attr.aria-selected]="selectedPreset==='lastMonth'" title="Last month">
+        <i class="bi bi-calendar3 me-1"></i>
+        <span>Last month</span>
+        <i class="bi bi-check-lg ms-1" *ngIf="selectedPreset==='lastMonth'"></i>
+      </button>
+      <button type="button" class="btn btn-sm preset-btn" [class.active]="selectedPreset==='ytd'" (click)="applyPreset('ytd')" role="tab" [attr.aria-selected]="selectedPreset==='ytd'" title="Year to date">
+        <i class="bi bi-calendar-range me-1"></i>
+        <span>YTD</span>
+        <i class="bi bi-check-lg ms-1" *ngIf="selectedPreset==='ytd'"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-danger ms-1" (click)="onReset()" title="Reset to current month">
+        <i class="bi bi-arrow-counterclockwise me-1"></i>
+      </button>
+    </div>
+  </div>
+
+  <form class="row g-3 align-items-end mb-2" novalidate>
+    <div class="col-12 col-sm-4">
+      <label class="form-label">Start date</label>
+      <input class="form-control" [class.is-invalid]="validationErrors.start" type="date" [(ngModel)]="startDate" (change)="onDateChange()" name="startDate" [max]="todayYMD" required />
+      <div class="feedback-space">
+        <div class="invalid-feedback d-block" *ngIf="validationErrors.start">{{ validationErrors.start }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-4">
+      <label class="form-label">End date</label>
+      <input class="form-control" [class.is-invalid]="validationErrors.end" type="date" [(ngModel)]="endDate" (change)="onDateChange()" name="endDate" [max]="todayYMD" required />
+      <div class="feedback-space">
+        <div class="invalid-feedback d-block" *ngIf="validationErrors.end">{{ validationErrors.end }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-4 d-flex gap-2 mt-0">
+      
+    </div>
+  </form>
+
+  <div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+  <div class="small text-muted mb-2" *ngIf="currentPresetLabel">Selected: {{ currentPresetLabel }}</div>
+
+  <div *ngIf="data" class="mt-2">
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-6">
+        <div class="card kpi-card h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <div class="kpi-label">Total Amount</div>
+                <div class="kpi-value">{{ data.total | number:'1.0-2' }}</div>
+              </div>
+              <i class="bi bi-cash-stack kpi-icon text-success"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="card kpi-card h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <div class="kpi-label">Payments Count</div>
+                <div class="kpi-value">{{ data.count | number }}</div>
+              </div>
+              <i class="bi bi-receipt-cutoff kpi-icon text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Breakdown by Payment Type</strong>
+        <small class="text-muted" *ngIf="startDate || endDate">Range: {{ startDate }} → {{ endDate }}</small>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead class="table-light sticky-top">
+            <tr>
+              <th>Payment Type</th>
+              <th class="text-end">Total Amount</th>
+              <th class="text-end">Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of data.breakdown">
+              <td>{{ b.payment_type }}</td>
+              <td class="text-end">{{ b.total_amount | number:'1.0-2' }}</td>
+              <td class="text-end">{{ b.count | number }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Use shared page loader -->
+  <app-page-loader></app-page-loader>
+</div>

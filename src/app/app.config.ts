@@ -5,6 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHighcharts } from 'highcharts-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +18,8 @@ export const appConfig: ApplicationConfig = {
       closeButton: true, // Optional: Add a close button
       progressBar: true // Optional: Add a progress bar
     }),
-    provideAnimations()
+    provideAnimations(),
+    // Highcharts Angular v5 root provider (prevents DI issues and enables charts)
+    provideHighcharts()
   ]
 };

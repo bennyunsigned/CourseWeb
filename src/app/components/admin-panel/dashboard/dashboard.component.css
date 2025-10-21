@@ -1,22 +1,51 @@
-.dashboard-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-  width: 100%;
-}
+.dashboard-heading { font-size: 1.25rem; font-weight: 600; color: #0d6efd; }
+.dashboard-subheading { font-size: 0.9rem; color: #6c757d; }
+.kpi-card { border: 1px solid rgba(13, 110, 253, 0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.kpi-label { font-size: 0.8rem; color: #6c757d; margin-bottom: .25rem; }
+.kpi-value { font-size: 1.25rem; font-weight: 700; line-height: 1.1; }
+.kpi-icon { font-size: 1.25rem; opacity: 0.85; }
 
-.dashboard-heading {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #007bff; /* Primary color */
-  text-align: center;
-}
+/* Chip toolbar (reuse style idea from reports) */
+.chip-bar { background: linear-gradient(120deg, #f8f9fa, #f1f3f5); border: 1px solid #e9ecef; }
+.preset-btn { border-radius: 999px; border: 1px solid transparent; background-color: #fff; color: #495057; }
+.preset-btn:hover { background-color: #f8f9fa; }
+.preset-btn.active { background-color: #0d6efd; color: #fff; }
 
-.dashboard-subheading {
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #6c757d; /* Secondary color */
-  text-align: center;
-  margin-top: 0.5rem;
-}
+/* Simple CSS bar chart */
+.chart { display: grid; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 140px 1fr minmax(100px, auto); gap: 10px; align-items: center; }
+.bar-label { font-size: 0.9rem; color: #495057; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { background: #f1f3f5; border-radius: 6px; height: 14px; overflow: hidden; }
+.bar-fill { background: linear-gradient(90deg, #74c0fc, #4dabf7); height: 100%; border-radius: 6px; }
+.bar-value { text-align: right; font-variant-numeric: tabular-nums; color: #212529; font-weight: 600; }
+
+/* Payments section theming */
+.payments-section { color: #fff; }
+.payments-section .card { background-color: rgba(33,37,41,0.6); border-color: rgba(255,255,255,0.08); }
+.payments-section .card-header { background-color: rgba(33,37,41,0.6); border-bottom-color: rgba(255,255,255,0.08); }
+.payments-section .card-body { color: #fff; }
+.payments-section .dropdown .btn { color: #fff; border-color: rgba(255,255,255,0.25); }
+.payments-section .dropdown-menu { background-color: #212529; color: #fff; border-color: rgba(255,255,255,0.1); }
+.payments-section .dropdown-item { color: #e9ecef; }
+.payments-section .dropdown-item.active, .payments-section .dropdown-item:active { background-color: #0d6efd; color: #fff; }
+.payments-section .form-label, .payments-section .form-control, .payments-section .invalid-feedback { color: #fff; }
+.payments-section .form-control { background-color: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); color: #fff; }
+.payments-section .form-control.is-invalid { border-color: #dc3545; }
+
+/* Using Bootstrap badge color classes for visibility */
+
+/* Minimal stats strip (no badges) */
+.stats-strip { color: #fff; }
+.stats-strip .stat-item { display: inline-flex; align-items: baseline; gap: .4rem; position: relative; padding-right: .8rem; }
+.stats-strip .stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); height: 14px; width: 1px; background: rgba(255,255,255,0.2); }
+.stats-strip .label { color: #ced4da; font-weight: 600; }
+.stats-strip .value { color: #ffffff; font-weight: 700; }
+
+/* Dark modal styling for Payments filters */
+.payments-section .modal-content { background-color: #212529; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+.payments-section .modal-header, .payments-section .modal-footer { border-color: rgba(255,255,255,0.1); }
+.payments-section .btn-close { filter: invert(1) grayscale(100%); opacity: .8; }
+.payments-section .list-group-item { background-color: transparent; color: #e9ecef; border-color: rgba(255,255,255,0.1); }
+.payments-section .list-group-item.active { background-color: #0d6efd; border-color: #0d6efd; color: #fff; }
+.payments-section .modal .form-control { background-color: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); color: #fff; }
+.payments-section .modal .form-control.is-invalid { border-color: #dc3545; }

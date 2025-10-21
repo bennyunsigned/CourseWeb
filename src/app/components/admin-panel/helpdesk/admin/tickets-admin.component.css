@@ -1,0 +1,384 @@
+.tickets-admin .card { margin-bottom: 1rem; }
+.tickets-admin img { border: 1px solid #eee; }
+.helpdesk-attachment-img { width:100%; height:160px; object-fit:cover; border-radius:6px; }
+/* Modal styles */
+.helpdesk-modal { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; z-index:1050; }
+/* Admin helpdesk modal styles - copied from user styles and adapted for .tickets-admin */
+.tickets-admin img { border: 1px solid #e6e6e6; }
+.tickets-admin .card { margin-bottom: 1rem; }
+
+/* Modal styles (shared with admin) */
+.helpdesk-modal { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; z-index:1050; }
+.helpdesk-modal-backdrop { position: absolute; inset:0; background: rgba(0,0,0,0.5); }
+.helpdesk-modal-content { position: relative; width: 90%; max-width: 900px; max-height: 90vh; overflow:auto; z-index:1060; }
+.helpdesk-attachment-img { width:100%; height:160px; object-fit:cover; border-radius:6px; }
+/* Attachments grid */
+.attachments-grid { margin-bottom: 0.5rem; }
+.attachments-grid .file-chip { display:inline-block; padding:6px 8px; background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
+.attachment-link { color:inherit; text-decoration:none; }
+.attachment-link .helpdesk-attachment-img { border: 1px solid #eef0f2; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-radius:8px; }
+/* Professional enhancements */
+.hover-zoom img { transition: transform .25s ease; }
+.hover-zoom:hover img { transform: scale(1.04); }
+.file-chip { display:inline-block; padding:8px 10px; background:#fff; border:1px solid #e9eef6; border-radius:10px; font-size:.9rem; color:#495057; box-shadow:0 1px 2px rgba(16,24,40,0.03); }
+.file-chip { display:inline-block; padding:8px 10px; background:#fff; border:1px solid #e9eef6; border-radius:10px; font-size:.9rem; color:#495057; box-shadow:0 1px 2px rgba(16,24,40,0.03); }
+.msg-bubble { background:#ffffff; padding:10px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(2,6,23,0.12); max-width:70ch; line-height:1.4; word-break:break-word; }
+.messages-container { min-height:160px; display:flex; flex-direction:column; }
+
+@media (max-width: 767px) {
+	.modal-dialog.modal-xl { max-width: 95%; }
+	.avatar-circle { width:32px; height:32px; }
+	.helpdesk-attachment-img { height:100px; }
+}
+
+/* Responsive message rows */
+.message-row { align-items:flex-start; display:block; }
+.message-row .message-body { width:100%; }
+.message-meta { display:flex; gap:8px; align-items:center; }
+.message-sender { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.message-time { white-space:nowrap; }
+
+/* Distinguish admin vs user messages */
+.message-body.from-admin { text-align: left; padding:8px 12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-left: 6px solid rgba(255,184,28,0.18); }
+.message-body.from-admin .msg-bubble { background: linear-gradient(90deg,#ffd166,#ff9a8b); color:#fff; box-shadow: 0 10px 30px rgba(255,154,139,0.08); }
+.message-body.from-user { text-align: right; padding:8px 12px; border-radius:12px; background: linear-gradient(180deg, rgba(7,89,133,0.02), rgba(7,89,133,0.01)); border-left: 6px solid rgba(59,130,246,0.12); }
+.message-body.from-user .msg-bubble { background: linear-gradient(90deg,#7c3aed,#06b6d4); color:#fff; box-shadow: 0 10px 30px rgba(12,74,110,0.12); }
+
+/* small colored indicator before sender for quick recognition */
+.message-meta .badge { font-size:0.7rem; padding:0.25rem 0.4rem; border-radius:6px; box-shadow: 0 4px 12px rgba(2,6,23,0.12); }
+.msg-bubble.bubble-right { background: linear-gradient(90deg,#7b61ff,#4b9cff); color: #fff; }
+.msg-bubble.bubble-left { background: linear-gradient(90deg,#20c997,#0ea5a1); color: #fff; }
+
+/* colorful alternation for visual variety */
+.messages-container .message-row:nth-child(4n) .msg-bubble.bubble-left { background: linear-gradient(90deg,#ff7ab6,#ff9a8b); }
+.messages-container .message-row:nth-child(4n+1) .msg-bubble.bubble-right { background: linear-gradient(90deg,#6ee7b7,#3b82f6); }
+.messages-container .message-row:nth-child(4n+2) .msg-bubble.bubble-left { background: linear-gradient(90deg,#f59e0b,#f97316); }
+.messages-container .message-row:nth-child(4n+3) .msg-bubble.bubble-right { background: linear-gradient(90deg,#a78bfa,#7c3aed); }
+
+/* brighter scrollbar thumb */
+.messages-container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08)); }
+
+/* composer send button gradient */
+.composer .btn-primary { background: linear-gradient(90deg,#7c3aed,#06b6d4); border: none; box-shadow: 0 6px 18px rgba(124,58,237,0.18); }
+.composer .btn-primary:hover { filter: brightness(1.05); }
+
+/* message meta (sender + time) */
+.message-meta { margin-bottom:6px; }
+.message-sender { font-weight:600; }
+.message-time { font-size:0.8rem; color: rgba(255,255,255,0.6); }
+
+/* ensure messages container scrolls and grows */
+.messages-container { overflow-y:auto; padding-right:6px; }
+.messages-container .message-row { padding:4px 0; }
+
+/* composer area improvements */
+.composer { border-top: 1px solid rgba(255,255,255,0.03); padding-top:10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)); }
+.composer textarea { resize: none; }
+.composer .btn { min-width:76px; }
+
+/* make messages area scrollable with white text */
+.messages-container { background: linear-gradient(180deg,#0b1220, #071021); color: #fff; display:flex; flex-direction:column; }
+.messages-container .msg-bubble { color: #fff; }
+.messages-container { max-height: 420px; }
+
+.composer { border-top: 1px solid rgba(255,255,255,0.03); padding-top:10px; }
+
+/* custom scrollbar */
+.messages-container::-webkit-scrollbar { height:8px; width:8px; }
+.messages-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius:4px; }
+.messages-container::-webkit-scrollbar-track { background: transparent; }
+
+/* Attachments: horizontal scroll on small screens */
+.attachments-grid { overflow-x:auto; padding-bottom:6px; }
+.attachments-grid .row { flex-wrap:nowrap; }
+.attachments-grid .col-6 { min-width:140px; max-width:160px; }
+.attachments-grid img { border-radius:8px; }
+
+/* Vertical divider between left and right columns on large screens */
+.left-col { position:relative; }
+.right-col { position:relative; }
+@media(min-width: 992px) {
+	.left-col { border-right: 1px solid rgba(255,255,255,0.04); padding-right: 1.5rem; }
+	.right-col { padding-left: 1.5rem; }
+}
+
+/* Priority badge inside left column should be white text for contrast */
+.left-col .badge { color: #fff !important; }
+.left-col .badge.bg-info { background: linear-gradient(90deg,#2a9df4,#1776d2) !important; }
+
+/* Modern glass header and body for ticket modal */
+.helpdesk-glass { background: linear-gradient(180deg, rgba(10,14,20,0.9), rgba(7,11,16,0.94)); color: #e6eef8; border-radius:10px; }
+.modern-header { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-bottom: 1px solid rgba(255,255,255,0.03); }
+.modern-header .modal-title { font-weight:700; color:#fff; }
+.modern-body { padding:0; }
+.modern-right { min-height:360px; }
+.modern-messages { background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:8px; }
+.modern-row { align-items:flex-start; }
+.modern-message { width:100%; }
+.modern-message .message-sender { color: rgba(255,255,255,0.75); font-weight:600; }
+.modern-bubble { padding:12px 16px; border-radius:14px; box-shadow: 0 8px 26px rgba(2,6,23,0.28); color:#fff; }
+.modern-bubble.bubble-left { background: #f1f0f0; color: #fff; box-shadow: none; }
+.modern-bubble.bubble-right { background: linear-gradient(90deg,#34d399,#10b981); color: #fff; }
+.modern-composer { padding-top:8px; border-top: 1px solid rgba(255,255,255,0.02); }
+.modern-textarea { resize:none; min-height:56px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color: #fff; }
+.modern-send { background: linear-gradient(90deg,#7c3aed,#06b6d4); border:none; color:#fff; box-shadow: 0 6px 20px rgba(124,58,237,0.14); }
+.modern-header .small { color: rgba(255,255,255,0.6); }
+
+@media (max-width: 767px) {
+	.left-col { max-width:100%; flex-basis: auto; border-right: none; padding-right: .5rem; }
+	.right-col { padding-left: .5rem; }
+}
+
+/* Responsive grid filters and pagination styling */
+.tickets-admin .card-header .filters-row { display:flex; gap:8px; align-items:center; width:100%; }
+.tickets-admin .card-header .filters-row .left-filters { display:flex; gap:8px; flex:1 1 auto; align-items:center; }
+.tickets-admin .card-header .filters-row .right-filters { display:flex; gap:8px; align-items:center; }
+
+/* Also apply same responsive rules to tickets-user to keep parity */
+.tickets-user .card-header .filters-row { display:flex; gap:8px; align-items:center; width:100%; }
+.tickets-user .card-header .filters-row .left-filters { display:flex; gap:8px; flex:1 1 auto; align-items:center; }
+.tickets-user .card-header .filters-row .right-filters { display:flex; gap:8px; align-items:center; }
+
+@media (max-width: 767px) {
+	.tickets-admin .card-header .filters-row { flex-direction:column; align-items:stretch; gap:6px; }
+	.tickets-admin .card-header .filters-row .left-filters,
+	.tickets-admin .card-header .filters-row .right-filters { flex-direction:row; flex-wrap:wrap; gap:6px; }
+	.tickets-admin .card-header .filters-row input.form-control,
+	.tickets-admin .card-header .filters-row select.form-select { width:100%; }
+}
+
+/* Pagination buttons: compact and consistent */
+.tickets-admin .pagination-controls .btn { min-width:48px; padding:6px 8px; border-radius:8px; }
+.tickets-admin .pagination-controls .btn-outline-secondary { border-color: rgba(255,255,255,0.06); color: #cbd5e1; }
+.tickets-admin .pagination-controls .btn:hover { transform: translateY(-1px); }
+.tickets-admin .pagination-info { color: rgba(255,255,255,0.7); }
+
+/* Prominent Load more button used in both admin and user lists */
+.load-more-btn { padding:6px 12px; border-radius:8px; box-shadow: 0 6px 18px rgba(31,41,55,0.08); }
+.load-more-btn:hover { transform: translateY(-2px); }
+
+/* Polished responsive pagination */
+.tickets-admin .pagination { margin: 0; }
+.tickets-admin .pagination .page-link { color: #111827; background: #f8fafc; border-radius:8px; border: none; padding:6px 10px; }
+.tickets-admin .pagination .page-item.disabled .page-link { opacity: 0.6; cursor: default; }
+.tickets-admin .pagination .page-item .page-link:hover { background: #eef2ff; }
+
+/* Compact layout on small screens */
+@media (max-width: 575px) {
+	.tickets-admin .pagination-sm { --bs-pagination-padding-x: .35rem; --bs-pagination-padding-y: .25rem; }
+	.tickets-admin .pagination-info { display:none; }
+	.tickets-admin .pagination .d-none.d-sm-inline { display:none !important; }
+	.tickets-admin button[aria-label="Previous"], .tickets-admin button[aria-label="Next"] { padding:6px 8px; }
+	/* hide First/Last on very small screens */
+	.tickets-admin .btn-outline-primary { display:none; }
+}
+
+/* Reuse same pagination polish for tickets-user for parity */
+.tickets-user .pagination { margin: 0; }
+.tickets-user .pagination .page-link { color: #111827; background: #f8fafc; border-radius:8px; border: none; padding:6px 10px; }
+.tickets-user .load-more-btn { padding:6px 12px; border-radius:8px; box-shadow: 0 6px 18px rgba(31,41,55,0.06); }
+.tickets-user .pagination-info { color: #6b7280; }
+@media (max-width: 575px) {
+	.tickets-user .pagination-info { display:none; }
+	.tickets-user .btn-outline-primary { display:none; }
+}
+
+/* Numeric pagination: active and disabled styles */
+.pagination .page-item.active .page-link {
+	background: linear-gradient(90deg,#7c3aed,#06b6d4);
+	color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 6px 18px rgba(124,58,237,0.12);
+}
+.pagination .page-item .page-link {
+	color: #334155;
+	background: #fff;
+	border-radius: 8px;
+	margin: 0 2px;
+}
+.pagination .page-item.disabled .page-link { color: #94a3b8; background: transparent; }
+.pagination .page-item .page-link:focus { outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+
+/* Make Prev/Next compact on small screens */
+@media (max-width: 575px) {
+	.pagination-sm .page-link { padding: 4px 8px; }
+	.tickets-admin .load-more-btn, .tickets-user .load-more-btn { padding: 6px 10px; }
+}
+
+/* Professional pagination: squares, range chip and gradient current */
+.pagination-pro { gap: 8px; display: flex; align-items: center; width: 100%; }
+.pagination-pro .pg-square { width:36px; height:36px; border-radius:8px; border:none; background:#0b1220; color:#fff; display:inline-flex; align-items:center; justify-content:center; box-shadow: 0 6px 18px rgba(2,6,23,0.4); }
+.pagination-pro .pg-square.disabled,
+.pagination-pro .pg-square[disabled] { opacity:0.4; pointer-events:none; }
+.pagination-pro .pg-range { background:#111827; color:#e6eef8; padding:6px 10px; border-radius:8px; font-weight:600; box-shadow: inset 0 -1px 0 rgba(255,255,255,0.02); }
+.pagination-pro .pg-current { min-width:42px; height:36px; border-radius:10px; border:none; background: linear-gradient(90deg,#6ee7b7,#3b82f6); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 8px 26px rgba(15,23,42,0.3); }
+.pagination-pro .pg-nav-text .btn-link { color:#cbd5e1; }
+.gradient-btn { background: linear-gradient(90deg,#7c3aed,#06b6d4); color:#fff; border:none; padding:8px 14px; border-radius:10px; box-shadow:0 10px 26px rgba(124,58,237,0.14); }
+.gradient-btn:hover { transform: translateY(-2px); }
+
+@media (max-width: 575px) {
+	.pagination-pro { gap:6px; }
+	.pagination-pro .pg-range { display:none; }
+	.pagination-pro .pg-nav-text { display:none !important; }
+	.pagination-pro .pg-current { min-width:36px; }
+	.gradient-btn { padding:8px 10px; }
+}
+
+/* WhatsApp-like alignment: admin left, user right */
+.message-row { display:flex; }
+.message-body.from-admin { justify-content:flex-start; }
+.message-body.from-user { justify-content:flex-end; }
+.message-body .msg-bubble { max-width: 72%; }
+
+/* Bubble tail (pseudo-element) */
+.modern-bubble { position: relative; }
+.modern-bubble.bubble-left::after, .modern-bubble.bubble-right::after {
+	content: '';
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	bottom: 10px;
+	border-radius: 3px;
+	transform: rotate(45deg);
+}
+.modern-bubble.bubble-left::after { left: -8px; background: #e9e8e8; }
+.modern-bubble.bubble-right::after { right: -8px; background: linear-gradient(90deg,#34d399,#10b981); }
+
+/* Softer shadows and gradient refinements */
+.modern-bubble { box-shadow: 0 6px 20px rgba(2,6,23,0.14); }
+.modern-bubble.bubble-left { color: #0b1220; }
+.modern-bubble.bubble-right { color: #fff; }
+
+/* Entrance animations */
+.modern-row { opacity: 0; transform: translateY(6px); animation: msgEnter 360ms cubic-bezier(.22,.9,.29,1) forwards; }
+.modern-row .modern-bubble { transform-origin: left center; }
+.modern-row.right { transform-origin: right center; }
+@keyframes msgEnter {
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtle slide from left/right depending on role */
+.message-body.from-admin { animation: slideFromLeft 420ms cubic-bezier(.22,.9,.29,1) forwards; }
+.message-body.from-user { animation: slideFromRight 420ms cubic-bezier(.22,.9,.29,1) forwards; }
+@keyframes slideFromLeft { from { opacity:0; transform: translateX(-8px); } to { opacity:1; transform: translateX(0); } }
+@keyframes slideFromRight { from { opacity:0; transform: translateX(8px); } to { opacity:1; transform: translateX(0); } }
+
+/* Subtle header glow */
+.modern-header { box-shadow: inset 0 -1px 0 rgba(255,255,255,0.02), 0 4px 20px rgba(2,6,23,0.2); }
+
+/* Sleeker scrollbar */
+.messages-container::-webkit-scrollbar { width:10px; }
+.messages-container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border-radius:8px; }
+
+/* Composer polish */
+.modern-textarea { padding:10px; border-radius:10px; }
+.modern-send { padding:10px 14px; border-radius:10px; }
+
+/* Reduce visual noise on left panel */
+.left-col { background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); }
+
+/* header X button */
+.btn-close-custom { background: transparent; border: 1px solid rgba(255,255,255,0.03); color: #6b7280; width:34px; height:34px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; }
+.btn-close-custom:hover { background: rgba(0,0,0,0.06); color:#111827; }
+
+/* clear button and close button styling */
+.btn-outline-secondary { border-color: rgba(255,255,255,0.06); color: #cbd5e1; }
+.btn-outline-secondary:hover { background: rgba(255,255,255,0.02); color: #fff; }
+.btn-secondary { background: linear-gradient(90deg,#6b7280,#4b5563); border: none; color: #fff; }
+
+/* small close button for the list card */
+.btn-close-card { background: transparent; border: 1px solid rgba(0,0,0,0.06); color: #546170; padding:4px 8px; border-radius:6px; }
+.btn-close-card:hover { background: rgba(0,0,0,0.04); color:#111827; }
+
+/* Vertical divider between left and right columns on large screens */
+.left-col { position:relative; }
+.right-col { position:relative; }
+@media(min-width: 992px) {
+	.left-col { border-right: 1px solid rgba(255,255,255,0.04); padding-right: 1.5rem; }
+	.right-col { padding-left: 1.5rem; }
+}
+
+/* Priority badge inside left column should be white text for contrast */
+.left-col .badge { color: #fff !important; }
+.left-col .badge.bg-info { background: linear-gradient(90deg,#2a9df4,#1776d2) !important; }
+
+/* Modern glass header and body for ticket modal */
+.helpdesk-glass { background: linear-gradient(180deg, rgba(10,14,20,0.9), rgba(7,11,16,0.94)); color: #e6eef8; border-radius:10px; }
+.modern-header { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-bottom: 1px solid rgba(255,255,255,0.03); }
+.modern-header .modal-title { font-weight:700; color:#fff; }
+.modern-body { padding:0; }
+.modern-right { min-height:360px; }
+.modern-messages { background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:8px; }
+.modern-row { align-items:flex-start; }
+.modern-message { width:100%; }
+.modern-message .message-sender { color: rgba(255,255,255,0.75); font-weight:600; }
+.modern-bubble { padding:12px 16px; border-radius:14px; box-shadow: 0 8px 26px rgba(2,6,23,0.28); color:#fff; }
+.modern-bubble.bubble-left { background: #f1f0f0; color: #fff; box-shadow: none; }
+.modern-bubble.bubble-right { background: linear-gradient(90deg,#34d399,#10b981); color: #fff; }
+.modern-composer { padding-top:8px; border-top: 1px solid rgba(255,255,255,0.02); }
+.modern-textarea { resize:none; min-height:56px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color: #fff; }
+.modern-send { background: linear-gradient(90deg,#7c3aed,#06b6d4); border:none; color:#fff; box-shadow: 0 6px 20px rgba(124,58,237,0.14); }
+.modern-header .small { color: rgba(255,255,255,0.6); }
+
+@media (max-width: 767px) {
+	.left-col { max-width:100%; flex-basis: auto; border-right: none; padding-right: .5rem; }
+	.right-col { padding-left: .5rem; }
+}
+
+/* WhatsApp-like alignment: admin left, user right */
+.message-row { display:flex; }
+.message-body.from-admin { justify-content:flex-start; }
+.message-body.from-user { justify-content:flex-end; }
+.message-body .msg-bubble { max-width: 72%; }
+
+/* Bubble tail (pseudo-element) */
+.modern-bubble { position: relative; }
+.modern-bubble.bubble-left::after, .modern-bubble.bubble-right::after {
+	content: '';
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	bottom: 10px;
+	border-radius: 3px;
+	transform: rotate(45deg);
+}
+.modern-bubble.bubble-left::after { left: -8px; background: #e9e8e8; }
+.modern-bubble.bubble-right::after { right: -8px; background: linear-gradient(90deg,#34d399,#10b981); }
+
+/* Softer shadows and gradient refinements */
+.modern-bubble { box-shadow: 0 6px 20px rgba(2,6,23,0.14); }
+.modern-bubble.bubble-left { color: #0b1220; }
+.modern-bubble.bubble-right { color: #fff; }
+
+/* Entrance animations */
+.modern-row { opacity: 0; transform: translateY(6px); animation: msgEnter 360ms cubic-bezier(.22,.9,.29,1) forwards; }
+.modern-row .modern-bubble { transform-origin: left center; }
+.modern-row.right { transform-origin: right center; }
+@keyframes msgEnter {
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtle slide from left/right depending on role */
+.message-body.from-admin { animation: slideFromLeft 420ms cubic-bezier(.22,.9,.29,1) forwards; }
+.message-body.from-user { animation: slideFromRight 420ms cubic-bezier(.22,.9,.29,1) forwards; }
+@keyframes slideFromLeft { from { opacity:0; transform: translateX(-8px); } to { opacity:1; transform: translateX(0); } }
+@keyframes slideFromRight { from { opacity:0; transform: translateX(8px); } to { opacity:1; transform: translateX(0); } }
+
+/* Subtle header glow */
+.modern-header { box-shadow: inset 0 -1px 0 rgba(255,255,255,0.02), 0 4px 20px rgba(2,6,23,0.2); }
+
+/* Sleeker scrollbar */
+.messages-container::-webkit-scrollbar { width:10px; }
+.messages-container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border-radius:8px; }
+
+/* Composer polish */
+.modern-textarea { padding:10px; border-radius:10px; }
+.modern-send { padding:10px 14px; border-radius:10px; }
+
+/* Reduce visual noise on left panel */
+.left-col { background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); }
+
+@media (max-width: 767px) {
+	.left-col { max-width:100%; flex-basis: auto; border-right: none; padding-right: .5rem; }
+	.right-col { padding-left: .5rem; }
+}

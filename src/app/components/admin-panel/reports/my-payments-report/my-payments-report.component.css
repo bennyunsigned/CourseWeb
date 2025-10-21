@@ -1,0 +1,21 @@
+.report-panel { background: var(--panel); border-radius: 10px; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+.report-panel h4 { margin-top: 0; }
+.table-responsive { max-height: 60vh; }
+.table thead.sticky-top th { position: sticky; top: 0; z-index: 1; }
+.invalid-feedback { font-size: .85rem; }
+/* Reserve stable space under inputs */
+.feedback-space { min-height: 1.25rem; }
+
+/* Loading overlay */
+.loading-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(255,255,255,0.6);
+	border-radius: 10px;
+	z-index: 10;
+}
+
+/* Filter bar design */
+.filter-bar { background: linear-gradient(180deg, #f8f9fb, #eef1f6); border: 1px solid rgba(0,0,0,0.06); }
+.filter-bar .input-group-text { background: #fff; border-color: rgba(0,0,0,0.1); }
+.filter-bar .form-control, .filter-bar .form-select { border-color: rgba(0,0,0,0.1); }

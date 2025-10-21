@@ -6,9 +6,12 @@ import { WebsiteBaseComponent } from './components/website/website-base/website-
 import { DashboardComponent } from './components/admin-panel/dashboard/dashboard.component';
 import { CourseMasterComponent } from './components/admin-panel/courses/course-master/course-master.component';
 import { AuthGuard } from './authGuard/auth.guard';
+import { AdminOnlyGuard } from './authGuard/admin-only.guard';
 import { CourseModuleComponent } from './components/admin-panel/courses/course-module/course-module.component';
 import { CategoryMasterComponent } from './components/admin-panel/courses/category-master/category-master.component';
 import { TicketsComponent } from './components/admin-panel/helpdesk/tickets/tickets.component';
+import { TicketsUserComponent } from './components/admin-panel/helpdesk/user/tickets-user.component';
+import { TicketsAdminComponent } from './components/admin-panel/helpdesk/admin/tickets-admin.component';
 import { FaqComponent } from './components/admin-panel/helpdesk/faq/faq.component';
 import { ErrorReportComponent } from './components/admin-panel/reports/error-report/error-report.component';
 import { LoginReportComponent } from './components/admin-panel/reports/login-report/login-report.component';
@@ -54,6 +57,7 @@ export const routes: Routes = [
         path: 'dashboard',
         component: AdminBaseComponent,
         children: [          
+            { path: '', redirectTo: 'home', pathMatch: 'full' },
             
             { path: 'home', component: DashboardComponent, canActivate: [AuthGuard] },
             
@@ -86,9 +90,11 @@ export const routes: Routes = [
         path: 'helpdesk', 
         component: AdminBaseComponent,
         children: [
-            { path: 'tickets', component: TicketsComponent, canActivate: [AuthGuard] },
+            // Backwards-compatible path (defaults to user tickets)
+            { path: 'tickets', component: TicketsUserComponent, canActivate: [AuthGuard] },
+            { path: 'user-tickets', component: TicketsUserComponent, canActivate: [AuthGuard] },
+            { path: 'admin-tickets', component: TicketsAdminComponent, canActivate: [AuthGuard] },
             { path: 'faq', component: FaqComponent, canActivate: [AuthGuard] },            
-            
         ]
     },
     {
@@ -99,6 +105,8 @@ export const routes: Routes = [
             { path: 'login-report', component: LoginReportComponent, canActivate: [AuthGuard] },    
             { path: 'sales-report', component: SalesReportComponent, canActivate: [AuthGuard] },
             { path: 'user-report', component: UserReportComponent, canActivate: [AuthGuard] },        
+            { path: 'admin-total', loadComponent: () => import('./components/admin-panel/reports/admin-total-report/admin-total-report.component').then(m => m.AdminTotalReportComponent), canActivate: [AuthGuard, AdminOnlyGuard] },
+            { path: 'my-payments', loadComponent: () => import('./components/admin-panel/reports/my-payments-report/my-payments-report.component').then(m => m.MyPaymentsReportComponent), canActivate: [AuthGuard] },
             
         ]
     }

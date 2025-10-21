@@ -143,8 +143,8 @@
 .course-banner {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10; /* slightly taller ratio but smaller min height */
-  min-height: 120px; /* reduced height for compact cards */
+  /* responsive height: clamp between 96px and 180px, scale with viewport */
+  min-height: clamp(96px, 14vw, 180px);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -153,6 +153,7 @@
   overflow: hidden;
 }
 
+/* Default: use absolutely positioned image to cover the banner (desktop/tablet) */
 .course-banner-img {
   position: absolute;
   inset: 0;
@@ -161,6 +162,45 @@
   object-fit: cover;
   z-index: 0;
   display: block;
+}
+
+/* Mobile: switch image to normal flow so it cannot escape the container and set a compact height */
+@media (max-width: 767.98px) {
+  .course-banner {
+    min-height: clamp(88px, 18vw, 140px);
+    aspect-ratio: auto;
+  }
+  .course-banner-img {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+}
+
+/* Strong mobile-safe rules: prevent any banner image from overflowing viewport */
+@media (max-width: 576px) {
+  .aw-available-courses .course-banner {
+    aspect-ratio: auto; /* allow height to adjust naturally on tiny screens */
+    min-height: 110px; /* reduced for compact mobile cards */
+    width: 100%;
+    max-width: 100%;
+  }
+  .aw-available-courses .course-banner-img {
+    position: relative; /* avoid absolute positioning causing overflow */
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    object-fit: cover;
+    display: block;
+  }
+  /* Ensure card doesn't create horizontal scroll due to padding/margins */
+  .aw-available-courses {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
 }
 
 .course-banner .badge-row { z-index: 2; }
@@ -175,6 +215,54 @@
   gap: 6px;
   z-index: 4;
   pointer-events: none; /* allow clicks through badges */
+}
+
+/* Extra defensive mobile rules to prevent any horizontal overflow */
+@media (max-width: 576px) {
+  /* Make sure the component uses border-box so padding doesn't add to width unexpectedly */
+  .aw-available-courses, .aw-available-courses * {
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure the grid row never creates overflow due to gaps */
+  .aw-available-courses .aw-row {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    gap: 0.6rem;
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Cards should not add extra horizontal padding that can push them out */
+  .aw-available-courses .aw-col,
+  .aw-available-courses .aw-card,
+  .aw-available-courses .aw-card .aw-card-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0.4rem !important;
+    padding-right: 0.4rem !important;
+  }
+
+  /* Disable absolute positioning for the banner image to keep it inside flow */
+  .aw-available-courses .course-banner {
+    position: relative !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+  }
+
+  /* Clamp images to container and avoid height forcing overflow */
+  .aw-available-courses .course-banner-img {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  /* Prevent page-level horizontal scroll coming from this component */
+  .aw-available-courses { overflow-x: hidden !important; padding-left: 0.25rem; padding-right: 0.25rem; }
 }
 
 /* subtle badge hover glow */
@@ -892,6 +980,17 @@
   align-items: center;
 }
 
+/* Compact pagination visuals for extra-small screens */
+.aw-available-courses .bottom-pagination .btn-sm {
+  min-width: 40px;
+  height: 36px;
+  padding: 0.25rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.aw-available-courses .bottom-pagination .small { font-size: 0.85rem; }
+
 /* Strong scoped fixes to undo any leftover large sizes from global/admin styles */
 .aw-available-courses .course-card { min-height: 0 !important; padding: 0 !important; }
 .aw-available-courses .aw-card { min-height: 0; }
@@ -960,3 +1059,134 @@
     color: #fff !important;
     border: 1px solid rgba(59,130,246,0.12) !important;
   }
+
+/* Final high-specificity responsive overrides to ensure banners behave correctly */
+/* Place this at the end so it wins over earlier rules and third-party admin styles */
+.aw-available-courses .aw-col .course-banner,
+.aw-available-courses .aw-col .course-banner-img {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+/* Desktop/tablet: keep cover behavior but clamp heights */
+.aw-available-courses .aw-col .course-banner {
+  position: relative !important;
+  min-height: clamp(96px, 14vw, 180px) !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+.aw-available-courses .aw-col .course-banner-img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Mobile: force image into document flow to prevent overflow and horizontal scrolling */
+@media (max-width: 767.98px) {
+  .aw-available-courses .aw-col .course-banner {
+    position: relative !important;
+    min-height: clamp(72px, 16vw, 120px) !important;
+    aspect-ratio: auto !important;
+  }
+  .aw-available-courses .aw-col .course-banner-img {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+  }
+}
+
+/* Bootstrap ratio + object-fit helpers for course banners */
+.ratio.course-banner {
+  /* ensure the ratio box looks like the designed card top */
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  position: relative; /* badges / overlays position relative to this box */
+}
+
+.ratio.course-banner img.object-fit-cover {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+}
+
+/* Ensure badges are centered at the bottom of the ratio box */
+.ratio.course-banner .badge-row {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 8px !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  pointer-events: none !important;
+  z-index: 4 !important;
+}
+
+/* High-specificity alignment fixes for badges inside admin panel ratio box
+   Ensures badges are vertically centered, equal height, and won't wrap or shift
+   when one or more badges are hidden (via *ngIf). */
+.aw-available-courses .ratio.course-banner .badge-row,
+.wrapper .main .aw-available-courses .ratio.course-banner .badge-row {
+  display: flex !important;
+  align-items: center !important;      /* vertically center badges */
+  justify-content: center !important;  /* horizontal center */
+  gap: 0.5rem !important;
+  bottom: 12px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  pointer-events: none !important;
+  width: auto !important;
+  max-width: calc(100% - 24px) !important; /* give small horizontal padding */
+}
+
+/* Normalize badge visuals and ensure consistent vertical alignment */
+.aw-available-courses .ratio.course-banner .aw-badge,
+.wrapper .main .aw-available-courses .ratio.course-banner .aw-badge {
+  height: 32px !important;
+  min-width: 58px !important;
+  padding: 0 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  white-space: nowrap !important;
+  font-size: 0.78rem !important;
+}
+
+/* Slightly reduce spacing on very small screens so badges fit */
+@media (max-width: 420px) {
+  .aw-available-courses .ratio.course-banner .badge-row,
+  .wrapper .main .aw-available-courses .ratio.course-banner .badge-row {
+    gap: 0.4rem !important;
+    bottom: 8px !important;
+  }
+  .aw-available-courses .ratio.course-banner .aw-badge { height: 28px !important; min-width: 48px !important; font-size: 0.72rem !important; }
+}
+
+/* Final override: ensure badges are bottom-centered inside the ratio box
+   This cancels any earlier 'top' placement or centering transforms applied by
+   other rules (including admin/global CSS). Keep this at the end of the file. */
+.ratio.course-banner .badge-row,
+.aw-available-courses .ratio.course-banner .badge-row,
+.wrapper .main .aw-available-courses .ratio.course-banner .badge-row {
+  position: absolute !important;
+  top: auto !important;      /* cancel any top-based centering */
+  bottom: 12px !important;    /* firmly place at the bottom */
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important; /* horizontal center only */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+  z-index: 6 !important; /* make sure badges sit above the image */
+}

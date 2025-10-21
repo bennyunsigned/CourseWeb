@@ -83,20 +83,14 @@
                                 <span class="badge bg-primary ms-2" *ngIf="cartCount > 0">{{cartCount}}</span>
                             </a>
                         </li>
-                        <!-- <li class="sidebar-item" [ngClass]="{'active': isActive('/course/premium-courses')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/premium-courses'"
-                                (click)="activateSubmenu('courses')">
-                                <i class="align-middle me-2 bi bi-gem"></i>
-                                <span class="align-middle">My Courses</span>
-                            </a>
-                        </li> -->
+                        
                     </ng-container>
                 </ul>
             </li>
 
             <!-- Helpdesk Menu with Submenus -->
             <li class="sidebar-item"
-                [ngClass]="{'active': isHelpdeskMenuOpen || isSubmenuActive(['/helpdesk/tickets', '/admin/helpdesk/faq'])}">
+                [ngClass]="{'active': isHelpdeskMenuOpen || isSubmenuActive(['/helpdesk/tickets', '/helpdesk/faq'])}">
                 <a class="sidebar-link d-flex align-items-center collapsed" data-bs-toggle="collapse"
                     href="#helpdeskMenu" role="button" aria-expanded="false" aria-controls="helpdeskMenu"
                     (click)="toggleMenu('helpdesk')">
@@ -106,34 +100,20 @@
                 </a>
                 <ul class="collapse list-unstyled ps-4" id="helpdeskMenu" [ngClass]="{'show': isHelpdeskMenuOpen}">
                     <ng-container *ngIf="isSpecialUser">
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/tickets')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/tickets'"
-                                (click)="activateSubmenu('helpdesk')">
-                                <i class="align-middle me-2 bi bi-file-earmark-text"></i>
-                                <span class="align-middle">Tickets</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/faq')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/faq'"
-                                (click)="activateSubmenu('helpdesk')">
-                                <i class="align-middle me-2 bi bi-info-circle"></i>
-                                <span class="align-middle">FAQ</span>
+                        <!-- Admin users see admin-specific helpdesk pages -->
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/admin-tickets')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/admin-tickets'" (click)="activateSubmenu('helpdesk')">
+                                <i class="align-middle me-2 bi bi-people-fill"></i>
+                                <span class="align-middle">Admin Tickets</span>
                             </a>
                         </li>
                     </ng-container>
                     <ng-container *ngIf="!isSpecialUser">
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/priority-tickets')}">
-                            <a class="sidebar-link d-flex align-items-center"
-                                [routerLink]="'/helpdesk/priority-tickets'" (click)="activateSubmenu('helpdesk')">
-                                <i class="align-middle me-2 bi bi-exclamation-triangle"></i>
-                                <span class="align-middle">Priority Tickets</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/vip-support')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/vip-support'"
-                                (click)="activateSubmenu('helpdesk')">
-                                <i class="align-middle me-2 bi bi-life-preserver"></i>
-                                <span class="align-middle">VIP Support</span>
+                        <!-- Regular users see only their tickets -->
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/user-tickets')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/user-tickets'" (click)="activateSubmenu('helpdesk')">
+                                <i class="align-middle me-2 bi bi-person-lines-fill"></i>
+                                <span class="align-middle">My Tickets</span>
                             </a>
                         </li>
                     </ng-container>
@@ -142,7 +122,7 @@
 
             <!-- Reports Menu with Submenus -->
             <li class="sidebar-item"
-                [ngClass]="{'active': isReportsMenuOpen || isSubmenuActive(['/reports/sales-report', '/reports/user-report', '/reports/error-report', '/reports/login-report'])}">
+                [ngClass]="{'active': isReportsMenuOpen || isSubmenuActive(['/reports/sales-report', '/reports/user-report', '/reports/error-report', '/reports/login-report', '/reports/admin-total', '/reports/my-payments'])}">
                 <a class="sidebar-link d-flex align-items-center collapsed" data-bs-toggle="collapse"
                     href="#reportsMenu" role="button" aria-expanded="false" aria-controls="reportsMenu"
                     (click)="toggleMenu('reports')">
@@ -151,6 +131,7 @@
                     <i class="align-middle ms-auto bi bi-chevron-down"></i>
                 </a>
                 <ul class="collapse list-unstyled ps-4" id="reportsMenu" [ngClass]="{'show': isReportsMenuOpen}">
+                    <!-- Admin-only reports -->
                     <ng-container *ngIf="isSpecialUser">
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/sales')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/sales-report'"
@@ -180,7 +161,16 @@
                                 <span class="align-middle">Login Report</span>
                             </a>
                         </li>
+                        <!-- New report links -->
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/admin-total')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/admin-total'"
+                                (click)="activateSubmenu('reports')">
+                                <i class="align-middle me-2 bi bi-clipboard-data"></i>
+                                <span class="align-middle">Admin Total</span>
+                            </a>
+                        </li>
                     </ng-container>
+                    <!-- Regular user reports -->
                     <ng-container *ngIf="!isSpecialUser">
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/premium-sales')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/premium-sales'"
@@ -194,6 +184,13 @@
                                 (click)="activateSubmenu('reports')">
                                 <i class="align-middle me-2 bi bi-people-fill"></i>
                                 <span class="align-middle">VIP Users</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/my-payments')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/my-payments'"
+                                (click)="activateSubmenu('reports')">
+                                <i class="align-middle me-2 bi bi-wallet2"></i>
+                                <span class="align-middle">My Payments</span>
                             </a>
                         </li>
                     </ng-container>

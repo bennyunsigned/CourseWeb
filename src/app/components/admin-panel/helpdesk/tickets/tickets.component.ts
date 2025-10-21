@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tickets',
-  imports: [],
-  templateUrl: './tickets.component.html',
-  styleUrl: './tickets.component.css'
+  template: '',
 })
-export class TicketsComponent {
-
+export class TicketsComponent implements OnInit {
+  constructor(private router: Router) {}
+  ngOnInit(): void {
+    // Redirect to the new user tickets route for backward compatibility
+    this.router.navigate(['/helpdesk/user-tickets']);
+  }
 }

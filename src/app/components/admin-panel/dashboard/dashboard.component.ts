@@ -1,12 +1,339 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
+import { decryptData } from '../../../utils/crypto-util';
+import { ReportService } from '../../../services/report.service';
+import { CourseProgressService } from '../../../services/course-progress.service';
+import { LoadingService } from '../../../services/loading.service';
+import { PageLoaderComponent } from '../../page-loader/page-loader.component';
+import * as Highcharts from 'highcharts';
+import { HighchartsChartComponent } from 'highcharts-angular';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule, PageLoaderComponent, HighchartsChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
   appName = environment.appName;
+
+  // Role detection (simple email-based admin check)
+  isAdmin = false;
+  userEmail: string | null = null;
+
+  // Admin totals + filters
+  loading = false;
+  error: string | null = null;
+  adminData: any = null;
+  startDate = '';
+  endDate = '';
+  todayYMD: string = this.toLocalYMD(new Date());
+  validationErrors: { start?: string; end?: string } = {};
+  selectedPreset: 'today' | 'last7' | 'month' | 'lastMonth' | 'ytd' | null = null;
+  showCustomRange = false;
+
+  // Highcharts (v5 standalone component; no [Highcharts] binding needed)
+  chartOptions: Highcharts.Options = {};
+  chartUpdateFlag = false;
+  chartOptionsDaily: Highcharts.Options = {};
+  chartUpdateFlagDaily = false;
+  hasDailySeries = false;
+
+  // User metric
+  hasSubscription = false;
+  purchasedCourseIds: number[] = [];
+  totalCoursesCovered = 0;
+
+  constructor(
+    private reports: ReportService,
+    private cps: CourseProgressService,
+    private loadingService: LoadingService
+  ) {}
+
+  ngOnInit() {
+    this.detectRole();
+    if (this.isAdmin) {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      this.startDate = this.toLocalYMD(start);
+      this.endDate = this.toLocalYMD(end);
+      this.validateDates(true);
+      this.loadAdminTotals();
+    } else {
+      this.loadUserCourseCoverage();
+    }
+  }
+
+  private detectRole() {
+    try {
+      const stored = localStorage.getItem('user_email');
+      if (stored) {
+        const email = (decryptData(stored) || stored).trim().toLowerCase();
+        this.userEmail = email;
+        this.isAdmin = email === 'bennyunsigned@gmail.com';
+      }
+    } catch {}
+  }
+
+  // ----- Admin side -----
+  loadAdminTotals() {
+    this.loading = true;
+    this.loadingService.show();
+    this.error = null;
+    const start = this.startDate || undefined;
+    const end = this.endDate || undefined;
+    this.reports.getAdminTotal(start, end).subscribe({
+      next: (res) => {
+        try {
+          this.adminData = res || { total: 0, count: 0, breakdown: [] };
+          this.buildChart();
+        } catch (e) {
+          console.error('[Dashboard] buildChart error', e);
+          this.error = 'Failed to render chart';
+        } finally {
+          this.loading = false;
+          this.loadingService.hide();
+        }
+      },
+      error: (err: any) => {
+        console.error('[Dashboard] loadAdminTotals error', err);
+        this.error = err?.message || 'Failed to load dashboard totals';
+        this.loading = false;
+        this.loadingService.hide();
+      }
+    });
+  }
+
+  applyPreset(preset: 'today' | 'last7' | 'month' | 'lastMonth' | 'ytd') {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let start: Date;
+    let end: Date = new Date(today);
+    switch (preset) {
+      case 'today':
+        start = new Date(today); end = new Date(today); break;
+      case 'last7':
+        start = new Date(today); start.setDate(today.getDate() - 6); end = new Date(today); break;
+      case 'month':
+        start = new Date(today.getFullYear(), today.getMonth(), 1); end = new Date(today); break;
+      case 'lastMonth':
+        start = new Date(today.getFullYear(), today.getMonth() - 1, 1); end = new Date(today.getFullYear(), today.getMonth(), 0); break;
+      case 'ytd':
+        start = new Date(today.getFullYear(), 0, 1); end = new Date(today); break;
+    }
+    this.startDate = this.toLocalYMD(start);
+    this.endDate = this.toLocalYMD(end);
+    this.selectedPreset = preset;
+    if (this.validateDates(true)) this.loadAdminTotals();
+  }
+
+  onDateChange() {
+    this.selectedPreset = null;
+    if (this.validateDates(true)) this.loadAdminTotals();
+  }
+
+  private toLocalYMD(d: Date): string {
+    const y = d.getFullYear();
+    const m = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  private parseLocalYMD(s: string): Date | null {
+    if (!s) return null;
+    const [y, m, d] = s.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+  }
+
+  private validateDates(setErrors: boolean): boolean {
+    const errs: { start?: string; end?: string } = {};
+    const start = this.parseLocalYMD(this.startDate || '');
+    const end = this.parseLocalYMD(this.endDate || '');
+    const today = this.parseLocalYMD(this.todayYMD)!;
+
+    if (!start) errs.start = 'Start date is required';
+    if (!end) errs.end = 'End date is required';
+    if (start && end && start.getTime() > end.getTime()) errs.end = 'End date must be on or after start date';
+    if (start && start.getTime() > today.getTime()) errs.start = 'Start date cannot be in the future';
+    if (end && end.getTime() > today.getTime()) errs.end = 'End date cannot be in the future';
+
+    if (setErrors) this.validationErrors = errs;
+    return Object.keys(errs).length === 0;
+  }
+
+  private getString(obj: any, keys: string[], fallback = 'Unknown'): string {
+    for (const k of keys) {
+      const v = obj?.[k];
+      if (v !== undefined && v !== null) return String(v);
+    }
+    return fallback;
+  }
+
+  private getNumber(obj: any, keys: string[], fallback = 0): number {
+    for (const k of keys) {
+      const v = obj?.[k];
+      if (v !== undefined && v !== null && v !== '') return Number(v) || 0;
+    }
+    return fallback;
+  }
+
+  private buildChart() {
+    const raw = (this.adminData as any) || {};
+    const breakdown = ((raw.breakdown || raw.breakdowns || raw.by_type || []) as any[]).slice();
+    // Sort categories by amount descending for better readability
+    breakdown.sort((a, b) => (
+      this.getNumber(b, ['total_amount', 'amount', 'totalAmount']) - this.getNumber(a, ['total_amount', 'amount', 'totalAmount'])
+    ));
+    const categories = breakdown.map(b => this.getString(b, ['payment_type', 'type', 'paymentType', 'PaymentType']));
+    const amounts = breakdown.map(b => this.getNumber(b, ['total_amount', 'amount', 'totalAmount']));
+    const counts = breakdown.map(b => this.getNumber(b, ['count', 'total_count', 'totalCount']));
+
+    this.chartOptions = {
+      chart: { type: 'bar', height: 300, spacing: [8, 8, 8, 8], backgroundColor: 'transparent' },
+      title: { text: undefined, style: { color: '#adb5bd' } },
+      xAxis: {
+        categories,
+        title: { text: undefined },
+        lineColor: 'rgba(255,255,255,0.08)',
+        tickColor: 'rgba(255,255,255,0.08)',
+        labels: { style: { color: '#ced4da' } }
+      },
+      yAxis: [
+        { title: { text: 'Amount', style: { color: '#adb5bd' } }, gridLineColor: 'rgba(255,255,255,0.08)', labels: { style: { color: '#ced4da' } } },
+        { title: { text: 'Count', style: { color: '#adb5bd' } }, opposite: true, gridLineColor: 'rgba(255,255,255,0.08)', labels: { style: { color: '#ced4da' } } }
+      ],
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          pointPadding: 0.1,
+          groupPadding: 0.06,
+          dataLabels: { enabled: true, style: { fontSize: '10px', color: '#f8f9fa' } }
+        },
+        spline: {
+          dataLabels: { enabled: false },
+          marker: { enabled: true, radius: 2 },
+          lineWidth: 2
+        }
+      },
+      tooltip: {
+        shared: true,
+        borderColor: 'rgba(255,255,255,0.15)',
+        backgroundColor: 'rgba(33,37,41,0.95)',
+        style: { color: '#ffffff' },
+        useHTML: true,
+        formatter: function() {
+          const pts = (this as any).points || [];
+          const header = `<div class=\"mb-1\"><strong>${(this as any).x}</strong></div>`;
+          const lines = pts.map((p: any) => {
+            const valNum = typeof p.y === 'number' ? p.y : Number(p.y || 0);
+            const isAmount = /amount/i.test(p.series.name);
+            const formatted = isAmount ? `Rs: ${valNum.toLocaleString('en-IN')}` : `${valNum.toLocaleString()}`;
+            return `<div><span style=\"color:${p.color}\">●</span> ${p.series.name}: <b>${formatted}</b></div>`;
+          });
+          return header + lines.join('');
+        }
+      },
+      legend: { enabled: true },
+      series: [
+        { name: 'Amount', type: 'bar', data: amounts, yAxis: 0, color: '#5bc0ff' },
+        { name: 'Count', type: 'spline', data: counts, yAxis: 1, color: '#b197fc' }
+      ],
+      credits: { enabled: false }
+    };
+    this.chartUpdateFlag = true;
+
+    // Second chart: prefer backend daily totals; otherwise show counts by type as a line chart
+    const daily: Array<{ date: string; total_amount: number }> = raw.daily || raw.daily_series || [];
+    if (Array.isArray(daily) && daily.length) {
+      const dailySorted = daily.slice().sort((a, b) => a.date.localeCompare(b.date));
+      const dates = dailySorted.map(d => d.date);
+      const dayAmounts = dailySorted.map(d => Number(d.total_amount || 0));
+      this.chartOptionsDaily = {
+        chart: { type: 'areaspline', height: 300, spacing: [8,8,8,8], backgroundColor: 'transparent' },
+        title: { text: undefined, style: { color: '#adb5bd' } },
+        xAxis: { categories: dates, title: { text: undefined }, lineColor: 'rgba(255,255,255,0.08)', tickColor: 'rgba(255,255,255,0.08)', labels: { style: { color: '#ced4da' } } },
+        yAxis: { title: { text: 'Amount', style: { color: '#adb5bd' } }, gridLineColor: 'rgba(255,255,255,0.08)', labels: { style: { color: '#ced4da' } } },
+        plotOptions: {
+          areaspline: {
+            fillOpacity: 0.25,
+            marker: { enabled: false },
+            dataLabels: { enabled: false }
+          }
+        },
+        tooltip: { shared: true, borderColor: 'rgba(255,255,255,0.15)', backgroundColor: 'rgba(33,37,41,0.95)' },
+        legend: { enabled: false },
+  series: [ { name: 'Amount', type: 'areaspline', data: dayAmounts, color: '#51cf66' } ],
+        credits: { enabled: false }
+      };
+      this.hasDailySeries = true;
+      this.chartUpdateFlagDaily = true;
+    } else if (categories.length) {
+      this.chartOptionsDaily = {
+        chart: { type: 'column', height: 300, spacing: [8,8,8,8], backgroundColor: 'transparent' },
+        title: { text: undefined, style: { color: '#adb5bd' } },
+        xAxis: { categories, title: { text: undefined }, lineColor: 'rgba(255,255,255,0.08)', tickColor: 'rgba(255,255,255,0.08)', labels: { style: { color: '#ced4da' } } },
+        yAxis: { title: { text: 'Count', style: { color: '#adb5bd' } }, gridLineColor: 'rgba(255,255,255,0.08)', labels: { style: { color: '#ced4da' } } },
+        plotOptions: {
+          column: {
+            borderRadius: 4,
+            pointPadding: 0.1,
+            groupPadding: 0.06,
+            dataLabels: { enabled: true, style: { fontSize: '10px', color: '#f8f9fa' } }
+          }
+        },
+        tooltip: { shared: true, borderColor: 'rgba(255,255,255,0.15)', backgroundColor: 'rgba(33,37,41,0.95)' },
+        legend: { enabled: false },
+  series: [ { name: 'Count', type: 'column', data: counts, color: '#ffd43b' } ],
+        credits: { enabled: false }
+      };
+      this.hasDailySeries = true; // show the fallback chart
+      this.chartUpdateFlagDaily = true;
+    } else {
+      this.hasDailySeries = false;
+    }
+  }
+
+  // ----- User side -----
+  loadUserCourseCoverage() {
+    this.loading = true;
+    this.loadingService.show();
+    this.error = null;
+    // Step 1: get subscription status
+    this.cps.hasActiveSubscription().subscribe({
+      next: (sub) => {
+        this.hasSubscription = !!sub?.has_active_subscription;
+        if (!this.hasSubscription) {
+          // load purchased courses then compute coverage from available list
+          this.cps.getPurchasedCourses().subscribe({
+            next: (pc) => { this.purchasedCourseIds = pc?.purchased_courses || []; this.fetchAllCoursesAndCompute(); },
+            error: () => { this.purchasedCourseIds = []; this.fetchAllCoursesAndCompute(); }
+          });
+        } else {
+          this.fetchAllCoursesAndCompute();
+        }
+      },
+      error: () => { this.hasSubscription = false; this.purchasedCourseIds = []; this.fetchAllCoursesAndCompute(); }
+    });
+  }
+
+  private fetchAllCoursesAndCompute() {
+    // Category 0 = All (based on existing MyCourses usage); large limit
+    this.cps.getPublicCourseContentByCategory(0, 1000, 0).subscribe({
+      next: (all: any[]) => {
+        let list = Array.isArray(all) ? all : [];
+        if (!this.hasSubscription) {
+          if (!this.purchasedCourseIds?.length) list = [];
+          else list = list.filter(c => this.purchasedCourseIds.includes(Number(c?.CourseId)));
+        }
+        this.totalCoursesCovered = list.length;
+        this.loading = false; this.loadingService.hide();
+      },
+      error: () => { this.totalCoursesCovered = 0; this.loading = false; this.loadingService.hide(); }
+    });
+  }
 }
