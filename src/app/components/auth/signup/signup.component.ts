@@ -67,7 +67,7 @@ export class SignupComponent implements OnInit {
     }
 
     try {
-      const client_id = (document.querySelector('meta[name="google-signin-client_id"]') as HTMLMetaElement)?.content;
+      const client_id = this.googleAuthKey;
       if (!client_id) {
         console.error('No google client id configured');
         this.toastr.error('Google client id not configured');

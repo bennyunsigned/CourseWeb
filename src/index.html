@@ -14,52 +14,72 @@
   <!-- Bootstrap Icons (temporary CDN restore to fix missing icons) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-  <!-- Google Identity (kept as CDN) - special case: hosting this locally is possible but not recommended because Google updates this file. If you want it hosted locally, I can add it, but you'll need to accept the maintenance burden. -->
+  <!-- Google Identity (CDN) -->
   <script src="https://accounts.google.com/gsi/client" async></script>
-  <!-- Defensive initializer: ensure GSI button is rendered even if script/Angular timing varies -->
+  <!-- Defensive initializer: find client_id from meta or from the Angular placeholder, and only initialize when available -->
   <script>
     (function(){
-      function initGSI(){
+      function getClientId(){
+        try {
+          var meta = document.querySelector('meta[name="google-signin-client_id"]');
+          if (meta && meta.content) return meta.content;
+          var onloadEl = document.getElementById('g_id_onload');
+          if (onloadEl) {
+            var attr = onloadEl.getAttribute('data-client_id') || onloadEl.getAttribute('data-client-id');
+            if (attr) return attr;
+          }
+        } catch(e) { /* ignore */ }
+        return null; // do not fallback to a hardcoded client id
+      }
+
+      function renderButtons(){
         try{
           var w = window;
-          if(!w.google || !w.google.accounts || !w.google.accounts.id) return;
-          var meta = document.querySelector('meta[name="google-signin-client_id"]');
-          var clientId = (meta && meta.content) || '411656733323-2p348igl6kgfo7756i61ivng2b62fkov.apps.googleusercontent.com';
-          if(!w.__gsi_initialized){
-            try{ w.google.accounts.id.initialize({ client_id: clientId, callback: handleCredentialResponse }); }catch(e){}
-            w.__gsi_initialized = true;
-          }
+          if(!w.google || !w.google.accounts || !w.google.accounts.id) return false;
           document.querySelectorAll('.g_id_signin').forEach(function(el){
             try{
               if((el.childElementCount||0) === 0){
                 w.google.accounts.id.renderButton(el, { theme: 'outline', size: 'large' });
               }
-            }catch(e){/* ignore */}
+            }catch(e){ /* ignore */ }
           });
+          return true;
+        }catch(e){ console.warn('GSI render error', e); return false; }
+      }
+
+      function initGSI(){
+        try{
+          var w = window;
+          if(!w.google || !w.google.accounts || !w.google.accounts.id) return;
+          if(!w.__gsi_initialized){
+            var clientId = getClientId();
+            if (!clientId) return; // wait until Angular provides client id
+            try{ w.google.accounts.id.initialize({ client_id: clientId, callback: handleCredentialResponse }); }catch(e){}
+            w.__gsi_initialized = true;
+          }
+          renderButtons();
         }catch(e){ console.warn('GSI init error', e); }
       }
 
+      // Run once DOM is ready
       if(document.readyState === 'loading'){
         document.addEventListener('DOMContentLoaded', initGSI);
       } else { initGSI(); }
 
-  // Expose a global render function so SPA route navigations can trigger rendering
-  try { if(!window.__gsi_render_buttons) window.__gsi_render_buttons = initGSI; } catch(e){}
-  // Observe DOM mutations for a short time: Angular may insert the placeholder later
-  var mo = new MutationObserver(function(){ initGSI(); });
-  function startGsiObserver(){
-    if(document.body){
-      try{ mo.observe(document.body, { childList: true, subtree: true }); }catch(e){/* ignore */}
-      setTimeout(function(){ mo.disconnect(); }, 10000);
-    } else {
-      // If body isn't available yet, wait for DOMContentLoaded then start
-      document.addEventListener('DOMContentLoaded', function(){
-        try{ mo.observe(document.body, { childList: true, subtree: true }); }catch(e){/* ignore */}
-        setTimeout(function(){ mo.disconnect(); }, 10000);
-      });
-    }
-  }
-  startGsiObserver();
+      // Expose a global render function so SPA route navigations can trigger rendering
+      try { if(!window.__gsi_render_buttons) window.__gsi_render_buttons = initGSI; } catch(e){}
+      // Observe DOM mutations: Angular may insert the placeholder later
+      var mo = new MutationObserver(function(){ initGSI(); });
+      function startGsiObserver(){
+        function begin(){
+          try{ mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-client_id','data-client-id'] }); }catch(e){/* ignore */}
+        }
+        if(document.body){ begin(); } else {
+          document.addEventListener('DOMContentLoaded', begin);
+        }
+        // Keep observer running; it's cheap and ensures buttons render after route changes
+      }
+      startGsiObserver();
     })();
   </script>
 
