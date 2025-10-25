@@ -133,13 +133,7 @@
                 <ul class="collapse list-unstyled ps-4" id="reportsMenu" [ngClass]="{'show': isReportsMenuOpen}">
                     <!-- Admin-only reports -->
                     <ng-container *ngIf="isSpecialUser">
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/sales')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/sales-report'"
-                                (click)="activateSubmenu('reports')">
-                                <i class="align-middle me-2 bi bi-currency-dollar"></i>
-                                <span class="align-middle">Sales Report</span>
-                            </a>
-                        </li>
+                        
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/users')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/user-report'"
                                 (click)="activateSubmenu('reports')">
@@ -166,13 +160,13 @@
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/admin-total'"
                                 (click)="activateSubmenu('reports')">
                                 <i class="align-middle me-2 bi bi-clipboard-data"></i>
-                                <span class="align-middle">Admin Total</span>
+                                <span class="align-middle">Sales Report</span>
                             </a>
                         </li>
                     </ng-container>
                     <!-- Regular user reports -->
                     <ng-container *ngIf="!isSpecialUser">
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/premium-sales')}">
+                        <!-- <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/premium-sales')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/premium-sales'"
                                 (click)="activateSubmenu('reports')">
                                 <i class="align-middle me-2 bi bi-star"></i>
@@ -185,7 +179,7 @@
                                 <i class="align-middle me-2 bi bi-people-fill"></i>
                                 <span class="align-middle">VIP Users</span>
                             </a>
-                        </li>
+                        </li> -->
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/my-payments')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/my-payments'"
                                 (click)="activateSubmenu('reports')">

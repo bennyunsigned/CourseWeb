@@ -17,19 +17,19 @@ export class WebsitePricingComponent {
     {
       SubscriptionId: 'S06',
       SubscriptionName: '6 Month Subscription',
-      SubscriptionPrice: 20,
+      SubscriptionPrice: 599,
       SubscriptionDescription: 'Unlimited access to a curated set of courses for 6 months. Great for intermediate plans.'
     },
     {
       SubscriptionId: 'S12',
       SubscriptionName: '1 Year Subscription',
-      SubscriptionPrice: 25,
+      SubscriptionPrice: 999,
       SubscriptionDescription: 'Unlimited access to all courses for 1 year. Best for medium-term learners.'
     },
     {
       SubscriptionId: 'LFT',
       SubscriptionName: 'Lifetime Access',
-      SubscriptionPrice: 30,
+      SubscriptionPrice: 4999,
       SubscriptionDescription: 'Lifetime access to all courses. The ultimate plan for lifelong learners.',
       SubscriptionColor: 'powderblue'
     }

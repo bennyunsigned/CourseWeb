@@ -14,9 +14,9 @@ import { decryptData } from '../../../../utils/crypto-util';
 })
 export class CourseSubscriptionComponent {
   subscriptions = [
-    { SubscriptionId: 'S06', SubscriptionName: '6 Months', SubscriptionPrice: 20, SubscriptionDescription: 'Access for six months' },
-    { SubscriptionId: 'S12', SubscriptionName: '1 Year', SubscriptionPrice: 25, SubscriptionDescription: 'Access for one year' },
-    { SubscriptionId: 'LFT', SubscriptionName: 'Lifetime', SubscriptionPrice: 30, SubscriptionDescription: 'Lifetime access' }
+    { SubscriptionId: 'S06', SubscriptionName: '6 Months', SubscriptionPrice: 599, SubscriptionDescription: 'Access for six months' },
+    { SubscriptionId: 'S12', SubscriptionName: '1 Year', SubscriptionPrice: 999, SubscriptionDescription: 'Access for one year' },
+    { SubscriptionId: 'LFT', SubscriptionName: 'Lifetime', SubscriptionPrice: 4999, SubscriptionDescription: 'Lifetime access' }
   ];
 
   constructor(private paymentService: PaymentService, private router: Router, private toastr: ToastrService) {}
