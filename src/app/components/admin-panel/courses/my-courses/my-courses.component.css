@@ -62,9 +62,46 @@
 .aw-col .aw-card { flex: 1 1 auto; display: flex; flex-direction: column; }
 .aw-card .aw-card-body { display: flex; flex-direction: column; flex: 1 1 auto; }
 
-.course-banner { position: relative; width: 100%; aspect-ratio: 16 / 10; min-height: 120px; background-size: cover; background-position: center; background-repeat: no-repeat; border-bottom: 1px solid rgba(255,255,255,0.04); border-radius: 8px 8px 0 0; overflow: hidden; }
-.course-banner-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: block; }
-.badge-row { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; gap: 8px; z-index: 4; pointer-events: none; }
+/* Banner: switch to Bootstrap ratio pattern + strong responsive guards to prevent overflow */
+.course-banner {
+	position: relative;
+	width: 100%;
+	/* ratio is controlled by .ratio-16x9 on the element; keep visual borders here */
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-bottom: 1px solid rgba(255,255,255,0.04);
+	border-radius: 8px 8px 0 0;
+	overflow: hidden;
+	box-sizing: border-box;
+	max-width: 100% !important;
+}
+
+/* When using ratio container, the image fills the box absolutely */
+.course-banner img.object-fit-cover,
+.ratio.course-banner img.object-fit-cover {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover !important;
+	object-position: center !important;
+	display: block !important;
+	max-width: 100% !important;
+}
+
+/* Bottom-centered badges inside the ratio box */
+.ratio.course-banner .badge-row {
+	position: absolute !important;
+	left: 50% !important;
+	right: auto !important;
+	bottom: 8px !important;
+	top: auto !important;
+	transform: translateX(-50%) !important;
+	display: flex !important;
+	justify-content: center !important;
+	gap: 6px !important;
+	pointer-events: none !important;
+	z-index: 4 !important;
+}
 .aw-badge { display: inline-flex; align-items: center; justify-content: center; padding: 0 10px; height: 28px; min-width: 48px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; box-shadow: 0 8px 22px rgba(2,6,23,0.45); text-shadow: 0 1px 0 rgba(255,255,255,0.06); }
 .aw-badge-best-seller { background: linear-gradient(90deg,#ffd54a,#ffb300) !important; color: #111 !important; }
 .aw-badge-premium { background: linear-gradient(90deg,#7c4dff,#6156f6) !important; color: #fff !important; }
@@ -114,3 +151,20 @@
 
 /* keep other admin scoped helper styles minimal */
 .category-tabs-container > .d-flex { justify-content: center !important; align-items: center !important; }
+
+/* Defensive: ensure the component never causes horizontal scroll on small screens */
+@media (max-width: 576px) {
+	.aw-available-courses { max-width: 100vw; overflow-x: hidden; }
+	.course-banner { max-width: 100% !important; }
+}
+
+/* Final high-specificity override: force badges to the bottom of the banner */
+.ratio.course-banner .badge-row,
+.aw-available-courses .ratio.course-banner .badge-row,
+.wrapper .main .aw-available-courses .ratio.course-banner .badge-row {
+	top: auto !important;
+	bottom: 12px !important;
+	left: 50% !important;
+	right: auto !important;
+	transform: translateX(-50%) !important;
+}
