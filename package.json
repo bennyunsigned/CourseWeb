@@ -10,14 +10,14 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^19.2.8",
-    "@angular/common": "^19.2.0",
-    "@angular/compiler": "^19.2.0",
-    "@angular/core": "^19.2.0",
-    "@angular/forms": "^19.2.0",
-    "@angular/platform-browser": "^19.2.0",
-    "@angular/platform-browser-dynamic": "^19.2.0",
-    "@angular/router": "^19.2.0",
+    "@angular/animations": "^20.3.7",
+    "@angular/common": "^20.3.7",
+    "@angular/compiler": "^20.3.7",
+    "@angular/core": "^20.3.7",
+    "@angular/forms": "^20.3.7",
+    "@angular/platform-browser": "^20.3.7",
+    "@angular/platform-browser-dynamic": "^20.3.7",
+    "@angular/router": "^20.3.7",
     "@ng-select/ng-select": "^15.0.2",
     "@popperjs/core": "^2.11.8",
     "@tinymce/tinymce-angular": "^8.0.1",
@@ -29,7 +29,7 @@
     "idb": "^8.0.3",
     "jquery": "^3.7.1",
     "jwt-decode": "^4.0.0",
-    "ngx-bootstrap": "^19.0.2",
+    "ngx-bootstrap": "^20.0.2",
     "ngx-toastr": "^19.0.0",
     "rxjs": "~7.8.0",
     "tinymce": "^7.9.1",
@@ -38,9 +38,9 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.2.7",
-    "@angular/cli": "^19.2.7",
-    "@angular/compiler-cli": "^19.2.0",
+    "@angular/build": "^20.3.7",
+    "@angular/cli": "^20.3.7",
+    "@angular/compiler-cli": "^20.3.7",
     "@types/ckeditor__ckeditor5-build-classic": "^29.0.1",
     "@types/crypto-js": "^4.2.2",
     "@types/jasmine": "~5.1.0",
@@ -50,6 +50,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.9.3"
   }
 }
