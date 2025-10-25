@@ -49,3 +49,12 @@
 .payments-section .list-group-item.active { background-color: #0d6efd; border-color: #0d6efd; color: #fff; }
 .payments-section .modal .form-control { background-color: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); color: #fff; }
 .payments-section .modal .form-control.is-invalid { border-color: #dc3545; }
+
+/* ===== PWA CTA layout ===== */
+.pwa-cta .card-body { gap: 1rem; }
+.pwa-cta-actions { min-width: 180px; }
+.pwa-cta-list { margin-top: .15rem; }
+@media (max-width: 576px) {
+	.pwa-cta-actions { width: 100%; align-items: stretch; }
+	.pwa-cta-actions .btn { width: 100%; }
+}

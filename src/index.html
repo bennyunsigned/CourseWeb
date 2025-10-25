@@ -5,18 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
     <meta name="author" content="AdminKit">
-    <meta name="keywords"
-        content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
     <base href="/">
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+  <link rel="shortcut icon" href="img/icons/icon-48x48.png"/>
+  <!-- iOS/Apple PWA icon (fallback to 192 if 180 not available) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
   <!-- Bootstrap Icons (temporary CDN restore to fix missing icons) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
   <!-- Google Identity (CDN) -->
-  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script src="https://accounts.google.com/gsi/client" async=""></script>
   <!-- Defensive initializer: find client_id from meta or from the Angular placeholder, and only initialize when available -->
+   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5910536965514788"
+     crossorigin="anonymous"></script>
   <script>
     (function(){
       function getClientId(){
@@ -88,17 +91,20 @@
 
   <link href="css/app.css" rel="stylesheet">
   <!-- NOTE: Google Fonts currently loaded from Google; to remove CDN you should download the Inter font files and serve them from /assets/fonts and update CSS. I'll add that as a follow-up if you'd like. -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet">
   <!-- Font Awesome (temporary CDN restore to fix missing icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous">
   <!-- Local animate.css (placeholder) -->
-  <link rel="stylesheet" href="/vendor/animate.min.css" />
+  <link rel="stylesheet" href="/vendor/animate.min.css"/>
   <!-- Local jQuery -->
   <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest.webmanifest">
 </head>
 
 <body id="page-top">
-  <app-root></app-root>
+  <app-root></app-root><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5910536965514788"
+     crossorigin="anonymous"></script>
   <!-- Local Bootstrap bundle (includes Popper) -->
   <script src="/vendor/bootstrap.bundle.min.js"></script>
 <script>
@@ -180,6 +186,8 @@
         if(document.readyState !== 'loading') updatePopupOpen(); else document.addEventListener('DOMContentLoaded', updatePopupOpen);
       })();
     </script>
+  <noscript>Please enable JavaScript to continue using this application.</noscript>
+
 </body>
 
 </html>

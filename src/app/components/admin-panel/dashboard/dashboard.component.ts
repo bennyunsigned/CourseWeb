@@ -6,6 +6,7 @@ import { decryptData } from '../../../utils/crypto-util';
 import { ReportService } from '../../../services/report.service';
 import { CourseProgressService } from '../../../services/course-progress.service';
 import { LoadingService } from '../../../services/loading.service';
+import { PwaService } from '../../../services/pwa.service';
 import { PageLoaderComponent } from '../../page-loader/page-loader.component';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartComponent } from 'highcharts-angular';
@@ -47,14 +48,27 @@ export class DashboardComponent {
   purchasedCourseIds: number[] = [];
   totalCoursesCovered = 0;
 
+  // PWA prompt state
+  showPwaCta = true; // always visible per request
+  isSafariOnIOS = false;
+  showIosHelp = false;
+  canInstallPrompt = false; // enabled when beforeinstallprompt fires
+  showWebInstallHelp = false; // temporary hint when prompt isn't available on web
+  justInstalled = false; // show a one-time success hint after install
+  browserInfo: { browser: string; platform: string } = { browser: 'unknown', platform: 'desktop' };
+  installTipLines: string[] = [];
+  // cooldown removed — always show CTA when not installed
+
   constructor(
     private reports: ReportService,
     private cps: CourseProgressService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private pwa: PwaService
   ) {}
 
   ngOnInit() {
     this.detectRole();
+    this.initPwaFlow();
     if (this.isAdmin) {
       const now = new Date();
       const start = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -68,6 +82,10 @@ export class DashboardComponent {
     }
   }
 
+  ngOnDestroy() {
+    // no-op, listeners are attached to window but don’t require explicit cleanup in this simple case
+  }
+
   private detectRole() {
     try {
       const stored = localStorage.getItem('user_email');
@@ -78,6 +96,56 @@ export class DashboardComponent {
       }
     } catch {}
   }
+
+  // ================= PWA helpers (Dashboard scope) =================
+  private now(): number { return Date.now ? Date.now() : new Date().getTime(); }
+  private get isInstalled(): boolean {
+    try {
+      const mq = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+      // @ts-ignore
+      const iosStandalone = !!(navigator as any).standalone;
+      const androidRef = document.referrer && document.referrer.startsWith('android-app://');
+      return !!(mq || iosStandalone || androidRef);
+    } catch { return false; }
+  }
+  private detectSafariIOS(): boolean {
+    try {
+      const ua = navigator.userAgent || '';
+      const isIOS = /iphone|ipad|ipod/i.test(ua);
+      const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS/i.test(ua);
+      return isIOS && isSafari;
+    } catch { return false; }
+  }
+  private initPwaFlow() {
+    // Always show CTA; we still detect platform and prompt readiness
+    this.isSafariOnIOS = this.detectSafariIOS();
+    this.showPwaCta = true;
+    this.browserInfo = this.getBrowserInfo();
+    this.installTipLines = this.getInstallTipLines(this.browserInfo);
+    // Subscribe to global PWA prompt availability (captured at app level)
+    this.pwa.canInstallPrompt$.subscribe(v => this.canInstallPrompt = v);
+    this.pwa.installed$.subscribe(inst => {
+      if (inst) {
+        this.justInstalled = true;
+        this.showIosHelp = false; this.showWebInstallHelp = false;
+      }
+    });
+  }
+
+  openInstallFlow() {
+    if (this.isSafariOnIOS) { this.toggleIosHelp(true); return; }
+    if (!this.pwa.hasPrompt()) {
+      // Prompt not available (yet or already consumed). Show a temporary inline hint.
+      this.showWebInstallHelp = true;
+      setTimeout(() => (this.showWebInstallHelp = false), 8000);
+      return;
+    }
+    try {
+      this.pwa.promptInstall();
+    } catch { /* ignore */ }
+  }
+  // no dismiss button anymore
+  toggleIosHelp(force?: boolean) { this.showIosHelp = force ?? !this.showIosHelp; }
 
   // ----- Admin side -----
   loadAdminTotals() {
@@ -148,6 +216,54 @@ export class DashboardComponent {
     const [y, m, d] = s.split('-').map(Number);
     if (!y || !m || !d) return null;
     return new Date(y, m - 1, d);
+  }
+
+  // ---- Browser detection & tips ----
+  private getBrowserInfo(): { browser: string; platform: string } {
+    try {
+      const ua = navigator.userAgent || '';
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const isDesktop = !isAndroid && !isIOS;
+
+      const isEdge = /Edg\//i.test(ua);
+      const isChrome = /Chrome\//i.test(ua) && !isEdge && !/OPR\//i.test(ua) && !/Brave/i.test((navigator as any).userAgentData?.brands?.map((b:any)=>b.brand).join(' ') || '') && !/Brave/i.test(ua);
+      const isOpera = /OPR\//i.test(ua);
+      const isFirefox = /Firefox\//i.test(ua);
+      const isSafariDesktop = /Safari\//i.test(ua) && !isChrome && !isEdge && !isOpera && isDesktop;
+
+      const browser = isEdge ? 'edge' : isOpera ? 'opera' : isFirefox ? 'firefox' : isChrome ? 'chrome' : isSafariDesktop ? 'safari' : 'unknown';
+      const platform = isAndroid ? 'android' : isIOS ? 'ios' : 'desktop';
+      return { browser, platform };
+    } catch { return { browser: 'unknown', platform: 'desktop' }; }
+  }
+
+  private getInstallTipLines(info: { browser: string; platform: string }): string[] {
+    // iOS handled separately with the dedicated toggle/help
+    if (info.platform === 'android') {
+      if (info.browser === 'firefox') {
+        return ['Tap menu (⋮) → Install', 'If not shown: menu (⋮) → Add to Home screen'];
+      }
+      // Chromium-based (Chrome/Edge/Opera) on Android
+      return ['Tap menu (⋮) → Install app', 'If not shown: menu (⋮) → Add to Home screen'];
+    }
+    if (info.platform === 'desktop') {
+      if (info.browser === 'edge') {
+        return ['Menu (…) → Apps → Install this site as an app'];
+      }
+      if (info.browser === 'chrome' || info.browser === 'opera') {
+        return ['Click the Install icon in the address bar, or', 'Menu (⋮) → Install CourseWeb'];
+      }
+      if (info.browser === 'firefox') {
+        return ['Desktop Firefox has limited PWA install support.', 'Use Chrome or Edge to install, or bookmark this page.'];
+      }
+      if (info.browser === 'safari') {
+        return ['Safari (macOS): File → Add to Dock'];
+      }
+      return ['Use your browser menu to install this app.'];
+    }
+    // Fallback for any other platform
+    return ['Use your browser menu to install this app.'];
   }
 
   private validateDates(setErrors: boolean): boolean {

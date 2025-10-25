@@ -57,6 +57,7 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
       this._subs.push(this.cartService.cartCount$.subscribe(c => this.cartCount = c));
       this.cartService.refreshCount();
     } catch (e) { /* ignore */ }
+
   }
 
   ngAfterViewInit(): void {

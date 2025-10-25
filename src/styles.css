@@ -464,9 +464,9 @@ a, a:hover, a:focus {
     box-shadow: none;
 }
 
-/* Modal backdrop */
+/* Modal backdrop (translucent) */
 .modal-backdrop.show {
-    background-color: rgba(0,0,0,0.6) !important;
+    background-color: rgba(0,0,0,0.2) !important;
 }
 
 /* Toasts */
@@ -785,7 +785,7 @@ select option:hover,
     border-color: rgba(255,255,255,0.04) !important;
 }
 .modal .modal-title { color: var(--text) !important; }
-.modal-backdrop.show { background-color: rgba(0,0,0,0.6) !important; }
+.modal-backdrop.show { background-color: rgba(0,0,0,0.2) !important; }
 
 .popover,
 .popover .popover-body,
@@ -841,8 +841,8 @@ body > .popover, body > .tooltip, body > .modal { background: var(--panel) !impo
 .popover .popover-header, .popover .popover-body { background: #000 !important; color: #fff !important; }
 .tooltip .tooltip-inner { background: #000 !important; color: #fff !important; }
 
-/* Backdrop: increase darkness for clarity */
-.modal-backdrop.show { background-color: rgba(0,0,0,0.75) !important; }
+/* Backdrop: translucent for clarity without blocking context */
+.modal-backdrop.show { background-color: rgba(0,0,0,0.2) !important; }
 
 /* New approach: use a fixed overlay with backdrop-filter to blur/dim the page behind popups.
    The overlay sits above normal content and below popups so popups remain sharp.
@@ -856,8 +856,8 @@ body.popup-open::before {
     background: rgba(0,0,0,0.28);
     backdrop-filter: blur(6px) saturate(90%) contrast(0.95);
     -webkit-backdrop-filter: blur(6px) saturate(90%) contrast(0.95);
-    /* Put overlay above most fixed elements (like navbar) */
-    z-index: 9998; /* below full-screen modals but above header/nav (which often use 1000-2000) */
+    /* Place overlay above the Bootstrap backdrop but below the modal */
+    z-index: 10055; /* modal-backdrop (10050) < overlay (10055) < modal (10060) */
 }
 
 /* Ensure popups sit above the overlay */
@@ -875,8 +875,13 @@ body.popup-open .navbar, body.popup-open header, body.popup-open .admin-navbar, 
 /* Accessibility: ensure modals retain focus outline */
 .modal :focus { outline: 2px solid rgba(255,255,255,0.06); outline-offset: 3px; }
 
-/* Neutralize the previous ancestor-blurring rule if present so it doesn't accidentally blur popups */
-body.popup-open > :not(.modal):not(.modal-backdrop) { filter: none !important; pointer-events: auto !important; }
+/* Fallback blur on the Angular app shell so background clearly softens behind popups */
+body.popup-open app-root {
+    filter: blur(6px) saturate(90%) contrast(0.95);
+    transition: filter 160ms ease;
+}
+/* Keep pointer events flowing without overriding filters globally */
+body.popup-open > :not(.modal):not(.modal-backdrop) { pointer-events: auto !important; }
 
 
 

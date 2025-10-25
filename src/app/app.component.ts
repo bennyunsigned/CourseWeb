@@ -3,6 +3,7 @@ import { Router, NavigationStart, NavigationEnd, RouterOutlet } from '@angular/r
 import { PageLoaderComponent } from './components/page-loader/page-loader.component';
 import { environment } from '../environments/environment';
 import { Title } from '@angular/platform-browser';
+import { PwaService } from './services/pwa.service';
 
 // declare var feather: any;
 declare var bootstrap: any;
@@ -16,7 +17,7 @@ declare var bootstrap: any;
 export class AppComponent implements OnInit {  
   @ViewChild(PageLoaderComponent) loader!: PageLoaderComponent;
 
-  constructor(private router: Router,private titleService: Title) {
+  constructor(private router: Router,private titleService: Title, _pwa: PwaService) {
     this.titleService.setTitle(environment.appName);
   }
 
