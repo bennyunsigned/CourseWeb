@@ -4,53 +4,13 @@
     </a>
     <div class="navbar-collapse collapse">
         <ul class="navbar-nav navbar-align">
-            <!-- Notifications Dropdown -->
-            <li class="nav-item dropdown position-relative" [class.show]="showNotifications">
-                <a class="nav-icon dropdown-toggle" href="#" (click)="showNotifications=!showNotifications; $event.preventDefault()" aria-haspopup="true" aria-expanded="false">
-                    <div class="position-relative">
-                        <i class="bi bi-bell"></i>
-                        <span class="indicator">4</span>
-                    </div>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0 custom-dropdown-menu" [class.show]="showNotifications">
-                    <div class="dropdown-menu-header">
-                        4 New Notifications
-                    </div>
-                    <div class="list-group notifications-list">
-                        <a href="#" class="list-group-item" *ngFor="let notification of notifications">
-                            <div class="row g-0 align-items-center">
-                                <div class="col-2">
-                                    <i [ngClass]="notification.icon"></i>
-                                </div>
-                                <div class="col-10">
-                                    <div class="text-dark">{{notification.title}}</div>
-                                    <div class="text-muted small mt-1">{{notification.message}}</div>
-                                    <div class="text-muted small mt-1">{{notification.time}}</div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="dropdown-menu-footer">
-                        <a href="#" class="text-muted">Show all notifications</a>
-                    </div>
-                </div>
-            </li>
             <!-- User Dropdown -->
             <li class="nav-item dropdown position-relative" [class.show]="showUserMenu">
-                <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()" aria-haspopup="true" aria-expanded="false">
-                    <i class="bi bi-gear"></i>
-                </a>
-                <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()">
+                <a class="nav-link dropdown-toggle d-inline-flex align-items-center" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()" aria-haspopup="true" aria-expanded="false">
                     <img [src]="safeUserPicture" class="avatar img-fluid rounded me-1" alt="userName" /> 
                     <span class="navbar-username">{{userName}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" [class.show]="showUserMenu">
-                    <a class="dropdown-item" href="pages-profile.html"><i class="bi bi-person"></i> Profile</a>
-                    <a class="dropdown-item" href="#"><i class="bi bi-pie-chart"></i> Analytics</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="index.html"><i class="bi bi-gear"></i> Settings & Privacy</a>
-                    <a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> Help Center</a>
-                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" (click)="logout()">
                         <i class="bi bi-box-arrow-right"></i> Log out
                     </a>
@@ -59,50 +19,7 @@
         </ul>
     </div>
 </nav>
-<style>
-.custom-dropdown-menu {
-    min-width: 280px;
-    max-width: 350px;
-    right: 0;
-    left: auto;
-    top: 100%;
-    position: absolute !important;
-    z-index: 1050;
-    box-shadow: 0 8px 26px rgba(0,0,0,0.6), 0 0 10px rgba(255,212,0,0.03);
-    border-radius: 0.5rem;
-    overflow: hidden;
-    background: var(--panel) !important;
-    color: var(--text) !important;
-    border: 1px solid rgba(255,255,255,0.03) !important;
-}
-.notifications-list {
-    max-height: 250px;
-    overflow-y: auto;
-}
-.dropdown-menu.show {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.2s;
-}
-.dropdown-menu {
-    display: none;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s;
-    background: var(--panel) !important;
-    color: var(--text) !important;
-    border: 1px solid rgba(255,255,255,0.03) !important;
-}
-@media (max-width: 576px) {
-    .custom-dropdown-menu {
-        min-width: 200px;
-        max-width: 95vw;
-        left: 0;
-        right: auto;
-    }
-}
-</style>
+ 
 
 
 

@@ -24,10 +24,14 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
+        // Safety: ensure any popup blur state is cleared on navigation
+        try { document.body.classList.remove('popup-open'); } catch {}
         if (this.loader) {
           this.loader.showLoader();
         }
       } else if (event instanceof NavigationEnd) {
+        // Safety: ensure blur state is cleared after route change
+        try { document.body.classList.remove('popup-open'); } catch {}
         if (this.loader) {
           // Show loader for at least 1 second for smooth transition
           setTimeout(() => {

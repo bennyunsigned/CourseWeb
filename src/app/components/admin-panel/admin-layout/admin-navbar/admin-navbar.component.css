@@ -3,10 +3,7 @@
     border-top: .3em solid currentColor;
 }
 
-.dropdown .dropdown-menu.show {
-    min-width: 300px;
-    z-index: 9999;
-}
+.dropdown .dropdown-menu.show { min-width: 280px; z-index: 9999; }
 
 /* Make the admin navbar fixed at the top */
 .navbar {
@@ -40,8 +37,20 @@
     box-shadow: 0 8px 26px rgba(0,0,0,0.6), 0 0 10px rgba(255,212,0,0.03) !important;
 }
 
-/* notification indicator accent */
-.nav-icon .indicator { background: var(--neon-yellow); color: #111; }
+/* Mobile-friendly dropdown sizing */
+@media (max-width: 576px) {
+    .navbar .dropdown .custom-dropdown-menu,
+    .navbar .dropdown .dropdown-menu {
+        position: fixed !important;
+        top: 64px !important; /* approximate navbar height */
+        right: 8px !important;
+        left: 8px !important;
+        width: calc(100vw - 16px) !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        border-radius: 10px !important;
+    }
+}
 
 /* username in navbar should follow theme */
 .navbar-username {

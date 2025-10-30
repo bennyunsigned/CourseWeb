@@ -58,3 +58,39 @@
 	.pwa-cta-actions { width: 100%; align-items: stretch; }
 	.pwa-cta-actions .btn { width: 100%; }
 }
+
+/* ===== Todos ===== */
+.todo-list .list-group-item { display: flex; align-items: center; gap: .5rem; color: #ffffff; border: 0; border-radius: .5rem; }
+.todo-list .text-decoration-line-through { opacity: 0.8; }
+.todo-list .btn { min-width: 32px; }
+.todo-list .small, .todo-list .text-muted { color: rgba(255,255,255,0.85) !important; }
+
+/* Colorful backgrounds per item */
+.todo-list .list-group-item:nth-child(5n+1) { background: linear-gradient(135deg, #4361ee, #3a0ca3); }
+.todo-list .list-group-item:nth-child(5n+2) { background: linear-gradient(135deg, #d63384, #6f42c1); }
+.todo-list .list-group-item:nth-child(5n+3) { background: linear-gradient(135deg, #20c997, #0ca678); }
+.todo-list .list-group-item:nth-child(5n+4) { background: linear-gradient(135deg, #fd7e14, #f76707); }
+.todo-list .list-group-item:nth-child(5n+5) { background: linear-gradient(135deg, #0dcaf0, #0aa2c0); }
+
+/* Completed subtle state */
+.todo-list .list-group-item.completed { filter: saturate(0.8) brightness(0.95); opacity: 0.95; }
+
+/* Custom action buttons */
+.todo-actions .btn { border: 0; color: #fff; display: inline-flex; align-items: center; justify-content: center; border-radius: .5rem; transition: transform 120ms ease, filter 120ms ease; }
+.todo-actions .btn:active { transform: translateY(1px); }
+
+.btn-todo-edit { background: linear-gradient(135deg, #5bc0ff, #845ef7); }
+.btn-todo-edit:hover { filter: brightness(1.05); }
+
+.btn-todo-save { background: linear-gradient(135deg, #51cf66, #2f9e44); }
+.btn-todo-save:hover { filter: brightness(1.05); }
+
+.btn-todo-cancel { background: rgba(255,255,255,0.15); }
+.btn-todo-cancel:hover { background: rgba(255,255,255,0.25); }
+
+.btn-todo-delete { background: linear-gradient(135deg, #ff6b6b, #f03e3e); }
+.btn-todo-delete:hover { filter: brightness(1.05); }
+
+/* Inline edit input on colorful background */
+.todo-list .todo-edit-input.form-control { background: rgba(0,0,0,0.25); color: #fff; border-color: rgba(255,255,255,0.4); }
+.todo-list .todo-edit-input.form-control:focus { background: rgba(0,0,0,0.35); color: #fff; border-color: #fff; }

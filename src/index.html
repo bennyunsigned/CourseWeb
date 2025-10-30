@@ -144,30 +144,21 @@
         }
       }
     </script>
-    <!-- Popup blur toggle: add/remove body.popup-open when Bootstrap popups appear -->
+    <!-- Popup blur toggle: add/remove body.popup-open ONLY for modals (avoid dropdown/popover/tooltip to prevent page lock) -->
     <script>
       (function(){
         function updatePopupOpen(){
           var hasModal = !!document.querySelector('.modal.show');
-          var hasPopover = !!document.querySelector('.popover.show');
-          var hasTooltip = !!document.querySelector('.tooltip.show');
-          var hasDropdown = !!document.querySelector('.dropdown-menu.show');
-          if(hasModal || hasPopover || hasTooltip || hasDropdown){
+          if(hasModal){
             document.body.classList.add('popup-open');
           } else {
             document.body.classList.remove('popup-open');
           }
         }
 
-        // Bootstrap events
+        // Bootstrap events (modals only)
         document.addEventListener('shown.bs.modal', updatePopupOpen);
         document.addEventListener('hidden.bs.modal', updatePopupOpen);
-        document.addEventListener('shown.bs.popover', updatePopupOpen);
-        document.addEventListener('hidden.bs.popover', updatePopupOpen);
-        document.addEventListener('shown.bs.tooltip', updatePopupOpen);
-        document.addEventListener('hidden.bs.tooltip', updatePopupOpen);
-        document.addEventListener('shown.bs.dropdown', updatePopupOpen);
-        document.addEventListener('hidden.bs.dropdown', updatePopupOpen);
 
         // MutationObserver fallback (guard against null document.body)
         var mo = new MutationObserver(updatePopupOpen);

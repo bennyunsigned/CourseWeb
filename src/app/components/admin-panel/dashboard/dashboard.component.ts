@@ -7,6 +7,8 @@ import { ReportService } from '../../../services/report.service';
 import { CourseProgressService } from '../../../services/course-progress.service';
 import { LoadingService } from '../../../services/loading.service';
 import { PwaService } from '../../../services/pwa.service';
+import { TodoIndexeddbService, TodoItem } from '../../../services/todo-indexeddb.service';
+import { PaymentService } from '../../../services/payment.service';
 import { PageLoaderComponent } from '../../page-loader/page-loader.component';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartComponent } from 'highcharts-angular';
@@ -47,6 +49,9 @@ export class DashboardComponent {
   hasSubscription = false;
   purchasedCourseIds: number[] = [];
   totalCoursesCovered = 0;
+  // Payments KPI (end-user)
+  totalPaymentsAmount = 0;
+  totalPaymentsCount = 0;
 
   // PWA prompt state
   showPwaCta = true; // always visible per request
@@ -57,13 +62,21 @@ export class DashboardComponent {
   justInstalled = false; // show a one-time success hint after install
   browserInfo: { browser: string; platform: string } = { browser: 'unknown', platform: 'desktop' };
   installTipLines: string[] = [];
+
+  // ---- Todos (IndexedDB) ----
+  todos: TodoItem[] = [];
+  newTodoText = '';
+  editingId: number | null = null;
+  editedText = '';
   // cooldown removed — always show CTA when not installed
 
   constructor(
     private reports: ReportService,
     private cps: CourseProgressService,
     private loadingService: LoadingService,
-    private pwa: PwaService
+    private pwa: PwaService,
+    private todoDb: TodoIndexeddbService,
+    private payments: PaymentService
   ) {}
 
   ngOnInit() {
@@ -79,7 +92,11 @@ export class DashboardComponent {
       this.loadAdminTotals();
     } else {
       this.loadUserCourseCoverage();
+      this.loadUserPaymentsTotals();
     }
+
+    // Load todos for current user
+    this.loadTodos();
   }
 
   ngOnDestroy() {
@@ -290,12 +307,114 @@ export class DashboardComponent {
     return fallback;
   }
 
+  // ================= Todos =================
+  private currentUserKey(): string { return (this.userEmail || 'guest').toLowerCase(); }
+
+  async loadTodos() {
+    try {
+      this.todos = await this.todoDb.listTodos(this.currentUserKey());
+    } catch (e) {
+      console.error('[Todos] load error', e);
+    }
+  }
+
+  async addTodo() {
+    const text = (this.newTodoText || '').trim();
+    if (!text) return;
+    try {
+      const created = await this.todoDb.addTodo(this.currentUserKey(), text);
+      this.todos = [created, ...this.todos];
+      this.newTodoText = '';
+    } catch (e) { console.error('[Todos] add error', e); }
+  }
+
+  async toggleComplete(t: TodoItem) {
+    try {
+      const updated = await this.todoDb.updateTodo({ ...t, completed: !t.completed });
+      this.todos = this.todos.map(x => x.id === updated.id ? updated : x);
+    } catch (e) { console.error('[Todos] toggle error', e); }
+  }
+
+  startEdit(t: TodoItem) {
+    this.editingId = t.id!;
+    this.editedText = t.text;
+  }
+
+  cancelEdit() {
+    this.editingId = null;
+    this.editedText = '';
+  }
+
+  async saveEdit(t: TodoItem) {
+    const text = (this.editedText || '').trim();
+    if (!text) { this.cancelEdit(); return; }
+    try {
+      const updated = await this.todoDb.updateTodo({ ...t, text });
+      this.todos = this.todos.map(x => x.id === updated.id ? updated : x);
+    } catch (e) { console.error('[Todos] save error', e); }
+    this.cancelEdit();
+  }
+
+  async deleteTodo(t: TodoItem) {
+    if (t.id == null) return;
+    try {
+      await this.todoDb.deleteTodo(t.id);
+      this.todos = this.todos.filter(x => x.id !== t.id);
+    } catch (e) { console.error('[Todos] delete error', e); }
+  }
+
   private getNumber(obj: any, keys: string[], fallback = 0): number {
     for (const k of keys) {
       const v = obj?.[k];
       if (v !== undefined && v !== null && v !== '') return Number(v) || 0;
     }
     return fallback;
+  }
+
+  // ----- End-user payments KPI -----
+  private getUserIdFromStorage(): number | null {
+    try {
+      const enc = localStorage.getItem('user_id') || '';
+      const dec = decryptData(enc);
+      const val = Number(dec);
+      return Number.isFinite(val) && val > 0 ? val : null;
+    } catch { return null; }
+  }
+
+  loadUserPaymentsTotals() {
+    const userId = this.getUserIdFromStorage();
+    if (!userId) { this.totalPaymentsAmount = 0; this.totalPaymentsCount = 0; return; }
+    this.payments.getUserPayments(userId).subscribe({
+      next: (res: any) => {
+        try {
+          let list: any[] = [];
+          if (Array.isArray(res)) list = res;
+          else if (Array.isArray(res?.payments)) list = res.payments;
+          else if (Array.isArray(res?.data)) list = res.data;
+
+          // Strictly filter by current user id (client-side safety) and successful status
+          const belongsToUser = (p: any) => {
+            const uid = this.getNumber(p, ['user_id', 'userId', 'UserId'], NaN);
+            const nested = this.getNumber(p?.user, ['id', 'Id', 'user_id'], NaN);
+            return Number(uid) === userId || Number(nested) === userId;
+          };
+          const isSuccess = (p: any) => {
+            const raw = this.getString(p, ['status', 'payment_status', 'Status', 'state'], '').toLowerCase();
+            const flagTrue = (p?.success === true) || (String(p?.success).toLowerCase() === 'true') || (String(p?.is_paid).toLowerCase() === 'true');
+            return flagTrue || ['success','completed','credit','paid','approved'].some(s => raw.includes(s));
+          };
+          const filtered = list.filter(p => belongsToUser(p) && isSuccess(p));
+
+          const amounts = filtered.map(p => this.getNumber(p, ['amount', 'total_amount', 'Amount', 'paid_amount', 'payment_amount'], 0));
+          const sum = amounts.reduce((a, b) => a + (Number(b) || 0), 0);
+          this.totalPaymentsAmount = sum;
+          this.totalPaymentsCount = filtered.length;
+        } catch {
+          this.totalPaymentsAmount = 0; this.totalPaymentsCount = 0;
+        }
+      },
+      error: () => { this.totalPaymentsAmount = 0; this.totalPaymentsCount = 0; }
+    });
   }
 
   private buildChart() {
