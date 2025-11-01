@@ -7,8 +7,7 @@
     <form class="row g-3 align-items-end" novalidate>
       <div class="col-12 col-md-3">
         <label class="form-label">Start date</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+        <div class="input-group">          
           <input class="form-control" [class.is-invalid]="validationErrors.start" type="date"
                  [(ngModel)]="startDate" (change)="onDateChange()" name="startDate" [max]="endDate || today" />
         </div>
@@ -16,8 +15,7 @@
       </div>
       <div class="col-12 col-md-3">
         <label class="form-label">End date</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-calendar2-event"></i></span>
+        <div class="input-group">          
           <input class="form-control" [class.is-invalid]="validationErrors.end" type="date"
                  [(ngModel)]="endDate" (change)="onDateChange()" name="endDate" [min]="startDate || null" [max]="today" />
         </div>
@@ -87,11 +85,11 @@
         </thead>
         <tbody>
           <tr *ngFor="let p of pagedPayments">
-            <td><code>{{ p.payment_id }}</code></td>
-            <td>{{ p.payment_type }}</td>
-            <td class="text-end">{{ p.amount | number:'1.0-2' }}</td>
-            <td>{{ p.status || '—' }}</td>
-            <td>{{ p.created_at | date:'medium' }}</td>
+            <td><code><span class="mobileScreen">Payment Id- </span>{{ p.payment_id }}</code></td>
+            <td><span class="mobileScreen">Payment Type- </span>{{ p.payment_type }}</td>
+            <td class="text-end"><span class="mobileScreen">Price- Rs- </span>{{ p.amount | number:'1.0-2' }}</td>
+            <td><span class="mobileScreen">Status- </span>{{ p.status || '—' }}</td>
+            <td><span class="mobileScreen">Created- </span>{{ p.created_at | date:'medium' }}</td>
           </tr>
           <tr *ngIf="!total && !loading">
             <td colspan="5" class="text-center text-muted py-4">No payments found for the selected range.</td>

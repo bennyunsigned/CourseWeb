@@ -1,1 +1,105 @@
-<p>login-report works!</p>
+<div class="report-panel p-3">
+	<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+		<h4 class="mb-0">User Last Login Report</h4>
+	</div>
+
+	<div class="filter-bar p-3 rounded-3 mb-2">
+		<form class="row g-3 align-items-end" novalidate>
+			<div class="col-12 col-md-3">
+				<label class="form-label">Search</label>
+				<input class="form-control" type="text" [(ngModel)]="searchText" name="searchText" placeholder="Name or email" (input)="onSearchChange()" />
+			</div>
+			<div class="col-12 col-md-3">
+				<label class="form-label">Start date</label>
+				<input class="form-control" [class.is-invalid]="validationErrors.start" type="date"
+							 [(ngModel)]="startDate" name="startDate" (change)="onDateChange()" [max]="endDate || today" />
+				<div class="invalid-feedback d-block" *ngIf="validationErrors.start">{{ validationErrors.start }}</div>
+			</div>
+			<div class="col-12 col-md-3">
+				<label class="form-label">End date</label>
+				<input class="form-control" [class.is-invalid]="validationErrors.end" type="date"
+							 [(ngModel)]="endDate" name="endDate" (change)="onDateChange()" [min]="startDate || null" [max]="today" />
+				<div class="invalid-feedback d-block" *ngIf="validationErrors.end">{{ validationErrors.end }}</div>
+			</div>
+			<div class="col-12 col-md-3">
+				<label class="form-label">Has login</label>
+				<select class="form-select" [(ngModel)]="hasLoginFilter" name="hasLoginFilter" (change)="onHasLoginChange()">
+					<option [ngValue]="''">All</option>
+					<option [ngValue]="'yes'">Only logged in</option>
+					<option [ngValue]="'no'">Never logged in</option>
+				</select>
+			</div>
+		</form>
+	</div>
+
+	<div class="feedback-space"></div>
+	<div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+
+	<div class="d-flex justify-content-between align-items-center gap-2 mb-2" *ngIf="total">
+		<div class="small text-muted">Showing {{ pageStart + 1 }}–{{ pageEnd }} of {{ total }}
+			<span *ngIf="searchText || startDate || endDate || hasLoginFilter" class="ms-2">•
+				<span class="text-muted">Filters:</span>
+				<span *ngIf="searchText">“{{ searchText }}”</span>
+				<span *ngIf="startDate">from {{ startDate }}</span>
+				<span *ngIf="endDate">to {{ endDate }}</span>
+				<span *ngIf="hasLoginFilter">status: {{ hasLoginFilter === 'yes' ? 'only logged in' : (hasLoginFilter === 'no' ? 'never logged in' : 'all') }}</span>
+			</span>
+		</div>
+		<div class="d-flex align-items-center gap-2">
+			<label class="small text-nowrap">Rows:</label>
+			<select class="form-select form-select-sm w-auto" [(ngModel)]="pageSize" name="pageSize" (change)="page=1">
+				<option [ngValue]="5">5</option>
+				<option [ngValue]="10">10</option>
+				<option [ngValue]="25">25</option>
+				<option [ngValue]="50">50</option>
+			</select>
+			<div class="btn-group btn-group-sm" role="group">
+				<button class="btn btn-outline-secondary" type="button" (click)="changePage(-1)" [disabled]="page===1">
+					<i class="bi bi-chevron-left"></i>
+				</button>
+				<button class="btn btn-outline-secondary disabled" type="button">{{ page }}/{{ totalPages }}</button>
+				<button class="btn btn-outline-secondary" type="button" (click)="changePage(1)" [disabled]="page===totalPages">
+					<i class="bi bi-chevron-right"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="card position-relative">
+		<div class="table-responsive">
+			<table class="table table-sm table-hover table-striped align-middle mb-0">
+				<thead class="table-light sticky-top">
+					<tr>
+						<th>Sl#</th>
+						<th (click)="setSort('name')" role="button">Name</th>
+						<th (click)="setSort('email')" role="button">Email</th>
+						<th (click)="setSort('last_login_at')" role="button">Last login</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let u of pageRows; let i = index">
+						<td><span class="mobileScreen">Sl- </span>{{ pageStart + i + 1 }}</td>
+						<td><span class="mobileScreen">Name- </span>{{ u.name }}</td>
+						<td><span class="mobileScreen">Email- </span>{{ u.email }}</td>
+						<td>
+							<span class="mobileScreen">Last Login- </span>
+							<ng-container *ngIf="u.last_login_at; else neverTpl">{{ u.last_login_at | date:'medium' }}</ng-container>
+							<ng-template #neverTpl>—</ng-template>
+						</td>
+						<td>
+							<span class="mobileScreen">Status- </span>
+							<span class="badge" [class.bg-success]="u.last_login_at" [class.bg-secondary]="!u.last_login_at">
+								{{ u.last_login_at ? 'Logged in' : 'Never' }}
+							</span>
+						</td>
+					</tr>
+					<tr *ngIf="!total && !loading">
+						<td colspan="5" class="text-center text-muted py-4">No users match your filters.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<app-page-loader></app-page-loader>
+	</div>
+</div>

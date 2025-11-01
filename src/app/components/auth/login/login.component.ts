@@ -150,7 +150,14 @@ export class LoginComponent implements OnInit {
             this.toastr.error('Invalid email or password!', 'Error', {
               timeOut: 3000
             });
-          } else {
+          }
+          else if (err.error?.detail === 'Account not activated. Please check your email.') {
+            this.toastr.error('Account not activated. Please check your email.', 'Error', {
+              timeOut: 3000
+            });
+          }
+          
+          else {
             console.log(err);
             this.toastr.error('Something went wrong!', 'Error', { timeOut: 3000 });
           }

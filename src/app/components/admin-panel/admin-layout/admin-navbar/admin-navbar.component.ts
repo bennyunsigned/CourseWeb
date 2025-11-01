@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { encryptData,decryptData } from '../../../../utils/crypto-util';
 import { CommonModule } from '@angular/common';
+import { ChangePasswordComponent } from '../../account/change-password/change-password.component';
 
 @Component({
   selector: 'app-admin-navbar',
   templateUrl: './admin-navbar.component.html',
   styleUrls: ['./admin-navbar.component.css'],
-  imports:[CommonModule]
+  imports:[CommonModule, RouterLink, ChangePasswordComponent]
 })
 export class AdminNavbarComponent implements OnInit {
   constructor(private router: Router) {}
@@ -101,5 +102,22 @@ export class AdminNavbarComponent implements OnInit {
   }
 
   showUserMenu = false;
+
+  openChangePasswordModal(): void {
+    try {
+      this.showUserMenu = false; // close dropdown
+      const el = document.getElementById('changePasswordModal');
+      if (!el) return;
+      const Modal = (window as any).bootstrap?.Modal;
+      if (Modal) {
+        const instance = Modal.getOrCreateInstance(el, { backdrop: 'static', keyboard: true });
+        instance.show();
+      } else {
+        // Fallback: toggle data attribute for bootstrap to pick up if initialized elsewhere
+        el.classList.add('show');
+        el.style.display = 'block';
+      }
+    } catch {}
+  }
 
 }

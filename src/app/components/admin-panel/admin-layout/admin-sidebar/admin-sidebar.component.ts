@@ -90,8 +90,8 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
   }
 
   toggleMenu(menu: string): void {
-    // Close all menus first
-    this.closeAllMenus();
+    // Close all menus first without auto-hiding the sidebar
+    this.closeAllMenus(false);
 
     // Open the clicked menu
     if (menu === 'courses') {
@@ -113,12 +113,18 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
     } else if (parentMenu === 'reports') {
       this.isReportsMenuOpen = true;
     }
+    // Auto-hide sidebar on mobile after selecting a submenu item
+    this.collapseSidebarIfMobile();
   }
 
-  closeAllMenus(): void {
+  closeAllMenus(autoHideSidebar: boolean = false): void {
     this.isCoursesMenuOpen = false;
     this.isHelpdeskMenuOpen = false;
     this.isReportsMenuOpen = false;
+    // Optionally auto-hide sidebar on mobile when invoked from a navigation click
+    if (autoHideSidebar) {
+      this.collapseSidebarIfMobile();
+    }
   }
 
   isActive(route: string): boolean {
@@ -141,5 +147,21 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
     collapseTriggerList.forEach(collapseTriggerEl => {
       new window.bootstrap.Collapse(collapseTriggerEl, { toggle: false });
     });
+  }
+
+  private collapseSidebarIfMobile(): void {
+    try {
+      if (window.innerWidth < 992) { // Bootstrap lg breakpoint
+        const sidebar = document.getElementById('sidebar');
+        // On mobile, ".sidebar" default is hidden and ".sidebar.collapsed" is visible (see public/css/app.css)
+        // To auto-hide after navigation, REMOVE the "collapsed" class.
+        sidebar?.classList.remove('collapsed');
+      }
+    } catch { /* noop */ }
+  }
+
+  // Used by top-level navigation items (e.g., Dashboard) to close menus and hide sidebar on mobile
+  handleTopLevelNavClick(): void {
+    this.closeAllMenus(true);
   }
 }

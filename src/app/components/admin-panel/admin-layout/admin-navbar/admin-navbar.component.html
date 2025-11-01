@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand navbar-light navbar-bg" style="padding: 10px;">
+<nav class="navbar navbar-expand navbar-light navbar-bg" style="padding: 6px;">
     <a class="sidebar-toggle" (click)="sidebarToggle()" aria-label="Toggle sidebar">
         <i class="bi bi-list sidebar-hamburger"></i>
     </a>
@@ -10,7 +10,10 @@
                     <img [src]="safeUserPicture" class="avatar img-fluid rounded me-1" alt="userName" /> 
                     <span class="navbar-username">{{userName}}</span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" [class.show]="showUserMenu">
+                                <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" [class.show]="showUserMenu">
+                                        <a class="dropdown-item" href="#" (click)="openChangePasswordModal(); $event.preventDefault()">
+                                                <i class="bi bi-key"></i> Change Password
+                                        </a>
                     <a class="dropdown-item" (click)="logout()">
                         <i class="bi bi-box-arrow-right"></i> Log out
                     </a>
@@ -20,6 +23,23 @@
     </div>
 </nav>
  
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                        <button type="button" class="btn btn-danger btn-sm ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+            <div class="modal-body">
+                <app-change-password></app-change-password>
+            </div>
+        </div>
+    </div>
+    </div>
+
 
 
 

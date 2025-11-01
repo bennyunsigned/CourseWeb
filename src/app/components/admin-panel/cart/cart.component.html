@@ -24,13 +24,16 @@
       <tbody>
         <tr *ngFor="let it of items">
           <td style="width:40px;">
-            <input type="checkbox" [checked]="isSelected(it)" (change)="toggleSelect(it, $event)" [attr.aria-label]="'Select ' + it.CourseName" />
+            <input type="checkbox" [checked]="isSelected(it)" (change)="toggleSelect(it, $event)"
+              [attr.aria-label]="'Select ' + it.CourseName" />
           </td>
           <td style="width:80px;">
-            <img [src]="it.BannerImageUrl || getBannerUrl(it.BannerImage)" (error)="onBannerError($event)" alt="banner" style="width:72px;height:48px;object-fit:cover;border-radius:4px;" />
+            <img [src]="it.BannerImageUrl || getBannerUrl(it.BannerImage)" (error)="onBannerError($event)" alt="banner"
+              style="width:72px;height:48px;object-fit:cover;border-radius:4px;" />
           </td>
-          <td>{{it.CourseName}}</td>
-          <td>₹{{ (it.DiscountedPrice && it.DiscountedPrice > 0 ? it.DiscountedPrice : it.ActualPrice) | number:'1.2-2' }}</td>
+          <td><span class="mobileScreen">Course- </span>{{it.CourseName}}</td>
+          <td><span class="mobileScreen">Price- </span> ₹{{ (it.DiscountedPrice && it.DiscountedPrice > 0 ? it.DiscountedPrice : it.ActualPrice) | number:'1.2-2'
+            }}</td>
           <td>
             <button class="btn btn-sm btn-danger" (click)="removeItem(it)">Remove</button>
           </td>
@@ -38,7 +41,7 @@
       </tbody>
     </table>
     <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
-  <div><strong>Total:</strong> ₹{{ selectedTotal | number:'1.2-2' }}</div>
+      <div><strong>Total:</strong> ₹{{ selectedTotal | number:'1.2-2' }}</div>
       <button class="btn btn-primary" (click)="checkout()">Checkout</button>
     </div>
   </div>

@@ -102,9 +102,9 @@
           </thead>
           <tbody>
             <tr *ngFor="let b of data.breakdown">
-              <td>{{ b.payment_type }}</td>
-              <td class="text-end">{{ b.total_amount | number:'1.0-2' }}</td>
-              <td class="text-end">{{ b.count | number }}</td>
+              <td><span class="mobileScreen">Payment Type- </span>{{ b.payment_type }}</td>
+              <td class="text-end"><span class="mobileScreen">Total Amount- </span>{{ b.total_amount | number:'1.0-2' }}</td>
+              <td class="text-end"><span class="mobileScreen">Count- </span>{{ b.count | number }}</td>
             </tr>
           </tbody>
         </table>

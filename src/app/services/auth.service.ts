@@ -23,4 +23,11 @@ export class AuthService {
     const payload = { id_token, profile };
     return this.http.post(`${this.baseURL}/GoogleCallBack`, payload);
   }
+
+  // Change password for the currently authenticated user
+  // API: POST /auth/changePassword with JSON body { old_password, new_password }
+  // Auth header is added by AuthInterceptor
+  changePassword(payload: { old_password: string; new_password: string }) {
+    return this.http.post(`${this.baseURL}/changePassword`, payload);
+  }
 }

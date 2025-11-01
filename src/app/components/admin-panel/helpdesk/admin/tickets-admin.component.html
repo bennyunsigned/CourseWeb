@@ -3,15 +3,19 @@
     <div class="card-header">
       <div class="row">
         <div class="col-md-4 col-sm-12">
+          <label class="form-label me-2">Search:</label>
           <input class="form-control" placeholder="Search..." [(ngModel)]="searchText" (input)="applyFilters()" />
         </div>
         <div class="col-md-2 col-sm-12">
+          <label class="form-label me-2">From Date:</label>
           <input type="date" class="form-control" [(ngModel)]="fromDate" (change)="applyFilters()" />
         </div>
         <div class="col-md-2 col-sm-12">
+          <label class="form-label me-2">To Date:</label>
           <input type="date" class="form-control" [(ngModel)]="toDate" (change)="applyFilters()" />
         </div>
         <div class="col-md-2 col-sm-12">
+          <label class="form-label me-2">Status:</label>
           <select class="form-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
               <option value="">All Statuses</option>
               <option value="open">Open</option>
@@ -21,6 +25,7 @@
             </select>
         </div>
         <div class="col-md-2 col-sm-12">
+          <label class="form-label me-2">Priority:</label>
           <select class="form-select" [(ngModel)]="filterPriority" (change)="applyFilters()">
               <option value="">All Priorities</option>
               <option value="low">Low</option>
@@ -40,11 +45,11 @@
           </thead>
           <tbody>
             <tr *ngFor="let t of paginated(); let i = index">
-              <td>{{ (currentPage-1)*itemsPerPage + i + 1 }}</td>
-              <td>{{t.subject}}</td>
-              <td>{{t.priority}}</td>
-              <td>{{t.status}}</td>
-              <td>{{ formatDate(t.created_at) }}</td>
+              <td><span class="mobileScreen">#</span>{{ (currentPage-1)*itemsPerPage + i + 1 }}</td>
+              <td><span class="mobileScreen">Subject- </span>{{t.subject}}</td>
+              <td><span class="mobileScreen">Priority- </span>{{t.priority}}</td>
+              <td><span class="mobileScreen">Status- </span>{{t.status}}</td>
+              <td><span class="mobileScreen">Created- </span>{{ formatDate(t.created_at) }}</td>
               <td>
                 <button class="btn btn-sm btn-primary" (click)="openDetails(t)">View</button>
                 <button class="btn btn-sm btn-danger ms-2" (click)="deleteTicket(t.ticket_id)">Delete</button>

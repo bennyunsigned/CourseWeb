@@ -102,12 +102,20 @@ export const routes: Routes = [
         component: AdminBaseComponent,
         children: [
             { path: 'error-report', component: ErrorReportComponent, canActivate: [AuthGuard] },
-            { path: 'login-report', component: LoginReportComponent, canActivate: [AuthGuard] },    
+            { path: 'login-report', component: LoginReportComponent, canActivate: [AuthGuard, AdminOnlyGuard] },    
             { path: 'sales-report', component: SalesReportComponent, canActivate: [AuthGuard] },
             { path: 'user-report', component: UserReportComponent, canActivate: [AuthGuard] },        
             { path: 'admin-total', loadComponent: () => import('./components/admin-panel/reports/admin-total-report/admin-total-report.component').then(m => m.AdminTotalReportComponent), canActivate: [AuthGuard, AdminOnlyGuard] },
             { path: 'my-payments', loadComponent: () => import('./components/admin-panel/reports/my-payments-report/my-payments-report.component').then(m => m.MyPaymentsReportComponent), canActivate: [AuthGuard] },
             
+        ]
+    }
+    ,
+    {
+        path: 'account',
+        component: AdminBaseComponent,
+        children: [
+            { path: 'change-password', loadComponent: () => import('./components/admin-panel/account/change-password/change-password.component').then(m => m.ChangePasswordComponent), canActivate: [AuthGuard] }
         ]
     }
 ];

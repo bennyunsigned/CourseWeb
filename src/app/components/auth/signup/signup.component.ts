@@ -203,8 +203,8 @@ export class SignupComponent implements OnInit {
       try {
         const payload = { ...this.form.value, provider: 'local', role: 'User' };
         delete payload.confirmPassword;
-        const response = await lastValueFrom(this.authService.createUser(payload));
-        this.toastr.success('User created successfully!', 'Success', { timeOut: 3000 });
+  const response = await lastValueFrom(this.authService.createUser(payload));
+  this.toastr.success('User created successfully, check your email to activate the account.', 'Success', { timeOut: 3000 });
         this.cdr.detectChanges();
         this.form.reset();
         this.isSubmitted = false;

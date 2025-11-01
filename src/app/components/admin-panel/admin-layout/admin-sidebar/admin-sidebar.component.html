@@ -8,7 +8,7 @@
         <ul class="sidebar-nav mt-4">
             <!-- Dashboard Menu -->
             <li class="sidebar-item" [ngClass]="{'active': isActive('/dashboard')}">
-                <a class="sidebar-link d-flex align-items-center" [routerLink]="'/dashboard'" (click)="closeAllMenus()">
+                <a class="sidebar-link d-flex align-items-center" [routerLink]="'/dashboard'" (click)="handleTopLevelNavClick()">
                     <i class="align-middle me-2 bi bi-sliders"></i>
                     <span class="align-middle">Dashboard</span>
                 </a>
@@ -122,7 +122,7 @@
 
             <!-- Reports Menu with Submenus -->
             <li class="sidebar-item"
-                [ngClass]="{'active': isReportsMenuOpen || isSubmenuActive(['/reports/sales-report', '/reports/user-report', '/reports/error-report', '/reports/login-report', '/reports/admin-total', '/reports/my-payments'])}">
+                [ngClass]="{'active': isReportsMenuOpen || isSubmenuActive(['/reports/sales-report', '/reports/login-report', '/reports/admin-total', '/reports/my-payments'])}">
                 <a class="sidebar-link d-flex align-items-center collapsed" data-bs-toggle="collapse"
                     href="#reportsMenu" role="button" aria-expanded="false" aria-controls="reportsMenu"
                     (click)="toggleMenu('reports')">
@@ -133,21 +133,6 @@
                 <ul class="collapse list-unstyled ps-4" id="reportsMenu" [ngClass]="{'show': isReportsMenuOpen}">
                     <!-- Admin-only reports -->
                     <ng-container *ngIf="isSpecialUser">
-                        
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/users')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/user-report'"
-                                (click)="activateSubmenu('reports')">
-                                <i class="align-middle me-2 bi bi-people"></i>
-                                <span class="align-middle">User Report</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/error-report')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/error-report'"
-                                (click)="activateSubmenu('reports')">
-                                <i class="align-middle me-2 bi bi-currency-dollar"></i>
-                                <span class="align-middle">Error Report</span>
-                            </a>
-                        </li>
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/reports/login-report')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/reports/login-report'"
                                 (click)="activateSubmenu('reports')">

@@ -31,6 +31,7 @@ export class DashboardComponent {
   loading = false;
   error: string | null = null;
   adminData: any = null;
+  usersCount: number | null = null;
   startDate = '';
   endDate = '';
   todayYMD: string = this.toLocalYMD(new Date());
@@ -90,6 +91,7 @@ export class DashboardComponent {
       this.endDate = this.toLocalYMD(end);
       this.validateDates(true);
       this.loadAdminTotals();
+      this.loadUsersCount();
     } else {
       this.loadUserCourseCoverage();
       this.loadUserPaymentsTotals();
@@ -165,6 +167,16 @@ export class DashboardComponent {
   toggleIosHelp(force?: boolean) { this.showIosHelp = force ?? !this.showIosHelp; }
 
   // ----- Admin side -----
+  loadUsersCount() {
+    this.reports.getUsersCount().subscribe({
+      next: (res) => { this.usersCount = Number(res?.count) || 0; },
+      error: (err) => {
+        // If non-admin somehow reaches here, this may be 403; keep silent UI
+        console.warn('[Dashboard] users count error', err);
+        this.usersCount = null;
+      }
+    });
+  }
   loadAdminTotals() {
     this.loading = true;
     this.loadingService.show();
