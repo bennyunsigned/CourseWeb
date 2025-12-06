@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { encryptData,decryptData } from '../../../../utils/crypto-util';
 import { CommonModule } from '@angular/common';
 import { ChangePasswordComponent } from '../../account/change-password/change-password.component';
@@ -8,7 +8,7 @@ import { ChangePasswordComponent } from '../../account/change-password/change-pa
   selector: 'app-admin-navbar',
   templateUrl: './admin-navbar.component.html',
   styleUrls: ['./admin-navbar.component.css'],
-  imports:[CommonModule, RouterLink, ChangePasswordComponent]
+  imports:[CommonModule, ChangePasswordComponent]
 })
 export class AdminNavbarComponent implements OnInit {
   constructor(private router: Router) {}

@@ -3,7 +3,7 @@
   <div class="category-tabs-container mb-4">
   <div class="d-flex flex-row flex-wrap">
     <button
-      *ngFor="let cat of categories"
+      *ngFor="let cat of categories; trackBy: trackByCategory"
       class="category-tab-btn me-2 mb-2"
       [class.active]="cat.CategoryId === selectedCategoryId"
       (click)="onCategoryTabClick(cat.CategoryId)">
@@ -30,13 +30,14 @@
 </div>
 
 <div class="row mb-4">
-  <div *ngFor="let course of displayedCourses" class="col-md-4 col-sm-12 mb-4">
+  <div *ngFor="let course of displayedCourses; trackBy: trackByCourse" class="col-md-4 col-sm-12 mb-4">
     <div class="card aw-card course-card h-100 position-relative" (click)="onCardClick(course.CourseId)">
       <!-- Bootstrap ratio-based responsive banner -->
       <div class="ratio ratio-16x9 course-banner">
-        <!-- responsive cover image using Bootstrap utility classes -->
+        <!-- responsive cover image using Bootstrap utility classes with lazy loading -->
         <img
           [src]="getBannerUrl(course.BannerImage)"
+          loading="lazy"
           (error)="onBannerError($event)"
           alt="{{course.CourseName}} banner"
           class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"

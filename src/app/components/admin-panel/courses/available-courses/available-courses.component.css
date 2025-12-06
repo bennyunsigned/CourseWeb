@@ -61,7 +61,7 @@
   font-size: 1rem;
   font-weight: 500;
   min-width: 90px;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,7 +84,7 @@
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 
@@ -135,9 +135,15 @@
   border-radius: 8px;
 }
 .course-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(12,20,32,0.45), 0 6px 20px rgba(92,85,255,0.06);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(12,20,32,0.35), 0 4px 12px rgba(92,85,255,0.04);
   border-color: rgba(255,255,255,0.06);
+}
+
+/* CSS containment for performance */
+.course-card {
+  contain: layout style paint;
+  will-change: transform, box-shadow;
 }
 
 .course-banner {

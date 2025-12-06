@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CategoryMasterService } from '../../../../services/category-master.service';
 import { CourseProgressService } from '../../../../services/course-progress.service';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { decryptData, encryptData } from '../../../../utils/crypto-util';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
+import { debounceTime, Subject } from 'rxjs';
 
 interface CategoryTab {
   CategoryId: number;
@@ -23,9 +24,11 @@ interface CategoryTab {
   styleUrls: ['./available-courses.component.css'],
   standalone: true,
   imports: [CommonModule, DurationFormatPipe, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvailableCoursesComponent implements OnInit {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  
   categories: CategoryTab[] = [];
   selectedCategoryId: number = 0;
   // Store all courses per category
@@ -36,27 +39,42 @@ export class AvailableCoursesComponent implements OnInit {
   displayedCourses: AllCourseContent[] = [];
   hasMore: boolean = true;
   searchText: string = '';
-  // Enable verbose logging for image URLs
-  debugImageUrls = true;
+  
+  // Cache for resolved banner URLs (performance optimization)
+  private bannerUrlCache = new Map<string, string>();
+  
+  // Debounce search input
+  private searchSubject = new Subject<string>();
 
   constructor(
     private categoryService: CategoryMasterService,
     private courseProgressService: CourseProgressService,
-  private router: Router,
-  private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
     private paymentService: PaymentService,
     private cartService: CartService,
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService,
+    private cdr: ChangeDetectorRef
+  ) {
+    // Debounce search by 300ms to avoid excessive filtering
+    this.searchSubject.pipe(debounceTime(300)).subscribe(search => {
+      this.searchText = search;
+      this.categoryPagination[this.selectedCategoryId].currentPage = 0;
+      this.updateDisplayedCourses();
+      this.cdr.markForCheck();
+    });
+  }
 
   ngOnInit(): void {
     this.categoryService.getCategory().subscribe({
       next: (data) => {
         this.categories = [{ CategoryId: 0, CategoryName: 'All' }, ...data];
+        this.cdr.markForCheck();
         this.onCategoryTabClick(0);
       },
       error: () => {
         this.categories = [{ CategoryId: 0, CategoryName: 'All' }];
+        this.cdr.markForCheck();
       }
     });
 
@@ -85,6 +103,7 @@ export class AvailableCoursesComponent implements OnInit {
         this.categoryPagination[categoryId] = { currentPage: 0, totalPages: Math.ceil(this.categoryCourses[categoryId].length / this.coursesPerPage) };
       }
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     } else {
       this.fetchAllCoursesForCategory(categoryId);
     }
@@ -100,11 +119,13 @@ export class AvailableCoursesComponent implements OnInit {
           this.categoryCourses[categoryId] = data || [];
           this.categoryPagination[categoryId] = { currentPage: 0, totalPages: Math.ceil((data?.length || 0) / this.coursesPerPage) };
           this.updateDisplayedCourses();
+          this.cdr.markForCheck();
         },
         error: () => {
           this.categoryCourses[categoryId] = [];
           this.categoryPagination[categoryId] = { currentPage: 0, totalPages: 0 };
           this.displayedCourses = [];
+          this.cdr.markForCheck();
         }
       });
   }
@@ -133,60 +154,55 @@ export class AvailableCoursesComponent implements OnInit {
     const endIndex = startIndex + this.coursesPerPage;
     this.displayedCourses = allCourses.slice(startIndex, endIndex);
     this.hasMore = (this.categoryPagination[catId]?.totalPages || 0) > 1;
-    // Debug: log image URLs returned for displayed courses
-    if (this.debugImageUrls) {
-      this.displayedCourses.forEach(c => {
-        console.log('[AvailableCourses] raw BannerImage for course', c.CourseId, ':', c.BannerImage);
-        try {
-          const resolved = this.getBannerUrl(c.BannerImage);
-          console.log('[AvailableCourses] resolved BannerImage URL for course', c.CourseId, ':', resolved);
-        } catch (e) {
-          console.error('[AvailableCourses] error resolving BannerImage for course', c.CourseId, e);
-        }
-      });
-    }
   }
 
-  // Normalize banner image url. If it's absolute (http/https) or starts with '/', return as-is.
-  // Otherwise prefix with origin. If missing/empty, return a local fallback image.
+  // Normalize banner image url with caching. If it's absolute (http/https) or starts with '/', return as-is.
   getBannerUrl(raw: string | undefined | null): string {
+    // Check cache first
+    if (raw && this.bannerUrlCache.has(raw)) {
+      return this.bannerUrlCache.get(raw)!;
+    }
+
     const fallback = '/img/photos/p1.jpg';
     if (!raw) return fallback;
     const trimmed = String(raw).trim();
     if (!trimmed) return fallback;
+    
     let value = trimmed;
     // If backend returned a filesystem path without leading slash like 'home/...' normalize to '/home/...'
     if (/^home\//i.test(value)) {
-      return '/' + value;
+      value = '/' + value;
     }
     // If the string contains '/home/...' somewhere, extract from that point (normalize to leading slash)
     const homeIdx = value.indexOf('/home/');
     if (homeIdx !== -1) {
       const fsPath = value.substring(homeIdx);
-        // If path is under the known workspace root, map to mediaBaseUrl so browser requests go to media server.
-        const workspaceRoot = '/home/ashutosh-mishra/Desktop/Apps';
-        if (fsPath.startsWith(workspaceRoot)) {
-          let relative = fsPath.substring(workspaceRoot.length).replace(/^\//, '');
-          // Collapse immediate duplicate prefix sequences, e.g. "Uploads/CourseImages/Uploads/CourseImages/..." -> "Uploads/CourseImages/..."
-          try {
-            const segs = relative.split('/').filter(s => s.length > 0);
-            for (let L = Math.floor(segs.length / 2); L >= 1; L--) {
-              const first = segs.slice(0, L).join('/');
-              const second = segs.slice(L, 2 * L).join('/');
-              if (first === second) {
-                // keep one copy of the duplicated prefix
-                relative = segs.slice(0, L).concat(segs.slice(2 * L)).join('/');
-                break;
-              }
+      // If path is under the known workspace root, map to mediaBaseUrl so browser requests go to media server.
+      const workspaceRoot = '/home/ashutosh-mishra/Desktop/Apps';
+      if (fsPath.startsWith(workspaceRoot)) {
+        let relative = fsPath.substring(workspaceRoot.length).replace(/^\//, '');
+        // Collapse immediate duplicate prefix sequences, e.g. "Uploads/CourseImages/Uploads/CourseImages/..." -> "Uploads/CourseImages/..."
+        try {
+          const segs = relative.split('/').filter(s => s.length > 0);
+          for (let L = Math.floor(segs.length / 2); L >= 1; L--) {
+            const first = segs.slice(0, L).join('/');
+            const second = segs.slice(L, 2 * L).join('/');
+            if (first === second) {
+              // keep one copy of the duplicated prefix
+              relative = segs.slice(0, L).concat(segs.slice(2 * L)).join('/');
+              break;
             }
-          } catch (e) {
-            // ignore and use original relative
           }
-          const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-          const mapped = base + '/' + relative;
-          return mapped;
+        } catch (e) {
+          // ignore and use original relative
         }
-        return fsPath;
+        const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
+        const mapped = base + '/' + relative;
+        this.bannerUrlCache.set(raw, mapped);
+        return mapped;
+      }
+      this.bannerUrlCache.set(raw, fsPath);
+      return fsPath;
     }
     // Some backends return JSON-wrapped values like '{ "imagePath": "uploads/abc.png" }'
     if ((value.startsWith('{') || value.startsWith('[')) ) {
@@ -204,11 +220,21 @@ export class AvailableCoursesComponent implements OnInit {
       }
     }
     // Absolute http(s) URLs — return as-is
-    if (/^https?:\/\//i.test(value)) return value;
+    if (/^https?:\/\//i.test(value)) {
+      this.bannerUrlCache.set(raw, value);
+      return value;
+    }
     // Protocol-relative URLs like //cdn.example.com/image.png
-    if (/^\/\//.test(value)) return window.location.protocol + value;
+    if (/^\/\//.test(value)) {
+      const result = window.location.protocol + value;
+      this.bannerUrlCache.set(raw, result);
+      return result;
+    }
     // Data URIs (embedded images) or blob URLs must be returned as-is
-    if (/^data:/i.test(value) || /^blob:/i.test(value)) return value;
+    if (/^data:/i.test(value) || /^blob:/i.test(value)) {
+      this.bannerUrlCache.set(raw, value);
+      return value;
+    }
     // Root-relative paths (start with '/') — special-case server filesystem paths
     if (value.startsWith('/')) {
       // If the path looks like a server filesystem path (e.g. /home/username/.../Uploads/...),
@@ -218,28 +244,37 @@ export class AvailableCoursesComponent implements OnInit {
         if (match && match[1]) {
           const webPath = match[1];
           const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-          return base + webPath;
+          const result = base + webPath;
+          this.bannerUrlCache.set(raw, result);
+          return result;
         }
         // fallback: try to find '/Uploads/' occurring later in the string
         const idx = value.indexOf('/Uploads/');
         if (idx !== -1) {
           const webPath = value.substring(idx);
           const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-          return base + webPath;
+          const result = base + webPath;
+          this.bannerUrlCache.set(raw, result);
+          return result;
         }
         // otherwise return as-is (browser will resolve relative to origin)
+        this.bannerUrlCache.set(raw, value);
         return value;
       }
+      this.bannerUrlCache.set(raw, value);
       return value;
     }
     // Some backends return paths like 'uploads/xyz.png' or 'media/abc.png' — prefix with API origin
     if (/\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(value) || /uploads\//i.test(value) || /media\//i.test(value)) {
-      // Use configured API URL if available, otherwise window.origin
-  const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-  return base + '/' + value.replace(/^\//, '');
+      const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
+      const result = base + '/' + value.replace(/^\//, '');
+      this.bannerUrlCache.set(raw, result);
+      return result;
     }
     // Fallback: assume it is a relative path — prefix with origin
-    return window.location.origin + '/' + value.replace(/^\//, '');
+    const result = window.location.origin + '/' + value.replace(/^\//, '');
+    this.bannerUrlCache.set(raw, result);
+    return result;
   }
 
   getBannerStyle(raw: string | undefined | null): string {
@@ -268,8 +303,8 @@ export class AvailableCoursesComponent implements OnInit {
   }
 
   onSearchTextChange() {
-    this.categoryPagination[this.selectedCategoryId].currentPage = 0;
-    this.updateDisplayedCourses();
+    // Emit search text to debounced subject instead of directly updating
+    this.searchSubject.next(this.searchText);
   }
 
   nextPage() {
@@ -278,6 +313,7 @@ export class AvailableCoursesComponent implements OnInit {
     if (this.categoryPagination[catId].currentPage < this.categoryPagination[catId].totalPages - 1) {
       this.categoryPagination[catId].currentPage++;
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     }
   }
 
@@ -287,6 +323,7 @@ export class AvailableCoursesComponent implements OnInit {
     if (this.categoryPagination[catId].currentPage > 0) {
       this.categoryPagination[catId].currentPage--;
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     }
   }
 
@@ -296,6 +333,7 @@ export class AvailableCoursesComponent implements OnInit {
     if (page >= 0 && page < this.categoryPagination[catId].totalPages) {
       this.categoryPagination[catId].currentPage = page;
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     }
   }
 
@@ -307,6 +345,7 @@ export class AvailableCoursesComponent implements OnInit {
       totalPages: Math.ceil(this.categoryCourses[catId].length / this.coursesPerPage)
     };
     this.updateDisplayedCourses();
+    this.cdr.markForCheck();
   }
 
   get visiblePages(): number[] {
@@ -338,6 +377,15 @@ export class AvailableCoursesComponent implements OnInit {
       rows.push(this.categories.slice(i, i + 7));
     }
     return rows;
+  }
+
+  // TrackBy functions for performance optimization
+  trackByCourse(index: number, course: AllCourseContent): number {
+    return course.CourseId;
+  }
+
+  trackByCategory(index: number, category: CategoryTab): number {
+    return category.CategoryId;
   }
 
   onCardClick(courseId: number) {

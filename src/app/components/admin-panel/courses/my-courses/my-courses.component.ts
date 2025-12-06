@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CourseProgressService } from '../../../../services/course-progress.service';
 import { DurationFormatPipe } from '../../../../pipes/duration-format.pipe';
@@ -9,13 +9,15 @@ import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../../../environments/environment';
 import { CategoryMasterService } from '../../../../services/category-master.service';
 import { FormsModule } from '@angular/forms';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-my-courses',
   standalone: true,
   imports: [CommonModule, DurationFormatPipe, FormsModule, RouterModule],
   templateUrl: './my-courses.component.html',
-  styleUrls: ['./my-courses.component.css']
+  styleUrls: ['./my-courses.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyCoursesComponent implements OnInit {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
@@ -27,36 +29,67 @@ export class MyCoursesComponent implements OnInit {
   displayedCourses: any[] = [];
   hasMore = true;
   searchText = '';
-  debugImageUrls = true;
 
   hasSubscription = false;
   purchasedCourseIds: number[] = [];
+  
+  private bannerUrlCache = new Map<string, string>();
+  private searchSubject = new Subject<string>();
 
   constructor(
     private categoryService: CategoryMasterService,
     private cps: CourseProgressService,
     private router: Router,
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.searchSubject.pipe(debounceTime(300)).subscribe(search => {
+      this.searchText = search;
+      this.categoryPagination[this.selectedCategoryId].currentPage = 0;
+      this.updateDisplayedCourses();
+      this.cdr.markForCheck();
+    });
+  }
 
   ngOnInit(): void {
     this.categoryService.getCategory().subscribe({
       next: (data) => {
         this.categories = [{ CategoryId: 0, CategoryName: 'All' }, ...data];
+        this.cdr.markForCheck();
         // check subscription and fetch initial category
         this.cps.hasActiveSubscription().subscribe({
           next: (res) => {
             this.hasSubscription = !!res?.has_active_subscription;
             if (!this.hasSubscription) {
-              this.cps.getPurchasedCourses().subscribe({ next: (d) => { this.purchasedCourseIds = d?.purchased_courses || []; this.onCategoryTabClick(0); }, error: () => { this.purchasedCourseIds = []; this.onCategoryTabClick(0); } });
+              this.cps.getPurchasedCourses().subscribe({ 
+                next: (d) => { 
+                  this.purchasedCourseIds = d?.purchased_courses || []; 
+                  this.cdr.markForCheck();
+                  this.onCategoryTabClick(0); 
+                }, 
+                error: () => { 
+                  this.purchasedCourseIds = []; 
+                  this.cdr.markForCheck();
+                  this.onCategoryTabClick(0); 
+                } 
+              });
             } else {
               this.onCategoryTabClick(0);
             }
           },
-          error: () => { this.hasSubscription = false; this.purchasedCourseIds = []; this.onCategoryTabClick(0); }
+          error: () => { 
+            this.hasSubscription = false; 
+            this.purchasedCourseIds = []; 
+            this.cdr.markForCheck();
+            this.onCategoryTabClick(0); 
+          }
         });
       },
-      error: () => { this.categories = [{ CategoryId: 0, CategoryName: 'All' }]; this.onCategoryTabClick(0); }
+      error: () => { 
+        this.categories = [{ CategoryId: 0, CategoryName: 'All' }]; 
+        this.cdr.markForCheck();
+        this.onCategoryTabClick(0); 
+      }
     });
   }
 
@@ -65,6 +98,7 @@ export class MyCoursesComponent implements OnInit {
     if (this.categoryCourses[categoryId]) {
       if (!this.categoryPagination[categoryId]) this.categoryPagination[categoryId] = { currentPage: 0, totalPages: Math.ceil(this.categoryCourses[categoryId].length / this.coursesPerPage) };
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     } else {
       this.fetchAllCoursesForCategory(categoryId);
     }
@@ -86,8 +120,15 @@ export class MyCoursesComponent implements OnInit {
         this.categoryCourses[categoryId] = list;
         this.categoryPagination[categoryId] = { currentPage: 0, totalPages: Math.ceil((list?.length || 0) / this.coursesPerPage) };
         this.updateDisplayedCourses();
+        this.cdr.markForCheck();
       },
-      error: (err) => { this.categoryCourses[categoryId] = []; this.categoryPagination[categoryId] = { currentPage: 0, totalPages: 0 }; this.displayedCourses = []; console.error('Failed to fetch courses', err); }
+      error: (err) => { 
+        this.categoryCourses[categoryId] = []; 
+        this.categoryPagination[categoryId] = { currentPage: 0, totalPages: 0 }; 
+        this.displayedCourses = []; 
+        this.cdr.markForCheck();
+        console.error('Failed to fetch courses', err); 
+      }
     });
   }
 
@@ -107,19 +148,22 @@ export class MyCoursesComponent implements OnInit {
     const endIndex = startIndex + this.coursesPerPage;
     this.displayedCourses = allCourses.slice(startIndex, endIndex);
     this.hasMore = (this.categoryPagination[catId]?.totalPages || 0) > 1;
-    if (this.debugImageUrls) {
-      this.displayedCourses.forEach(c => { console.log('[MyCourses] raw BannerImage for course', c.CourseId, ':', c.BannerImage); try { const resolved = this.getBannerUrl(c.BannerImage); console.log('[MyCourses] resolved BannerImage URL for course', c.CourseId, ':', resolved); } catch (e) { console.error('[MyCourses] error resolving BannerImage for course', c.CourseId, e); } });
-    }
   }
 
   getBannerUrl(raw: string | undefined | null): string {
+    // Check cache first
+    if (raw && this.bannerUrlCache.has(raw)) {
+      return this.bannerUrlCache.get(raw)!;
+    }
+
     const fallback = '/img/photos/p1.jpg';
     if (!raw) return fallback;
     const trimmed = String(raw).trim();
     if (!trimmed) return fallback;
+    
     let value = trimmed;
     if (/^home\//i.test(value)) {
-      return '/' + value;
+      value = '/' + value;
     }
     const homeIdx = value.indexOf('/home/');
     if (homeIdx !== -1) {
@@ -140,8 +184,10 @@ export class MyCoursesComponent implements OnInit {
         } catch (e) {}
         const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
         const mapped = base + '/' + relative;
+        this.bannerUrlCache.set(raw, mapped);
         return mapped;
       }
+      this.bannerUrlCache.set(raw, fsPath);
       return fsPath;
     }
     if ((value.startsWith('{') || value.startsWith('[')) ) {
@@ -156,32 +202,52 @@ export class MyCoursesComponent implements OnInit {
         value = trimmed;
       }
     }
-    if (/^https?:\/\//i.test(value)) return value;
-    if (/^\/\//.test(value)) return window.location.protocol + value;
-    if (/^data:/i.test(value) || /^blob:/i.test(value)) return value;
+    if (/^https?:\/\//i.test(value)) {
+      this.bannerUrlCache.set(raw, value);
+      return value;
+    }
+    if (/^\/\//.test(value)) {
+      const result = window.location.protocol + value;
+      this.bannerUrlCache.set(raw, result);
+      return result;
+    }
+    if (/^data:/i.test(value) || /^blob:/i.test(value)) {
+      this.bannerUrlCache.set(raw, value);
+      return value;
+    }
     if (value.startsWith('/')) {
       if (/^\/home\//i.test(value)) {
         const match = value.match(/(\/(?:Uploads|uploads|Media|media|static|assets)\/.*)$/i);
         if (match && match[1]) {
           const webPath = match[1];
           const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-          return base + webPath;
+          const result = base + webPath;
+          this.bannerUrlCache.set(raw, result);
+          return result;
         }
         const idx = value.indexOf('/Uploads/');
         if (idx !== -1) {
           const webPath = value.substring(idx);
           const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-          return base + webPath;
+          const result = base + webPath;
+          this.bannerUrlCache.set(raw, result);
+          return result;
         }
+        this.bannerUrlCache.set(raw, value);
         return value;
       }
+      this.bannerUrlCache.set(raw, value);
       return value;
     }
     if (/\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(value) || /uploads\//i.test(value) || /media\//i.test(value)) {
       const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-      return base + '/' + value.replace(/^\//, '');
+      const result = base + '/' + value.replace(/^\//, '');
+      this.bannerUrlCache.set(raw, result);
+      return result;
     }
-    return window.location.origin + '/' + value.replace(/^\//, '');
+    const result = window.location.origin + '/' + value.replace(/^\//, '');
+    this.bannerUrlCache.set(raw, result);
+    return result;
   }
 
   getBannerStyle(raw: string | undefined | null): string {
@@ -206,8 +272,8 @@ export class MyCoursesComponent implements OnInit {
   }
 
   onSearchTextChange() {
-    this.categoryPagination[this.selectedCategoryId].currentPage = 0;
-    this.updateDisplayedCourses();
+    // Emit search text to debounced subject instead of directly updating
+    this.searchSubject.next(this.searchText);
   }
 
   nextPage() {
@@ -216,6 +282,7 @@ export class MyCoursesComponent implements OnInit {
     if (this.categoryPagination[catId].currentPage < this.categoryPagination[catId].totalPages - 1) {
       this.categoryPagination[catId].currentPage++;
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     }
   }
 
@@ -225,6 +292,7 @@ export class MyCoursesComponent implements OnInit {
     if (this.categoryPagination[catId].currentPage > 0) {
       this.categoryPagination[catId].currentPage--;
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     }
   }
 
@@ -234,6 +302,7 @@ export class MyCoursesComponent implements OnInit {
     if (page >= 0 && page < this.categoryPagination[catId].totalPages) {
       this.categoryPagination[catId].currentPage = page;
       this.updateDisplayedCourses();
+      this.cdr.markForCheck();
     }
   }
 
@@ -245,6 +314,7 @@ export class MyCoursesComponent implements OnInit {
       totalPages: Math.ceil(this.categoryCourses[catId].length / this.coursesPerPage)
     };
     this.updateDisplayedCourses();
+    this.cdr.markForCheck();
   }
 
   get visiblePages(): number[] {
@@ -268,6 +338,15 @@ export class MyCoursesComponent implements OnInit {
       rows.push(this.displayedCourses.slice(i, i + 4));
     }
     return rows;
+  }
+
+  // TrackBy functions for performance optimization
+  trackByCourse(index: number, course: any): number {
+    return course.CourseId;
+  }
+
+  trackByCategory(index: number, category: any): number {
+    return category.CategoryId;
   }
 
   onCardClick(courseId: number) {
