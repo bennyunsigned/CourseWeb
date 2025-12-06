@@ -4,34 +4,51 @@ import { PageLoaderComponent } from './components/page-loader/page-loader.compon
 import { environment } from '../environments/environment';
 import { Title } from '@angular/platform-browser';
 import { PwaService } from './services/pwa.service';
+import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
+import { filter } from 'rxjs/operators';
 
 // declare var feather: any;
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-root',
-  imports: [PageLoaderComponent,RouterOutlet],
+  imports: [PageLoaderComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {  
+export class AppComponent implements OnInit {
   @ViewChild(PageLoaderComponent) loader!: PageLoaderComponent;
 
-  constructor(private router: Router,private titleService: Title, _pwa: PwaService) {
+  constructor(
+    private router: Router,
+    private titleService: Title,
+    _pwa: PwaService,
+    private swUpdate: SwUpdate
+  ) {
     this.titleService.setTitle(environment.appName);
+
+    // Auto-update logic
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates
+        .pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))
+        .subscribe(() => {
+          // Activate the new version and reload to ensure fresh cache
+          this.swUpdate.activateUpdate().then(() => document.location.reload());
+        });
+    }
   }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         // Safety: ensure any popup blur state is cleared on navigation
-        try { document.body.classList.remove('popup-open'); } catch {}
+        try { document.body.classList.remove('popup-open'); } catch { }
         if (this.loader) {
           this.loader.showLoader();
         }
       } else if (event instanceof NavigationEnd) {
         // Safety: ensure blur state is cleared after route change
-        try { document.body.classList.remove('popup-open'); } catch {}
+        try { document.body.classList.remove('popup-open'); } catch { }
         if (this.loader) {
           // Show loader for at least 1 second for smooth transition
           setTimeout(() => {
