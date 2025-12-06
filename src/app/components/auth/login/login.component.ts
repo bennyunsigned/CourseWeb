@@ -11,6 +11,8 @@ import { encryptData } from '../../../utils/crypto-util';
 import { AuthService } from '../../../services/auth.service';
 import { LoadingService } from '../../../services/loading.service';
 
+import { PaymentService } from '../../../services/payment.service';
+
 @Component({
   selector: 'app-login',
   imports: [RouterLink, CommonModule, ReactiveFormsModule, FormsModule, FirstkeyPipe],
@@ -30,6 +32,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private ngZone: NgZone,
     private loadingService: LoadingService,
+    private paymentService: PaymentService
   ) {
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]], // Added email validation
@@ -37,8 +40,8 @@ export class LoginComponent implements OnInit {
     });
   }
 
-   
-  ngOnInit(): void {    
+
+  ngOnInit(): void {
 
     const token = localStorage.getItem('access_token');
     if (token) {
@@ -96,7 +99,7 @@ export class LoginComponent implements OnInit {
     this.loadingService.show();
     this.waitForGoogleButtonReady().then(() => this.loadingService.hide()).catch(() => this.loadingService.hide());
     // Trigger global initializer in case index.html init ran before Angular inserted the placeholder
-    try { (window as any).__gsi_render_buttons && (window as any).__gsi_render_buttons(); } catch(e){}
+    try { (window as any).__gsi_render_buttons && (window as any).__gsi_render_buttons(); } catch (e) { }
   }
 
   // Poll until the Google button is rendered or timeout
@@ -140,10 +143,8 @@ export class LoginComponent implements OnInit {
 
           this.setTokenTimeout(token); // Set token timeout after login
           this.setTokenTimeout(token); // Set token timeout after login
-          this.ngZone.run(() => {
-            this.router.navigate(['/dashboard']); // Correct path
-            this.toastr.success('Logged in successfully!', 'Success', { timeOut: 3000 });
-          });
+
+          this.handlePostLoginRedirect(userId, userName, userEmail);
         },
         error: (err: any) => {
           if (err.error?.detail === 'Invalid email or password') {
@@ -156,7 +157,7 @@ export class LoginComponent implements OnInit {
               timeOut: 3000
             });
           }
-          
+
           else {
             console.log(err);
             this.toastr.error('Something went wrong!', 'Error', { timeOut: 3000 });
@@ -232,12 +233,73 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('user_picture', picture);
 
       this.setTokenTimeout(token);
-      this.ngZone.run(() => {
-        this.toastr.success('Logged in successfully!', 'Success', { timeOut: 3000 });
-        this.router.navigate(['/dashboard']);
-      });
+      this.handlePostLoginRedirect(userId, userName, userEmail);
     } catch (e) {
       console.error('Error handling app JWT:', e);
     }
   }
+
+  private handlePostLoginRedirect(userId: string, userName: string, userEmail: string) {
+    this.ngZone.run(() => {
+      // Check for pending subscription intent
+      const pendingIntentStr = localStorage.getItem('pending_subscription_intent');
+      console.log('Checking for pending subscription intent:', pendingIntentStr);
+
+      if (pendingIntentStr) {
+        try {
+          const intent = JSON.parse(pendingIntentStr);
+          localStorage.removeItem('pending_subscription_intent'); // Clear it immediately
+
+          const redirectWithParams = `${window.location.origin}/course/payment-success`;
+          const payload: any = {
+            amount: intent.amount || 0,
+            purpose: `Subscription: ${intent.subscriptionName || 'Plan'}`,
+            buyer_name: userName || '',
+            email: userEmail || '',
+            phone: '',
+            redirect_url: redirectWithParams,
+            payment_type: 'subscription',
+            user_id: Number(userId),
+            subscription_type: intent.subscriptionId
+          };
+
+          this.toastr.info('Initiating pending subscription payment...', 'Redirecting');
+
+          this.paymentService.createPayment(payload).subscribe({
+            next: (res: any) => {
+              const redirect = res?.payment_request?.longurl || res?.payment_request?.payment_url || res?.longurl;
+              if (redirect) {
+                try {
+                  const pending = {
+                    user_id: Number(userId),
+                    subscription_id: intent.subscriptionId,
+                    amount: intent.amount,
+                    payment_request_id: res?.payment_request?.id || res?.id || null
+                  };
+                  localStorage.setItem('pending_payment', JSON.stringify(pending));
+                } catch (e) { }
+                window.location.href = redirect;
+              } else {
+                console.error('No redirect URL in payment response', res);
+                this.toastr.error('Could not initiate payment. Redirecting to dashboard.');
+                this.router.navigate(['/dashboard']);
+              }
+            },
+            error: (err) => {
+              console.error('Pending payment initiation failed', err);
+              this.toastr.error('Failed to initiate payment. Redirecting to dashboard.');
+              this.router.navigate(['/dashboard']);
+            }
+          });
+          return; // Stop execution here
+        } catch (e) {
+          console.error('Error parsing pending intent', e);
+        }
+      }
+
+      this.router.navigate(['/dashboard']);
+      this.toastr.success('Logged in successfully!', 'Success', { timeOut: 3000 });
+    });
+  }
 }
+

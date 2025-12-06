@@ -3,8 +3,9 @@
         <div class="hero-bg" style="background-image: url('/img/photos/unsplash-1.jpg')"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="fw-bold">Welcome Back!</h1>
-            <p class="lead">Resume your learning journey. Access courses, modules, and community discussions with a single sign in.</p>
+            <h1 class="fw-bold">Welcome to Vidyaroop!</h1>
+            <p class="lead">Resume your learning journey. Access courses, modules, and community discussions with a
+                single sign in.</p>
         </div>
     </section>
 
@@ -16,8 +17,8 @@
                         <form [formGroup]="form" (ngSubmit)="onSubmit()">
                             <div class="row">
                                 <div class="col-12 mb-3">
-                                    <input type="email" placeholder="Email" id="email" formControlName="email" aria-label="Email"
-                                        class="form-control form-control-sm neon-input">
+                                    <input type="email" placeholder="Email" id="email" formControlName="email"
+                                        aria-label="Email" class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('email')">
                                         <ng-container [ngSwitch]="form.controls['email'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your email.</div>
@@ -27,7 +28,8 @@
                                 </div>
 
                                 <div class="col-12 mb-3">
-                                    <input type="password" placeholder="Password" id="password" formControlName="password" aria-label="Password"
+                                    <input type="password" placeholder="Password" id="password"
+                                        formControlName="password" aria-label="Password"
                                         class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('password')">
                                         <ng-container [ngSwitch]="form.controls['password'].errors | firstkey">
@@ -38,7 +40,8 @@
 
                                 <div class="col-12 mb-3 d-flex align-items-center">
                                     <div class="form-check">
-                                        <input id="rememberMe" type="checkbox" class="form-check-input" value="remember-me" name="remember-me" checked>
+                                        <input id="rememberMe" type="checkbox" class="form-check-input"
+                                            value="remember-me" name="remember-me" checked>
                                         <label class="form-check-label text-small" for="rememberMe">Remember me</label>
                                     </div>
                                     <div class="ms-auto">
@@ -73,6 +76,6 @@
                 </div>
             </div>
         </div>
-        
+
     </section>
 </main>

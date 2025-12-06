@@ -1,0 +1,86 @@
+<div class="offer-container" *ngIf="!loading && course; else showLoading">
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-bg"
+            [style.backgroundImage]="'url(' + (course.BannerImage || '/img/photos/carausel3.png') + ')'"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content container text-center">
+            <span class="badge badge-neon mb-3">Limited Time Offer</span>
+            <h1 class="display-4 fw-bold mb-2">{{ course.CourseName }}</h1>
+            <p class="lead text-muted">{{ 'Premium Course' }}</p>
+
+            <div class="price-tag my-4">
+                <span class="old-price text-decoration-line-through text-muted fs-4 me-2"
+                    *ngIf="discountPercentage > 0">₹{{ course.ActualPrice }}</span>
+                <span class="new-price display-3 fw-bold text-accent">₹{{ course.DiscountedPrice > 0 ?
+                    course.DiscountedPrice : course.ActualPrice }}</span>
+                <div class="discount-pill mt-2" *ngIf="discountPercentage > 0">Save {{ discountPercentage }}%</div>
+            </div>
+
+            <button (click)="buyNow()" class="btn btn-lg btn-buy-pulse w-100 col-md-6 mx-auto">
+                Unlock Now <i class="bi bi-arrow-right-short"></i>
+            </button>
+            <p class="small text-muted mt-2"><i class="bi bi-shield-lock"></i> 100% Secure Checkout</p>
+        </div>
+    </div>
+
+    <!-- Key Benefits -->
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card glass-panel h-100">
+                    <div class="card-body">
+                        <h3 class="card-title fw-bold mb-4">What You'll Learn</h3>
+                        <ul class="list-unstyled feature-list">
+                            <li *ngFor="let mod of course.Modules; let i = index">
+                                <i class="bi bi-check-circle-fill text-accent me-2"></i>
+                                <span class="title">{{ mod.ModuleName }}</span>
+                            </li>
+                            <li *ngIf="(!course.Modules || course.Modules.length === 0)">
+                                <i class="bi bi-check-circle-fill text-accent me-2"></i> Comprehensive Curriculum
+                            </li>
+                            <li><i class="bi bi-check-circle-fill text-accent me-2"></i> Lifetime Access</li>
+                            <li><i class="bi bi-check-circle-fill text-accent me-2"></i> Certificate of Completion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card glass-panel h-100">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <i class="bi bi-people-fill display-4 text-muted mb-3"></i>
+                        <h4>Join Top Learners</h4>
+                        <p class="text-muted">Don't miss this chance to upgrade your career.</p>
+                        <div class="mt-auto">
+                            <button (click)="buyNow()" class="btn btn-outline-light w-100">Get Instant Access</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Mobile Buy Button -->
+    <div class="sticky-bottom-bar d-md-none">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="price-info">
+                <small class="text-muted d-block">Total</small>
+                <span class="fw-bold fs-5">₹{{ course.DiscountedPrice > 0 ? course.DiscountedPrice : course.ActualPrice
+                    }}</span>
+            </div>
+            <button (click)="buyNow()" class="btn btn-buy-sm">Buy Now</button>
+        </div>
+    </div>
+
+</div>
+
+<ng-template #showLoading>
+    <div class="d-flex justify-content-center align-items-center min-vh-100" *ngIf="loading">
+        <div class="spinner-border text-accent" role="status"></div>
+    </div>
+    <div class="text-center min-vh-100 d-flex flex-column justify-content-center" *ngIf="!loading && error">
+        <h2 class="text-muted">{{ error }}</h2>
+    </div>
+</ng-template>

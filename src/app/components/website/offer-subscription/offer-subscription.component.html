@@ -1,0 +1,163 @@
+```
+<div class="offer-container" *ngIf="!loading && subscription; else showLoading">
+
+    <!-- Modern Floating Navbar -->
+    <nav class="floating-nav">
+        <div class="container d-flex justify-content-center justify-content-sm-between align-items-center">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center p-0 m-0" href="#">
+                <img src="img/photos/vidyaroop-logo.png" alt="Vidyaroop" class="logo-img">
+            </a>
+
+            <!-- Center Timer -->
+            <div class="timer-pill d-none d-md-flex align-items-center">
+                <span class="pulsing-dot me-2"></span>
+                <span class="text-muted small me-2">Offer Ends:</span>
+                <span class="fw-bold font-monospace text-white">{{ timeLeft.hours }}:{{ timeLeft.minutes }}:{{
+                    timeLeft.seconds }}</span>
+            </div>
+
+            <!-- Right Action -->
+            <div class="d-none d-sm-flex align-items-center">
+                <span class="text-white fw-bold me-3">₹{{ subscription?.SubscriptionPrice }}</span>
+            </div>
+        </div>
+
+        <!-- Mobile Timer Bar (below nav) -->
+        <div class="mobile-timer-bar d-md-none text-center py-1">
+            <small class="text-white-50">Offer expires in: <span class="text-white fw-bold">{{ timeLeft.hours }}h {{
+                    timeLeft.minutes }}m {{ timeLeft.seconds }}s</span></small>
+        </div>
+    </nav>
+
+    <!-- Spacer for fixed nav -->
+    <div style="height: 80px;"></div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <!-- Abstract futuristic bg for subscription -->
+        <div class="hero-bg" style="background-image: url('/img/photos/carausel3.png')"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content container text-center pt-5">
+
+
+
+            <span class="badge badge-neon mb-3">Premium Access</span>
+            <h1 class="display-3 fw-bold mb-2">{{ subscription.SubscriptionName }}</h1>
+            <p class="lead text-muted">{{ subscription.Description }}</p>
+
+            <div class="price-tag my-5">
+                <div class="discount-pill mb-2" *ngIf="discountPercentage > 0">Save {{ discountPercentage }}%</div>
+                <br>
+                <span class="old-price text-decoration-line-through text-muted fs-4 me-3"
+                    *ngIf="discountPercentage > 0">₹{{ subscription.OriginalPrice }}</span>
+                <span class="new-price display-2 fw-bold text-accent">₹{{ subscription.SubscriptionPrice }}</span>
+            </div>
+
+            <button (click)="buyNow()" class="btn btn-lg btn-buy-pulse w-100 col-md-6 mx-auto">
+                Activate Plan <i class="bi bi-rocket-takeoff-fill ms-2"></i>
+            </button>
+            <p class="small text-muted mt-3"><i class="bi bi-check-circle"></i> Cancel anytime • Secure payment</p>
+        </div>
+    </div>
+
+    <!-- About Vidyaroop Section -->
+    <div class="container py-5 border-bottom border-secondary"
+        style="border-color: rgba(108, 117, 125, 0.2) !important;">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="fw-bold display-5 mb-3 text-white">Why Choose <span class="text-accent">Vidyaroop?</span>
+                </h2>
+                <p class="lead text-muted">We are India's fastest growing ed-tech platform committed to providing
+                    high-quality education at affordable prices. Our industry-expert mentors ensure you get real-world
+                    skills.</p>
+                <div class="row mt-4 g-3">
+                    <div class="col-6" *ngFor="let stat of aboutStats">
+                        <div class="d-flex align-items-center">
+                            <i [class]="'bi ' + stat.icon + ' text-accent fs-2 me-3'"></i>
+                            <div>
+                                <h4 class="fw-bold mb-0 text-white">{{ stat.value }}</h4>
+                                <small class="text-muted">{{ stat.label }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="glass-panel p-3">
+                    <img src="/img/photos/carausel2.png" class="img-fluid rounded shadow-lg" alt="About us">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Included Courses Preview -->
+    <div class="container py-5">
+        <h3 class="text-center fw-bold mb-5 text-white">Courses You'll Unlock</h3>
+        <app-available-courses [hideActions]="true"></app-available-courses>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="container py-5">
+        <h3 class="text-center fw-bold mb-5 text-white">Success Stories</h3>
+        <div class="row g-4">
+            <div class="col-md-4" *ngFor="let t of testimonials">
+                <div class="card glass-panel h-100 p-4 text-center">
+                    <img [src]="t.img" class="rounded-circle mx-auto mb-3 border border-2 border-accent" width="80"
+                        height="80" style="object-fit: cover;">
+                    <p class="text-italic text-muted">"{{ t.text }}"</p>
+                    <h6 class="fw-bold text-white mt-auto">- {{ t.name }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plan Benefits (Moved down) -->
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-8">
+                <div class="card glass-panel h-100">
+                    <div class="card-body">
+                        <h3 class="card-title fw-bold mb-4 text-center">Plan Benefits</h3>
+                        <ul class="list-unstyled feature-list">
+                            <li *ngFor="let feat of subscription.Features">
+                                <i class="bi bi-patch-check-fill text-accent me-3 fs-5"></i>
+                                <span class="title fs-5">{{ feat }}</span>
+                            </li>
+                        </ul>
+                        <div class="text-center mt-5">
+                            <div class="p-3 border border-dark rounded" style="background: rgba(255,255,255,0.02)">
+                                <h5 class="text-muted mb-0">Total Duration: <span class="text-white">{{
+                                        subscription.Duration }}</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Mobile Buy Button (Bottom) -->
+    <div class="sticky-bottom-bar">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="price-info">
+                <small class="text-muted d-block">{{ subscription.Duration }} Plan</small>
+                <span class="fw-bold fs-4">₹{{ subscription.SubscriptionPrice }}</span>
+            </div>
+            <button (click)="buyNow()" class="btn btn-buy-sm">Activate</button>
+        </div>
+    </div>
+
+</div>
+
+<ng-template #showLoading>
+    <div class="d-flex justify-content-center align-items-center min-vh-100" *ngIf="loading">
+        <div class="spinner-border text-accent" role="status"></div>
+    </div>
+    <div class="text-center min-vh-100 d-flex flex-column justify-content-center" *ngIf="!loading && error">
+        <i class="bi bi-emoji-frown display-1 text-muted mb-3"></i>
+        <h2 class="text-muted">{{ error }}</h2>
+        <a routerLink="/" class="btn btn-outline-light mt-3">Go Home</a>
+    </div>
+</ng-template>
+```

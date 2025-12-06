@@ -3,7 +3,7 @@
         <div class="hero-bg" style="background-image: url('/img/photos/unsplash-2.jpg')"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="fw-bold">Create Your Account</h1>
+            <h1 class="fw-bold">Join Vidyaroop Today</h1>
             <p class="lead">Get personalized course recommendations and connect with mentors.</p>
         </div>
     </section>
@@ -16,8 +16,8 @@
                         <form [formGroup]="form" (ngSubmit)="onSubmit()">
                             <div class="row">
                                 <div class="col-12 mb-3">
-                                    <input type="text" placeholder="Name" id="name" formControlName="name" aria-label="Name"
-                                        class="form-control form-control-sm neon-input">
+                                    <input type="text" placeholder="Name" id="name" formControlName="name"
+                                        aria-label="Name" class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('name')">
                                         <ng-container [ngSwitch]="form.controls['name'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your name.</div>
@@ -26,8 +26,8 @@
                                 </div>
 
                                 <div class="col-12 mb-3">
-                                    <input type="email" placeholder="Email" id="email" formControlName="email" aria-label="Email"
-                                        class="form-control form-control-sm neon-input">
+                                    <input type="email" placeholder="Email" id="email" formControlName="email"
+                                        aria-label="Email" class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('email')">
                                         <ng-container [ngSwitch]="form.controls['email'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your email.</div>
@@ -38,23 +38,27 @@
 
                                 <!-- hidden phone field: kept for backend but not visible to user -->
                                 <div class="col-12 mb-3" style="display:none !important;">
-                                    <input type="text" placeholder="Phone" id="phone" formControlName="phone" aria-label="Phone"
-                                        class="form-control form-control-sm neon-input" value="0000000000">
+                                    <input type="text" placeholder="Phone" id="phone" formControlName="phone"
+                                        aria-label="Phone" class="form-control form-control-sm neon-input"
+                                        value="0000000000">
                                 </div>
 
                                 <div class="col-12 mb-3">
-                                    <input type="password" placeholder="Password" id="password" formControlName="password" aria-label="Password"
+                                    <input type="password" placeholder="Password" id="password"
+                                        formControlName="password" aria-label="Password"
                                         class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('password')">
                                         <ng-container [ngSwitch]="form.controls['password'].errors | firstkey">
                                             <div *ngSwitchCase="'required'">Please enter your password.</div>
-                                            <div *ngSwitchCase="'minlength'">Password must be at least 6 characters.</div>
+                                            <div *ngSwitchCase="'minlength'">Password must be at least 6 characters.
+                                            </div>
                                         </ng-container>
                                     </div>
                                 </div>
 
                                 <div class="col-12 mb-3">
-                                    <input type="password" placeholder="Confirm Password" id="confirmpassword" formControlName="confirmPassword" aria-label="Confirm Password"
+                                    <input type="password" placeholder="Confirm Password" id="confirmpassword"
+                                        formControlName="confirmPassword" aria-label="Confirm Password"
                                         class="form-control form-control-sm neon-input">
                                     <div class="error-feedback" *ngIf="hasDisplayableError('confirmPassword')">
                                         <ng-container [ngSwitch]="form.controls['confirmPassword'].errors | firstkey">
@@ -90,6 +94,6 @@
                 </div>
             </div>
         </div>
-        
+
     </section>
 </main>

@@ -1,0 +1,297 @@
+:host {
+    display: block;
+    background-color: var(--bg);
+    min-height: 100vh;
+    color: var(--text);
+    padding-bottom: 90px;
+    /* Always reserve space for sticky bottom bar */
+}
+
+/* Floating Nav */
+.floating-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    background: rgba(18, 18, 24, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 0;
+    transition: all 0.3s ease;
+}
+
+.timer-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: 50px;
+}
+
+.pulsing-dot {
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ef4444;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.shadow-glow {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Mobile Timer Bar */
+.mobile-timer-bar {
+    background: linear-gradient(90deg, #1f1f2e, #2a2a3d);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    padding: 60px 0 80px;
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px) brightness(0.25);
+    z-index: 1;
+    transform: scale(1.1);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, transparent 0%, var(--bg) 95%);
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
+/* Typography & Badges */
+.badge-neon {
+    background: linear-gradient(90deg, #8b5cf6, #d946ef);
+    color: #fff;
+    font-weight: 800;
+    padding: 0.6em 1.2em;
+    font-size: 0.85rem;
+    border-radius: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.text-accent {
+    color: #d946ef !important;
+    text-shadow: 0 0 30px rgba(217, 70, 239, 0.3);
+}
+
+.discount-pill {
+    display: inline-block;
+    background: #10b981;
+    color: white;
+    font-weight: bold;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+/* Glass Panels */
+.glass-panel {
+    background: rgba(30, 30, 40, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+}
+
+/* Course Cards Grid */
+.course-card {
+    background: #1e1e26;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.course-img {
+    height: 0;
+    padding-bottom: 56.25%;
+    /* 16:9 Aspect Ratio */
+    background-size: cover;
+    background-position: center;
+    background-color: #2a2a35;
+    /* Placeholder color */
+}
+
+/* Pagination */
+.pagination-dark .page-link {
+    background-color: transparent;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    margin: 0 3px;
+    min-width: 38px;
+    text-align: center;
+}
+
+.pagination-dark .page-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.pagination-dark .active .page-link {
+    background: #8b5cf6;
+    border-color: #8b5cf6;
+    color: #fff;
+    font-weight: bold;
+}
+
+.pagination-dark .disabled .page-link {
+    color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Sticky Bottom Bar (Mobile) */
+.sticky-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #18181b;
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1020;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.btn-buy-sm {
+    background: linear-gradient(90deg, #d946ef, #8b5cf6);
+    color: white;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 30px;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 768px) {
+    .logo-img {
+        height: 40px;
+        /* Smaller on mobile to fit nicely */
+    }
+
+    /* Hero adjustments */
+    .hero-content {
+        padding-top: 20px;
+    }
+
+    .display-3 {
+        font-size: 2rem;
+        /* proportional scaling */
+    }
+
+    .lead {
+        font-size: 1rem;
+    }
+
+    /* Section Headings */
+    .display-5 {
+        font-size: 1.75rem;
+        /* Fixes "Why Choose" overflow */
+    }
+
+    /* Course Cards */
+    .course-card .p-3 {
+        padding: 12px !important;
+    }
+
+    .course-card h6 {
+        font-size: 0.95rem;
+    }
+
+    /* Stats Grid */
+    .about-stats h4 {
+        font-size: 1.2rem;
+    }
+
+    .about-stats i {
+        font-size: 1.5rem !important;
+    }
+
+    /* Ensure no horizontal overflow */
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .container {
+        overflow-x: hidden;
+    }
+}
+
+@media (max-width: 576px) {
+
+    /* Tighter mobile screens */
+    .display-3 {
+        font-size: 1.8rem;
+    }
+
+    .btn-buy-pulse {
+        padding: 16px;
+        font-size: 1rem;
+    }
+
+    .hero-section {
+        padding-bottom: 40px;
+    }
+
+    /* Stack stats tighter if needed, or keep col-6 but smaller text */
+    .col-6 {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}

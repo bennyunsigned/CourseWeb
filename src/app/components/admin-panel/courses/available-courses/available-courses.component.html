@@ -1,136 +1,143 @@
 <div class="aw-available-courses mt-2">
 
   <div class="category-tabs-container mb-4">
-  <div class="d-flex flex-row flex-wrap">
-    <button
-      *ngFor="let cat of categories; trackBy: trackByCategory"
-      class="category-tab-btn me-2 mb-2"
-      [class.active]="cat.CategoryId === selectedCategoryId"
-      (click)="onCategoryTabClick(cat.CategoryId)">
-      {{ cat.CategoryName }}
-    </button>
-  </div>
+    <div class="d-flex flex-row flex-wrap">
+      <button *ngFor="let cat of categories; trackBy: trackByCategory" class="category-tab-btn me-2 mb-2"
+        [class.active]="cat.CategoryId === selectedCategoryId" (click)="onCategoryTabClick(cat.CategoryId)">
+        {{ cat.CategoryName }}
+      </button>
+    </div>
   </div>
 
-<!-- Search Bar -->
-<div class="mb-3" style="max-width: 400px;">
-  <div class="search-input">
-    <span class="search-icon">
-      <i class="bi bi-search"></i>
-    </span>
-    <input
-      #searchInput
-      type="text"
-      class="search-field"
-      placeholder="Search courses..."
-      [(ngModel)]="searchText"
-      (ngModelChange)="onSearchTextChange()"
-    />
+  <!-- Search Bar -->
+  <div class="mb-3" style="max-width: 400px;">
+    <div class="search-input">
+      <span class="search-icon">
+        <i class="bi bi-search"></i>
+      </span>
+      <input #searchInput type="text" class="search-field" placeholder="Search courses..." [(ngModel)]="searchText"
+        (ngModelChange)="onSearchTextChange()" />
+    </div>
   </div>
-</div>
 
-<div class="row mb-4">
-  <div *ngFor="let course of displayedCourses; trackBy: trackByCourse" class="col-md-4 col-sm-12 mb-4">
-    <div class="card aw-card course-card h-100 position-relative" (click)="onCardClick(course.CourseId)">
-      <!-- Bootstrap ratio-based responsive banner -->
-      <div class="ratio ratio-16x9 course-banner">
-        <!-- responsive cover image using Bootstrap utility classes with lazy loading -->
-        <img
-          [src]="getBannerUrl(course.BannerImage)"
-          loading="lazy"
-          (error)="onBannerError($event)"
-          alt="{{course.CourseName}} banner"
-          class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
-        />
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center py-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
 
-        <!-- badges centered at bottom of the ratio box -->
-  <div class="badge-row position-absolute d-flex justify-content-center" style="left:50% !important; transform:translateX(-50%) !important; bottom:-38% !important; top:auto !important; pointer-events:none;">
-          <span *ngIf="course.IsBestSeller" class="aw-badge aw-badge-best-seller">Best Seller</span>
-          <span *ngIf="course.IsPremium" class="aw-badge aw-badge-premium">Premium</span>
-          <span class="aw-badge aw-badge-duration">
-            {{ course.TotalDurationPerCourse | durationFormat }}
-          </span>
+  <div class="row mb-4" *ngIf="!isLoading">
+    <div *ngFor="let course of displayedCourses; trackBy: trackByCourse" class="col-md-4 col-sm-12 mb-4">
+      <div class="card aw-card course-card h-100 position-relative" (click)="onCardClick(course.CourseId)">
+        <!-- Bootstrap ratio-based responsive banner -->
+        <div class="ratio ratio-16x9 course-banner">
+          <!-- responsive cover image using Bootstrap utility classes with lazy loading -->
+          <img [src]="getBannerUrl(course.BannerImage)" loading="lazy" (error)="onBannerError($event)"
+            alt="{{course.CourseName}} banner" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
+
+          <!-- badges centered at bottom of the ratio box -->
+          <div class="badge-row position-absolute d-flex justify-content-center"
+            style="left:50% !important; transform:translateX(-50%) !important; bottom:-38% !important; top:auto !important; pointer-events:none;">
+            <span *ngIf="course.IsBestSeller" class="aw-badge aw-badge-best-seller">Best Seller</span>
+            <span *ngIf="course.IsPremium" class="aw-badge aw-badge-premium">Premium</span>
+            <span class="aw-badge aw-badge-duration">
+              {{ course.TotalDurationPerCourse | durationFormat }}
+            </span>
+          </div>
         </div>
-      </div>
-  <div class="aw-card-body card-body d-flex flex-column">
-        <h5 class="aw-card-title text-truncate mb-2" title="{{ course.CourseName }}">{{ course.CourseName }}</h5>
-        <ul class="aw-list-group mb-2">
-          <li class="aw-list-item py-1 px-0 border-0">
-            <strong>Price:</strong>
-            <span *ngIf="course.DiscountedPrice < course.ActualPrice">
-              <del class="price-old">{{ course.ActualPrice | currency:'INR' }}</del>
-              <span class="price-new">{{ course.DiscountedPrice | currency:'INR' }}</span>
-            </span>
-            <span *ngIf="course.DiscountedPrice >= course.ActualPrice">
-              {{ course.ActualPrice | currency:'INR' }}
-            </span>
-          </li>
-        </ul>
-          <div class="mt-auto d-flex gap-2 action-row">
-            <button class="btn btn-success btn-sm action-btn" (click)="buyNow(course.CourseId); $event.stopPropagation();">
+        <div class="aw-card-body card-body d-flex flex-column">
+          <h5 class="aw-card-title text-truncate mb-2" title="{{ course.CourseName }}">{{ course.CourseName }}</h5>
+          <ul class="aw-list-group mb-2" *ngIf="!hideActions">
+            <li class="aw-list-item py-1 px-0 border-0">
+              <strong>Price:</strong>
+              <span *ngIf="course.DiscountedPrice < course.ActualPrice">
+                <del class="price-old">{{ course.ActualPrice | currency:'INR' }}</del>
+                <span class="price-new">{{ course.DiscountedPrice | currency:'INR' }}</span>
+              </span>
+              <span *ngIf="course.DiscountedPrice >= course.ActualPrice">
+                {{ course.ActualPrice | currency:'INR' }}
+              </span>
+            </li>
+          </ul>
+          <div class="mt-auto d-flex gap-2 action-row" *ngIf="!hideActions">
+            <button class="btn btn-success btn-sm action-btn"
+              (click)="buyNow(course.CourseId); $event.stopPropagation();">
               <i class="bi bi-bag-check"></i>
               <span class="btn-text">Buy Now</span>
             </button>
-            <button class="btn btn-info btn-sm action-btn" (click)="addToCart(course.CourseId, $event); $event.stopPropagation();" title="Add to cart" aria-label="Add to cart">
+            <button class="btn btn-info btn-sm action-btn"
+              (click)="addToCart(course.CourseId, $event); $event.stopPropagation();" title="Add to cart"
+              aria-label="Add to cart">
               <i class="bi bi-cart-plus"></i>
               <span class="cart-text">Add to Cart</span>
             </button>
           </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Pagination Controls (responsive) -->
-<div *ngIf="visiblePages.length > 1" class="bottom-pagination mt-3">
-  <nav aria-label="Courses pagination">
-    <!-- Full pagination for small+ screens -->
-    <ul class="pagination pagination-modern justify-content-center d-none d-sm-flex">
-      <!-- First Page -->
-      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
-        <button class="page-link" (click)="goToPage(0)" [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="First page">
-          <i class="bi bi-chevron-double-left"></i>
-        </button>
-      </li>
-      <!-- Previous Page -->
-      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
-        <button class="page-link" (click)="previousPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="Previous page">
-          <i class="bi bi-chevron-left"></i>
-        </button>
-      </li>
-      <!-- Page Numbers -->
-      <ng-container *ngFor="let p of visiblePages">
-        <li class="page-item" [class.active]="p === categoryPagination[selectedCategoryId].currentPage">
-          <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
-            {{ p + 1 }}
+  <!-- Pagination Controls (responsive) -->
+  <div *ngIf="visiblePages.length > 1" class="bottom-pagination mt-3">
+    <nav aria-label="Courses pagination">
+      <!-- Full pagination for small+ screens -->
+      <ul class="pagination pagination-modern justify-content-center d-none d-sm-flex">
+        <!-- First Page -->
+        <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
+          <button class="page-link" (click)="goToPage(0)"
+            [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="First page">
+            <i class="bi bi-chevron-double-left"></i>
           </button>
         </li>
-      </ng-container>
-      <!-- Next Page -->
-      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
-        <button class="page-link" (click)="nextPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)" title="Next page">
+        <!-- Previous Page -->
+        <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === 0">
+          <button class="page-link" (click)="previousPage()"
+            [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" title="Previous page">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+        </li>
+        <!-- Page Numbers -->
+        <ng-container *ngFor="let p of visiblePages">
+          <li class="page-item" [class.active]="p === categoryPagination[selectedCategoryId].currentPage">
+            <button class="page-link" (click)="goToPage(p)" [title]="'Go to page ' + (p + 1)">
+              {{ p + 1 }}
+            </button>
+          </li>
+        </ng-container>
+        <!-- Next Page -->
+        <li class="page-item"
+          [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
+          <button class="page-link" (click)="nextPage()"
+            [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)"
+            title="Next page">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </li>
+        <!-- Last Page -->
+        <li class="page-item"
+          [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
+          <button class="page-link" (click)="goToPage(categoryPagination[selectedCategoryId].totalPages - 1)"
+            [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)"
+            title="Last page">
+            <i class="bi bi-chevron-double-right"></i>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Compact pagination for extra-small screens -->
+      <div class="d-flex d-sm-none justify-content-center align-items-center gap-2">
+        <button class="btn btn-sm btn-light" (click)="previousPage()"
+          [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" aria-label="Previous">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <div class="small text-muted">Page {{ categoryPagination[selectedCategoryId].currentPage + 1 }} / {{
+          categoryPagination[selectedCategoryId].totalPages }}</div>
+        <button class="btn btn-sm btn-light" (click)="nextPage()"
+          [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)"
+          aria-label="Next">
           <i class="bi bi-chevron-right"></i>
         </button>
-      </li>
-      <!-- Last Page -->
-      <li class="page-item" [class.disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)">
-        <button class="page-link" (click)="goToPage(categoryPagination[selectedCategoryId].totalPages - 1)" [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)" title="Last page">
-          <i class="bi bi-chevron-double-right"></i>
-        </button>
-      </li>
-    </ul>
-
-    <!-- Compact pagination for extra-small screens -->
-    <div class="d-flex d-sm-none justify-content-center align-items-center gap-2">
-      <button class="btn btn-sm btn-light" (click)="previousPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === 0" aria-label="Previous">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <div class="small text-muted">Page {{ categoryPagination[selectedCategoryId].currentPage + 1 }} / {{ categoryPagination[selectedCategoryId].totalPages }}</div>
-      <button class="btn btn-sm btn-light" (click)="nextPage()" [disabled]="categoryPagination[selectedCategoryId].currentPage === (categoryPagination[selectedCategoryId].totalPages - 1)" aria-label="Next">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-    </div>
-  </nav>
-</div>
-
-
+      </div>
+    </nav>
+  </div>

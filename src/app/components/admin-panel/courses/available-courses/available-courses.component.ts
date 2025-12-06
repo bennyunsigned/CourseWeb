@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, ChangeDetectionStrategy, ChangeDetectorRef, Input } from '@angular/core';
 import { CategoryMasterService } from '../../../../services/category-master.service';
 import { CourseProgressService } from '../../../../services/course-progress.service';
 import { CommonModule } from '@angular/common';
@@ -27,8 +27,9 @@ interface CategoryTab {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvailableCoursesComponent implements OnInit {
+  @Input() hideActions: boolean = false;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
-  
+
   categories: CategoryTab[] = [];
   selectedCategoryId: number = 0;
   // Store all courses per category
@@ -39,10 +40,11 @@ export class AvailableCoursesComponent implements OnInit {
   displayedCourses: AllCourseContent[] = [];
   hasMore: boolean = true;
   searchText: string = '';
-  
+  isLoading: boolean = false;
+
   // Cache for resolved banner URLs (performance optimization)
   private bannerUrlCache = new Map<string, string>();
-  
+
   // Debounce search input
   private searchSubject = new Subject<string>();
 
@@ -111,6 +113,8 @@ export class AvailableCoursesComponent implements OnInit {
 
 
   fetchAllCoursesForCategory(categoryId: number) {
+    this.isLoading = true;
+    this.cdr.markForCheck();
     // Fetch all courses for the category (large limit)
     this.courseProgressService
       .getPublicCourseContentByCategory(categoryId, 1000, 0)
@@ -119,12 +123,14 @@ export class AvailableCoursesComponent implements OnInit {
           this.categoryCourses[categoryId] = data || [];
           this.categoryPagination[categoryId] = { currentPage: 0, totalPages: Math.ceil((data?.length || 0) / this.coursesPerPage) };
           this.updateDisplayedCourses();
+          this.isLoading = false;
           this.cdr.markForCheck();
         },
         error: () => {
           this.categoryCourses[categoryId] = [];
           this.categoryPagination[categoryId] = { currentPage: 0, totalPages: 0 };
           this.displayedCourses = [];
+          this.isLoading = false;
           this.cdr.markForCheck();
         }
       });
@@ -167,7 +173,7 @@ export class AvailableCoursesComponent implements OnInit {
     if (!raw) return fallback;
     const trimmed = String(raw).trim();
     if (!trimmed) return fallback;
-    
+
     let value = trimmed;
     // If backend returned a filesystem path without leading slash like 'home/...' normalize to '/home/...'
     if (/^home\//i.test(value)) {
@@ -205,7 +211,7 @@ export class AvailableCoursesComponent implements OnInit {
       return fsPath;
     }
     // Some backends return JSON-wrapped values like '{ "imagePath": "uploads/abc.png" }'
-    if ((value.startsWith('{') || value.startsWith('[')) ) {
+    if ((value.startsWith('{') || value.startsWith('['))) {
       try {
         const parsed = JSON.parse(value);
         if (parsed) {

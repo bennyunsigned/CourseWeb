@@ -19,7 +19,7 @@ export class CourseSubscriptionComponent {
     { SubscriptionId: 'LFT', SubscriptionName: 'Lifetime', SubscriptionPrice: 4999, SubscriptionDescription: 'Lifetime access' }
   ];
 
-  constructor(private paymentService: PaymentService, private router: Router, private toastr: ToastrService) {}
+  constructor(private paymentService: PaymentService, private router: Router, private toastr: ToastrService) { }
 
   formatPrice(amount: number) { return `₹${amount}/-`; }
 
@@ -29,8 +29,15 @@ export class CourseSubscriptionComponent {
     const userId = Number(userIdStr) || null;
 
     if (!userId) {
+      const intent = {
+        type: 'subscription',
+        subscriptionId: String(s.SubscriptionId),
+        subscriptionName: s.SubscriptionName,
+        amount: s.SubscriptionPrice
+      };
+      localStorage.setItem('pending_subscription_intent', JSON.stringify(intent));
       this.toastr.info('Please login to purchase a subscription.', 'Login required', { timeOut: 3000, closeButton: true });
-      setTimeout(() => this.router.navigate(['/login']), 3200);
+      setTimeout(() => this.router.navigate(['/login']), 1000);
       return;
     }
 
@@ -58,7 +65,11 @@ export class CourseSubscriptionComponent {
           window.location.href = redirect;
         } else { this.toastr.error('Unable to start payment.', 'Payment error'); console.error('Unexpected create payment response', res); }
       },
-      error: (err: any) => { console.error('Payment create error', err); this.toastr.error('Failed to create payment. Please try again.', 'Payment error'); }
+      error: (err: any) => {
+        console.error('Payment create error', err);
+        const msg = err?.error?.message || err?.message || 'Unknown error';
+        this.toastr.error(`Payment failed: ${msg}`, 'Payment error');
+      }
     });
   }
 }
