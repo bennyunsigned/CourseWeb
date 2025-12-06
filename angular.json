@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ZapLearn-Angular": {
+    "Vidyaroop": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/zap-learn-angular",
+            "outputPath": "dist/vidyaroop",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -30,7 +30,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css",
               "node_modules/ngx-toastr/toastr.css",
-               "node_modules/trix/dist/trix.css"
+              "node_modules/trix/dist/trix.css"
             ],
             "scripts": [
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
@@ -79,10 +79,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ZapLearn-Angular:build:production"
+              "buildTarget": "Vidyaroop:build:production"
             },
             "development": {
-              "buildTarget": "ZapLearn-Angular:build:development"
+              "buildTarget": "Vidyaroop:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,16 +1,18 @@
 <html lang="en">
+
 <head>
   <title>Vidyaroop</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
-    <meta name="author" content="AdminKit">
-    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
-    <base href="/">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+  <meta name="author" content="AdminKit">
+  <meta name="keywords"
+    content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+  <base href="/">
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link rel="shortcut icon" href="img/icons/icon-48x48.png"/>
+  <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
   <!-- iOS/Apple PWA icon (fallback to 192 if 180 not available) -->
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
   <!-- Bootstrap Icons (temporary CDN restore to fix missing icons) -->
@@ -19,11 +21,11 @@
   <!-- Google Identity (CDN) -->
   <script src="https://accounts.google.com/gsi/client" async=""></script>
   <!-- Defensive initializer: find client_id from meta or from the Angular placeholder, and only initialize when available -->
-   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5910536965514788"
-     crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5910536965514788"
+    crossorigin="anonymous"></script>
   <script>
-    (function(){
-      function getClientId(){
+    (function () {
+      function getClientId() {
         try {
           var meta = document.querySelector('meta[name="google-signin-client_id"]');
           if (meta && meta.content) return meta.content;
@@ -32,53 +34,53 @@
             var attr = onloadEl.getAttribute('data-client_id') || onloadEl.getAttribute('data-client-id');
             if (attr) return attr;
           }
-        } catch(e) { /* ignore */ }
+        } catch (e) { /* ignore */ }
         return null; // do not fallback to a hardcoded client id
       }
 
-      function renderButtons(){
-        try{
+      function renderButtons() {
+        try {
           var w = window;
-          if(!w.google || !w.google.accounts || !w.google.accounts.id) return false;
-          document.querySelectorAll('.g_id_signin').forEach(function(el){
-            try{
-              if((el.childElementCount||0) === 0){
+          if (!w.google || !w.google.accounts || !w.google.accounts.id) return false;
+          document.querySelectorAll('.g_id_signin').forEach(function (el) {
+            try {
+              if ((el.childElementCount || 0) === 0) {
                 w.google.accounts.id.renderButton(el, { theme: 'outline', size: 'large' });
               }
-            }catch(e){ /* ignore */ }
+            } catch (e) { /* ignore */ }
           });
           return true;
-        }catch(e){ console.warn('GSI render error', e); return false; }
+        } catch (e) { console.warn('GSI render error', e); return false; }
       }
 
-      function initGSI(){
-        try{
+      function initGSI() {
+        try {
           var w = window;
-          if(!w.google || !w.google.accounts || !w.google.accounts.id) return;
-          if(!w.__gsi_initialized){
+          if (!w.google || !w.google.accounts || !w.google.accounts.id) return;
+          if (!w.__gsi_initialized) {
             var clientId = getClientId();
             if (!clientId) return; // wait until Angular provides client id
-            try{ w.google.accounts.id.initialize({ client_id: clientId, callback: handleCredentialResponse }); }catch(e){}
+            try { w.google.accounts.id.initialize({ client_id: clientId, callback: handleCredentialResponse }); } catch (e) { }
             w.__gsi_initialized = true;
           }
           renderButtons();
-        }catch(e){ console.warn('GSI init error', e); }
+        } catch (e) { console.warn('GSI init error', e); }
       }
 
       // Run once DOM is ready
-      if(document.readyState === 'loading'){
+      if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initGSI);
       } else { initGSI(); }
 
       // Expose a global render function so SPA route navigations can trigger rendering
-      try { if(!window.__gsi_render_buttons) window.__gsi_render_buttons = initGSI; } catch(e){}
+      try { if (!window.__gsi_render_buttons) window.__gsi_render_buttons = initGSI; } catch (e) { }
       // Observe DOM mutations: Angular may insert the placeholder later
-      var mo = new MutationObserver(function(){ initGSI(); });
-      function startGsiObserver(){
-        function begin(){
-          try{ mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-client_id','data-client-id'] }); }catch(e){/* ignore */}
+      var mo = new MutationObserver(function () { initGSI(); });
+      function startGsiObserver() {
+        function begin() {
+          try { mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-client_id', 'data-client-id'] }); } catch (e) {/* ignore */ }
         }
-        if(document.body){ begin(); } else {
+        if (document.body) { begin(); } else {
           document.addEventListener('DOMContentLoaded', begin);
         }
         // Keep observer running; it's cheap and ensures buttons render after route changes
@@ -94,58 +96,60 @@
   <!-- NOTE: Google Fonts currently loaded from Google; to remove CDN you should download the Inter font files and serve them from /assets/fonts and update CSS. I'll add that as a follow-up if you'd like. -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet">
   <!-- Font Awesome (temporary CDN restore to fix missing icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    crossorigin="anonymous">
   <!-- Local animate.css (placeholder) -->
-  <link rel="stylesheet" href="/vendor/animate.min.css"/>
+  <link rel="stylesheet" href="/vendor/animate.min.css" />
   <!-- Local jQuery -->
   <script src="/vendor/jquery-3.6.0.min.js"></script>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="manifest" href="manifest.webmanifest">
+
 </head>
 
 <body id="page-top">
-  <app-root></app-root><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5910536965514788"
-     crossorigin="anonymous"></script>
+  <app-root></app-root>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5910536965514788"
+    crossorigin="anonymous"></script>
   <!-- Local Bootstrap bundle (includes Popper) -->
   <script src="/vendor/bootstrap.bundle.min.js"></script>
-<script>
-      function decodeJWT(token) {
+  <script>
+    function decodeJWT(token) {
 
-        let base64Url = token.split(".")[1];
-        let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-        let jsonPayload = decodeURIComponent(
-          atob(base64)
-            .split("")
-            .map(function (c) {
-              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-            })
-            .join("")
-        );
-        return JSON.parse(jsonPayload);
+      let base64Url = token.split(".")[1];
+      let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      let jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    }
+
+    function handleCredentialResponse(response) {
+
+      console.log("Encoded JWT ID token: " + response.credential);
+
+      const responsePayload = decodeJWT(response.credential);
+
+      console.log("Decoded JWT ID token fields:");
+      console.log("  Full Name: " + responsePayload.name);
+      console.log("  Given Name: " + responsePayload.given_name);
+      console.log("  Family Name: " + responsePayload.family_name);
+      console.log("  Unique ID: " + responsePayload.sub);
+      console.log("  Profile image URL: " + responsePayload.picture);
+      console.log("  Email: " + responsePayload.email);
+      // Dispatch a custom event so Angular can pick up the credential and profile
+      try {
+        window.dispatchEvent(new CustomEvent('google-id-token', { detail: { credential: response.credential, profile: responsePayload } }));
+      } catch (e) {
+        console.warn('Could not dispatch google-id-token event', e);
       }
-
-      function handleCredentialResponse(response) {
-
-        console.log("Encoded JWT ID token: " + response.credential);
-
-        const responsePayload = decodeJWT(response.credential);
-
-        console.log("Decoded JWT ID token fields:");
-        console.log("  Full Name: " + responsePayload.name);
-        console.log("  Given Name: " + responsePayload.given_name);
-        console.log("  Family Name: " + responsePayload.family_name);
-        console.log("  Unique ID: " + responsePayload.sub);
-        console.log("  Profile image URL: " + responsePayload.picture);
-        console.log("  Email: " + responsePayload.email);
-        // Dispatch a custom event so Angular can pick up the credential and profile
-        try {
-          window.dispatchEvent(new CustomEvent('google-id-token', { detail: { credential: response.credential, profile: responsePayload } }));
-        } catch (e) {
-          console.warn('Could not dispatch google-id-token event', e);
-        }
-      }
-    </script>
-    <!-- Removed custom popup blur script; rely on Bootstrap default modal backdrop behavior -->
+    }
+  </script>
+  <!-- Removed custom popup blur script; rely on Bootstrap default modal backdrop behavior -->
   <noscript>Please enable JavaScript to continue using this application.</noscript>
 
 </body>
