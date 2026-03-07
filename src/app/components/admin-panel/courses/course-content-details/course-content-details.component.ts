@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { DurationFormatPipe } from '../../../../pipes/duration-format.pipe';
 import { CourseProgressService } from '../../../../services/course-progress.service';
 import { environment } from '../../../../../environments/environment';
@@ -9,11 +10,12 @@ import { PaymentService } from '../../../../services/payment.service';
 import { CartService } from '../../../../services/cart.service';
 import { decryptData } from '../../../../utils/crypto-util';
 import { ToastrService } from 'ngx-toastr';
+import { ReviewService, Review } from '../../../../services/review.service';
 
 @Component({
   selector: 'app-course-content-details',
   standalone: true,
-  imports: [CommonModule, DurationFormatPipe],
+  imports: [CommonModule, DurationFormatPipe, FormsModule],
   templateUrl: './course-content-details.component.html',
   styleUrls: ['./course-content-details.component.css']
 })
@@ -22,6 +24,20 @@ export class CourseContentDetailsComponent implements OnInit {
   courseContent: PublicCourseContent | null = null;
   loading = true;
   error: string | null = null;
+  reviews: Review[] = [];
+  newReview: Review = { rating: 5, reviewText: '' };
+  submittingReview = false;
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('access_token');
+  }
+
+  getUserId(): number {
+    const encryptedId = localStorage.getItem('user_id');
+    if (!encryptedId) return 0;
+    const decryptedId = decryptData(encryptedId);
+    return Number(decryptedId) || 0;
+  }
 
   // Pagination properties
   currentPage = 0;
@@ -51,6 +67,7 @@ export class CourseContentDetailsComponent implements OnInit {
       this.courseId = Number(this.route.snapshot.paramMap.get('courseId'));
     }
     this.fetchCourseContent();
+    this.loadReviews();
   }
 
   buyNow(courseId: number) {
@@ -168,8 +185,61 @@ export class CourseContentDetailsComponent implements OnInit {
     private router: Router,
     private paymentService: PaymentService,
     private cartService: CartService,
+    private reviewService: ReviewService,
     private toastr: ToastrService
-  ) {}
+  ) { }
+
+  loadReviews() {
+    this.reviewService.getTop30Reviews({ courseId: Number(this.courseId) }).subscribe({
+      next: (data) => {
+        this.reviews = data;
+      },
+      error: (err) => console.error('Error loading reviews:', err)
+    });
+  }
+
+  resolveReviewAvatar(review: Review): string {
+    if (review.userImage) {
+      if (review.userImage.startsWith('http')) return review.userImage;
+      const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : '';
+      const cleanPath = review.userImage.startsWith('/') ? review.userImage.substring(1) : review.userImage;
+      return `${base}/${cleanPath}`;
+    }
+    return 'img/avatars/avatar.jpg';
+  }
+
+  submitReview() {
+    if (!this.isLoggedIn()) {
+      this.toastr.info('Please login to share your reviews', 'Login Required');
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (this.newReview.rating < 1 || this.newReview.rating > 5) {
+      this.toastr.warning('Please provide a rating between 1 and 5');
+      return;
+    }
+    this.submittingReview = true;
+    this.newReview.userId = this.getUserId();
+    this.newReview.courseId = Number(this.courseId) || 0;
+    this.newReview.bundleId = 0;
+    this.newReview.productId = 0;
+
+    console.log('[CourseDetails] Submitting review payload:', this.newReview);
+    this.reviewService.addReview(this.newReview).subscribe({
+      next: (res) => {
+        this.toastr.success('Review added successfully');
+        this.newReview = { rating: 5, reviewText: '' };
+        this.loadReviews();
+        this.submittingReview = false;
+      },
+      error: (err) => {
+        console.error('Full error adding review:', err);
+        const detail = err.error?.detail || err.error?.message || 'Make sure you are logged in.';
+        this.toastr.error(`Failed to add review: ${detail}`);
+        this.submittingReview = false;
+      }
+    });
+  }
 
   fetchCourseContent() {
     this.loading = true;
@@ -326,8 +396,8 @@ export class CourseContentDetailsComponent implements OnInit {
     }
     // Some backends return paths like 'uploads/xyz.png' or 'media/abc.png' — prefix with API origin
     if (/\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(value) || /uploads\//i.test(value) || /media\//i.test(value)) {
-  const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
-  const resolved = base + '/' + value.replace(/^\//, '');
+      const base = environment?.apiUrl ? environment.apiUrl.replace(/\/$/, '') : window.location.origin;
+      const resolved = base + '/' + value.replace(/^\//, '');
       console.log('[CourseContent] getBannerUrl resolved relative path to', resolved);
       return resolved;
     }

@@ -1,18 +1,16 @@
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('access_token');
-  // Log the request body payload
-  console.log('Interceptor running');
 
   if (token) {
+    console.log('[AuthInterceptor] Attaching token to request:', req.url);
     const cloned = req.clone({
       headers: req.headers.set('Authorization', `Bearer ${token}`)
     });
     return next(cloned);
   }
+
+  console.log('[AuthInterceptor] No token found for request:', req.url);
   return next(req);
 };

@@ -62,6 +62,10 @@ export const routes: Routes = [
         path: 'payment-failure',
         component: PaymentFailureComponent
     },
+    {
+        path: 'payment-success',
+        component: PaymentSuccessComponent
+    },
 
     {
         path: 'login',
@@ -111,7 +115,6 @@ export const routes: Routes = [
             { path: 'my-courses', loadComponent: () => import('./components/admin-panel/courses/my-courses/my-courses.component').then(m => m.MyCoursesComponent) },
             { path: 'course-subscription', loadComponent: () => import('./components/admin-panel/courses/course-subscription/course-subscription.component').then(m => m.CourseSubscriptionComponent) },
             { path: 'cart', component: CartComponent, canActivate: [AuthGuard] },
-            { path: 'payment-success', component: PaymentSuccessComponent },
 
 
 

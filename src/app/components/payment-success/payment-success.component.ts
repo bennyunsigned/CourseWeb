@@ -149,4 +149,8 @@ export class PaymentSuccessComponent implements OnInit {
   backToCourses() {
     this.router.navigate(['/course/available-course']);
   }
+
+  backToHome() {
+    this.router.navigate(['/']);
+  }
 }

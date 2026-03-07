@@ -1,32 +1,57 @@
-<div class="status-container d-flex align-items-center justify-content-center min-vh-100">
-  <div class="card glass-panel border-0 text-center p-5 shadow-lg mx-3" style="max-width: 500px;">
+<div class="payment-status-wrapper d-flex align-items-center justify-content-center min-vh-100">
+  <!-- Dynamic background elements for premium feel -->
+  <div class="bg-gradient-circle success-bg" *ngIf="status === 'success'"></div>
+  <div class="bg-gradient-circle failure-bg" *ngIf="status === 'failed' || status === 'error'"></div>
 
-    <div *ngIf="status === 'pending'">
-      <div class="spinner-border text-primary mb-4" style="width: 3rem; height: 3rem;" role="status"></div>
-      <h3 class="fw-bold">Checking Payment Status...</h3>
-      <p class="text-muted">Please wait while we verify your transaction.</p>
+  <div class="content-box text-center p-4 p-md-5">
+
+    <!-- Loading State -->
+    <div *ngIf="status === 'pending'" class="reveal-animation">
+      <div class="loader-wrapper mb-4">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+      <h2 class="fw-bold tracking-tight text-white">Verifying Transaction</h2>
+      <p class="text-white-50">Please stay on this page while we secure your payment.</p>
     </div>
 
-    <div *ngIf="status === 'success'">
-      <div class="mb-4">
-        <img src="img/payments/payment_success.png" alt="Success" class="status-img mb-4">
-        <h1 class="display-5 fw-bold text-success">Success!</h1>
+    <!-- Success State -->
+    <div *ngIf="status === 'success'" class="reveal-animation">
+      <div class="status-icon-wrapper success mb-4">
+        <div class="icon-circle">
+          <i class="bi bi-check2-circle"></i>
+        </div>
       </div>
-      <p class="text-muted mb-4 fs-5">{{ message }}</p>
-      <button (click)="backToCourses()" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm">
-        Back to Courses <i class="bi bi-arrow-right ms-2"></i>
-      </button>
+      <h1 class="display-4 fw-black text-white mb-2">Payment Received!</h1>
+      <p class="text-white-50 fs-5 mb-5 px-md-5">{{ message }}</p>
+
+      <div class="action-buttons gap-3 d-flex flex-column flex-md-row justify-content-center">
+        <button (click)="backToCourses()" class="btn btn-primary-premium btn-lg rounded-pill px-5 py-3">
+          <i class="bi bi-play-circle-fill me-2"></i> Start Learning
+        </button>
+        <button (click)="backToHome()" class="btn btn-outline-premium btn-lg rounded-pill px-5 py-3">
+          <i class="bi bi-house-door me-2"></i> Back to Home
+        </button>
+      </div>
     </div>
 
-    <div *ngIf="status === 'failed' || status === 'error'">
-      <div class="mb-4">
-        <img src="img/payments/payment_failure.png" alt="Failed" class="status-img mb-4">
-        <h1 class="display-5 fw-bold text-danger">Failed</h1>
+    <!-- Failure / Error State -->
+    <div *ngIf="status === 'failed' || status === 'error'" class="reveal-animation">
+      <div class="status-icon-wrapper failure mb-4">
+        <div class="icon-circle">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
       </div>
-      <p class="text-muted mb-4 fs-5">{{ message }}</p>
-      <button (click)="backToCourses()" class="btn btn-outline-light w-100 py-3 fw-bold rounded-pill">
-        Go Back
-      </button>
+      <h1 class="display-4 fw-black text-white mb-2">Oops!</h1>
+      <p class="text-white-50 fs-5 mb-5 px-md-5">{{ message }}</p>
+
+      <div class="action-buttons gap-3 d-flex flex-column flex-md-row justify-content-center">
+        <button (click)="backToCourses()" class="btn btn-danger-premium btn-lg rounded-pill px-5 py-3">
+          <i class="bi bi-arrow-left me-2"></i> Try Again
+        </button>
+        <button (click)="backToHome()" class="btn btn-outline-premium btn-lg rounded-pill px-5 py-3">
+          <i class="bi bi-house-door me-2"></i> Back to Home
+        </button>
+      </div>
     </div>
 
   </div>
