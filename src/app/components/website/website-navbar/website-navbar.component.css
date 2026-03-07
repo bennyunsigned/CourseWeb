@@ -1,6 +1,24 @@
-.navbar{
-    font-weight: 800;
+.navbar {
+  font-weight: 700;
+  padding: 0.8rem 0;
+  transition: all 0.3s ease;
 }
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+  padding: 0.6rem 1.2rem !important;
+  margin: 0 0.2rem;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Subtle white block */
+}
+
 .logo {
   width: 100px;
   height: auto;
@@ -33,25 +51,27 @@
 /* Login = Blue → Purple */
 .navbar .btn-login {
   background-image: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
-  box-shadow: 0 6px 18px rgba(59,130,246,0.22), 0 0 12px rgba(139,92,246,0.18);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.22), 0 0 12px rgba(139, 92, 246, 0.18);
 }
+
 .navbar .btn-login:hover,
 .navbar .btn-login:focus {
   filter: brightness(0.95);
   transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(59,130,246,0.28), 0 0 22px rgba(139,92,246,0.24);
+  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.28), 0 0 22px rgba(139, 92, 246, 0.24);
 }
 
 /* Sign Up = Amber → Red */
 .navbar .btn-signup {
   background-image: linear-gradient(135deg, #f59e0b, #ef4444) !important;
-  box-shadow: 0 6px 18px rgba(245,158,11,0.22), 0 0 12px rgba(239,68,68,0.18);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.22), 0 0 12px rgba(239, 68, 68, 0.18);
 }
+
 .navbar .btn-signup:hover,
 .navbar .btn-signup:focus {
   filter: brightness(0.95);
   transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(245,158,11,0.28), 0 0 22px rgba(239,68,68,0.24);
+  box-shadow: 0 10px 28px rgba(245, 158, 11, 0.28), 0 0 22px rgba(239, 68, 68, 0.24);
 }
 
 /* Small screens: reduce padding so buttons fit in navbar */
