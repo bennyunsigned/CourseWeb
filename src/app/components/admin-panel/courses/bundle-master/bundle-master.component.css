@@ -1,0 +1,169 @@
+.product-master {
+    padding: 1rem;
+}
+
+.inner-card {
+    border: none;
+    border-radius: 12px;
+    background: var(--panel) !important;
+}
+
+.inner-card .card-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--table-border) !important;
+    font-weight: 600;
+    color: var(--text) !important;
+}
+
+/* Aligned Multi-Select Styles for Dark Theme */
+.custom-ng-select-aligned .ng-select-container {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    min-height: 42px !important;
+    transition: all 0.2s ease;
+}
+
+.custom-ng-select-aligned.ng-select-focused .ng-select-container {
+    border-color: rgba(255, 212, 0, 0.4) !important;
+    box-shadow: 0 0 0 4px var(--neon-yellow-08) !important;
+}
+
+/* Fix for transparent dropdown panel in dark mode */
+::ng-deep .ng-dropdown-panel {
+    background-color: var(--panel) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+    z-index: 1050 !important;
+    margin-top: 4px;
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+
+::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+    background-color: transparent !important;
+    color: var(--text) !important;
+    padding: 8px 12px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+    background: linear-gradient(90deg, var(--neon-yellow-08), rgba(255, 255, 255, 0.01)) !important;
+}
+
+::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
+    background: rgba(255, 212, 0, 0.05) !important;
+    color: var(--neon-yellow) !important;
+}
+
+/* Aligned Chips (Tags) in Dark Mode */
+.aligned-chip {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin: 4px 2px;
+    font-size: 0.82rem;
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+.aligned-chip:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.chip-thumb {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 3px;
+    margin-right: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chip-clear {
+    margin-left: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.chip-clear:hover {
+    color: var(--danger);
+}
+
+/* Aligned Options in Dropdown */
+.aligned-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.option-thumb {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.option-title {
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text);
+}
+
+.option-content small {
+    color: var(--muted);
+}
+
+/* Search Input Styling inside ng-select */
+::ng-deep .ng-select .ng-select-container .ng-value-container .ng-input>input {
+    color: var(--text) !important;
+}
+
+::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+    color: var(--muted) !important;
+}
+
+/* Standard Pagination (Matching CourseMaster) */
+.pagination-modern {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.pg-btn {
+    border: 1px solid var(--table-border) !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    color: var(--text) !important;
+    transition: all 0.2s;
+}
+
+.pg-btn:hover:not(:disabled) {
+    background: var(--neon-yellow-08) !important;
+    border-color: var(--neon-yellow) !important;
+    color: var(--neon-yellow) !important;
+}
+
+.pg-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.action-buttons button {
+    padding: 0.25rem 0.5rem;
+}

@@ -18,11 +18,15 @@ export class PaymentSuccessComponent implements OnInit {
   status: string = 'pending';
   message: string = '';
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private paymentService: PaymentService) {}
+  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private paymentService: PaymentService) { }
 
   ngOnInit(): void {
     // Instamojo may return payment_request_id or payment_request on redirect query params
-    this.paymentRequestId = this.route.snapshot.queryParamMap.get('payment_request_id') || this.route.snapshot.queryParamMap.get('payment_request');
+    // Razorpay returns razorpay_payment_link_id
+    this.paymentRequestId = this.route.snapshot.queryParamMap.get('payment_request_id') ||
+      this.route.snapshot.queryParamMap.get('payment_request') ||
+      this.route.snapshot.queryParamMap.get('razorpay_payment_link_id');
+
     if (!this.paymentRequestId) {
       this.message = 'No payment identifier found in the URL.';
       this.status = 'error';
@@ -35,7 +39,7 @@ export class PaymentSuccessComponent implements OnInit {
   checkPaymentStatus(paymentRequestId: string) {
     this.paymentService.getPaymentStatus(paymentRequestId).subscribe({
       next: (res: any) => {
-        console.log('Instamojo payment status response:', res);
+        console.log('Payment gateway status response:', res);
         // Instamojo may return status as 'Completed', 'Credit', 'Success', true, etc.
         const pr = res?.payment_request || res;
         const statusRaw = pr?.status || pr?.payment_status || pr?.status_code || pr?.success;
@@ -58,10 +62,8 @@ export class PaymentSuccessComponent implements OnInit {
     });
   }
 
-  confirmOnServer(paymentRequestId: string, instamojoResponse: any) {
+  confirmOnServer(paymentRequestId: string, gatewayResponse: any) {
     // Backend endpoint to finalize payment and insert records
-    const url = `${environment.apiUrl}/instamojo/payment/confirm`;
-
     // Backend confirm expects body fields: payment_id, payment_type, user_id, course_id, subscription_type, amount
     // Build the payload from query params first, then fall back to pending_payment stored before redirect
     const query = this.route.snapshot.queryParamMap;
@@ -84,7 +86,7 @@ export class PaymentSuccessComponent implements OnInit {
     // If missing, try to read pending_payment saved before redirect
     try {
       const pendingRaw = localStorage.getItem('pending_payment');
-        if (pendingRaw) {
+      if (pendingRaw) {
         const pending = JSON.parse(pendingRaw);
         if (!body.user_id && pending.user_id) body.user_id = Number(pending.user_id);
         // If pending contains CSVs or string course ids, prefer them. Do not coerce to Number.
@@ -102,6 +104,8 @@ export class PaymentSuccessComponent implements OnInit {
         // If payment_type not present, infer from pending
         if (!body.payment_type) {
           if (body.subscription_type) body.payment_type = 'subscription';
+          else if (pending.product_id) body.payment_type = 'product';
+          else if (pending.bundle_id) body.payment_type = 'bundle';
           else body.payment_type = 'individual';
         }
         // clear pending
@@ -114,9 +118,19 @@ export class PaymentSuccessComponent implements OnInit {
     if (qCourseId && !body.course_id) body.course_id = qCourseId;
     if (qAmount && !body.amount) body.amount = Number(qAmount);
     if (qSubscriptionType && !body.subscription_type) body.subscription_type = qSubscriptionType;
+
+    // Check for product/bundle IDs in query params
+    const qProductId = query.get('product_id');
+    const qBundleId = query.get('bundle_id');
+    if (qProductId) body.product_id = Number(qProductId);
+    if (qBundleId) body.bundle_id = Number(qBundleId);
+
     if (!body.payment_type) {
       // final fallback
-      body.payment_type = body.subscription_type ? 'subscription' : 'individual';
+      if (body.subscription_type) body.payment_type = 'subscription';
+      else if (body.product_id) body.payment_type = 'product';
+      else if (body.bundle_id) body.payment_type = 'bundle';
+      else body.payment_type = 'individual';
     }
 
     this.paymentService.confirmPayment(body).subscribe({

@@ -1,0 +1,315 @@
+<div class="product-master">
+  <ul class="nav app-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button (click)="changeActiveTab('Add')" [ngClass]="{'active': ActiveTab === 'Add'}" class="nav-link" id="add-tab"
+        type="button" role="tab" aria-controls="add" aria-selected="true">
+        <i class="bi bi-plus-circle"></i>
+        <span class="d-none d-md-inline"> Add</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button (click)="changeActiveTab('View')" [ngClass]="{'active': ActiveTab === 'View'}" class="nav-link"
+        id="view-tab" type="button" role="tab" aria-controls="view" aria-selected="false">
+        <i class="bi bi-eye"></i>
+        <span class="d-none d-md-inline"> View</span>
+      </button>
+    </li>
+  </ul>
+</div>
+
+<div class="tab-content pt-2" id="myTabContent">
+  <!-- Add Form -->
+  <div *ngIf="ActiveTab === 'Add'" class="tab-pane fade show active" id="add" role="tabpanel">
+    <div class="card shadow-lg inner-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>{{ selectedProductId ? 'Edit Product' : 'Add Product' }}</span>
+        <small>All <span class="text-warning fw-bold">*</span> fields are mandatory.</small>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <!-- Left Side Inputs -->
+            <div class="col-md-9">
+              <div class="row">
+                <div class="col-md-6 col-sm-12 mb-3">
+                  <label for="product_name" class="form-label fw-bold">Product Name *</label>
+                  <input type="text" id="product_name" formControlName="product_name" class="form-control"
+                    placeholder="Enter product name" />
+                </div>
+                <div class="col-md-3 col-sm-12 mb-3">
+                  <label for="product_price" class="form-label fw-bold">Product Price *</label>
+                  <input type="number" id="product_price" formControlName="product_price" class="form-control" />
+                </div>
+                <div class="col-md-3 col-sm-12 mb-3">
+                  <label for="product_discount_price" class="form-label fw-bold">Discount Price *</label>
+                  <input type="number" id="product_discount_price" formControlName="product_discount_price"
+                    class="form-control" />
+                </div>
+                <div class="col-md-12 mb-3">
+                  <label for="product_description" class="form-label fw-bold">Product Description *</label>
+                  <textarea id="product_description" formControlName="product_description" class="form-control"
+                    placeholder="Enter product description" cols="3" style="height:100px;"></textarea>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="product_image" class="form-label fw-bold">Product Image</label>
+                  <input type="file" id="product_image" (change)="onProductImageChange($event)" class="form-control"
+                    accept="image/*" />
+                </div>
+                <div class="col-md-6 mb-3 mt-4 pt-3">
+                  <input type="checkbox" id="is_active" formControlName="is_active" class="form-check-input" />
+                  <label for="is_active" class="form-label fw-bold"> &nbsp;Is Active</label>&nbsp;
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side Preview -->
+            <div class="col-md-3 mb-3 text-center border-start">
+              <div *ngIf="productForm.get('product_image')?.value" class="mt-2">
+                <label class="form-label d-block fw-bold">Product Image Preview</label>
+                <img [src]="mediaUrl + productForm.get('product_image')?.value" alt="Product Preview"
+                  class="form-image-preview" />
+                <div class="mt-2">
+                  <small class="text-muted">Current Path:</small><br>
+                  <small><a [href]="mediaUrl + productForm.get('product_image')?.value" target="_blank"
+                      class="text-truncate d-inline-block" style="max-width: 150px;">
+                      {{ productForm.get('product_image')?.value }}
+                    </a></small>
+                </div>
+              </div>
+              <div *ngIf="!productForm.get('product_image')?.value"
+                class="mt-2 d-flex flex-column align-items-center justify-content-center h-100">
+                <div class="border rounded p-4 text-muted bg-light" style="border-style: dashed !important;">
+                  <i class="bi bi-image" style="font-size: 3rem;"></i>
+                  <p class="mb-0">No Image Preview</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 mb-3">
+              <label for="product_content" class="form-label fw-bold">Product Content *</label>
+              <input id="productContentInput" type="hidden" formControlName="product_content" name="product_content" />
+              <trix-editor input="productContentInput" (trix-change)="onTrixChange($event)"></trix-editor>
+            </div>
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-end mt-4">
+              <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <i class="bi bi-save me-1"></i> {{ selectedProductId ? 'Update' : 'Save' }} Product
+              </button>
+              <button type="button" class="btn btn-light rounded-pill px-4 ms-2" (click)="resetForm()">
+                <i class="bi bi-x-circle me-1"></i> Cancel
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Table -->
+  <div *ngIf="ActiveTab === 'View'" class="tab-pane fade show active" id="view" role="tabpanel">
+    <div class="table-responsive">
+      <div class="row mt-2">
+        <div class="col-md-8">
+          Page Size:
+          <div class="btn-group pagesize" role="group" aria-label="Items per page">
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage(10)">10</button>
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage(50)">50</button>
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage(100)">100</button>
+            <button type="button" class="neon-page-btn" (click)="setItemsPerPage('all')">All</button>
+          </div>
+        </div>
+        <div class="col-md-4 text-right d-flex ">
+          <input type="text" class="form-control mb-2" [(ngModel)]="searchText" (input)="filterData()"
+            placeholder="Search..." />
+        </div>
+      </div>
+
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Sl#</th>
+            <th (click)="sortData('product_name')">Name</th>
+            <th>Image</th>
+            <th (click)="sortData('product_price')">Price</th>
+            <th (click)="sortData('product_discount_price')">D.Price</th>
+            <th>Attch.</th>
+            <th (click)="sortData('is_active')">Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of paginatedData, let i = index">
+            <td><span class="mobileScreen">Sl- </span>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td><span class="mobileScreen">Product Name- </span>{{ product.product_name }}</td>
+            <td>
+              <span class="mobileScreen">Image- </span>
+              <img *ngIf="product.product_image" [src]="mediaUrl + product.product_image" alt="Product Image"
+                class="product-thumbnail" />
+              <span *ngIf="!product.product_image" class="text-muted small">No Image</span>
+            </td>
+            <td><span class="mobileScreen">Price- </span>{{ product.product_price }}</td>
+            <td><span class="mobileScreen">Discount Price- </span>{{ product.product_discount_price }}</td>
+            <td>
+              <span class="mobileScreen">Attachments- </span>
+              <span class="badge bg-secondary">{{ product.attachments?.length || 0 }}</span>
+            </td>
+            <td>
+              <span class="mobileScreen">Active- </span>
+              <span *ngIf="product.is_active; else notActive">Yes</span>
+              <ng-template #notActive>No</ng-template>
+            </td>
+            <td class="action-buttons">
+              <button class="btn btn-primary btn-sm" (click)="editProduct(product.product_id)">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>&nbsp;
+              <a [href]="'/product-sale/' + product.product_id" target="_blank" class="btn btn-success btn-sm"
+                title="View Sale Page">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>&nbsp;
+              <button class="btn btn-info btn-sm" title="Add Attachments" (click)="openAttachmentModal(product)">
+                <i class="fa-solid fa-paperclip"></i>
+              </button>&nbsp;
+              <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.product_id)">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-modern custom-pagination">
+        <button class="pg-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+          <i class="bi bi-chevron-left"></i> Prev
+        </button>
+        <div class="page-info">Page {{ currentPage }} of {{ totalPages }}</div>
+        <button class="pg-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+          Next <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attachment Modal -->
+<div class="modal fade" [ngClass]="{'show d-block': isAttachmentModalOpen}" tabindex="-1" role="dialog"
+  aria-labelledby="attachmentModalLabel" aria-hidden="true" *ngIf="isAttachmentModalOpen">
+  <div class="modal-dialog modal-lg modal-dialog-centered shadow-lg" role="document">
+    <div class="modal-content border-0 overflow-hidden rounded-4">
+      <div class="modal-header bg-gradient-premium text-white py-3">
+        <h5 class="modal-title fw-bold" id="attachmentModalLabel">
+          <i class="bi bi-paperclip me-2"></i> Product Attachments
+        </h5>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close"
+          (click)="closeAttachmentModal()"></button>
+      </div>
+      <div class="modal-body bg-light p-4">
+        <div class="mb-4">
+          <small class="text-muted text-uppercase fw-bold ls-1">Product</small>
+          <h4 class="text-primary mb-0">{{ selectedProductForAttachment?.product_name }}</h4>
+        </div>
+
+        <!-- Existing Attachments Section -->
+        <div class="mb-5" *ngIf="selectedProductForAttachment?.attachments?.length > 0">
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-folder2-open me-2 text-warning"></i> Existing Files</h6>
+            <span class="badge rounded-pill bg-primary ms-2">{{ selectedProductForAttachment.attachments.length
+              }}</span>
+          </div>
+          <div class="attachment-list">
+            <div *ngFor="let att of selectedProductForAttachment.attachments; let i = index"
+              class="attachment-card d-flex align-items-center justify-content-between p-3 mb-2 bg-white rounded-3 shadow-sm border-start border-4 border-primary">
+              <div class="d-flex align-items-center overflow-hidden">
+                <div class="file-icon-box me-3 text-primary">
+                  <i class="bi" [ngClass]="{
+                    'bi-file-pdf': att.file_type === 'PDF',
+                    'bi-image': att.file_type === 'Image',
+                    'bi-play-circle': att.file_type === 'Video',
+                    'bi-file-earmark-text': !['PDF', 'Image', 'Video'].includes(att.file_type || '')
+                  }" style="font-size: 1.5rem;"></i>
+                </div>
+                <div class="text-truncate">
+                  <h6 class="mb-0 text-dark text-truncate">{{ att.file_name || 'Unnamed Attachment' }}</h6>
+                  <small class="text-muted">{{ att.uploaded_on | date:'mediumDate' }} • {{ att.file_type || 'File'
+                    }}</small>
+                </div>
+              </div>
+              <div class="d-flex ms-3">
+                <a [href]="mediaUrl + att.file_url" target="_blank"
+                  class="btn btn-outline-primary btn-sm rounded-pill px-3 me-2">
+                  <i class="bi bi-eye"></i> View
+                </a>
+                <button class="btn btn-outline-danger btn-sm rounded-pill"
+                  (click)="deleteExistingAttachment(att.attachment_id, i)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add New Attachments Section -->
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-cloud-upload me-2 text-primary"></i> Upload New Files</h6>
+            <button class="btn btn-link text-decoration-none fw-bold p-0" (click)="addAttachmentRow()">
+              <i class="bi bi-plus-circle me-1"></i> Add Another
+            </button>
+          </div>
+
+          <div class="new-attachment-rows">
+            <div *ngFor="let row of tempAttachments; let i = index"
+              class="new-attachment-row p-3 mb-3 bg-white border rounded-3 border-dashed position-relative">
+              <button class="btn btn-sm btn-link text-danger position-absolute top-0 end-0 m-1 p-0"
+                (click)="removeAttachmentRow(i)">
+                <i class="bi bi-x-circle-fill" style="font-size: 1.2rem;"></i>
+              </button>
+
+              <div class="row g-3">
+                <div class="col-md-5">
+                  <label class="form-label small fw-bold text-muted">File Selection</label>
+                  <input type="file" class="form-control form-control-sm border-0 bg-light"
+                    (change)="onAttachmentFileChange($event, i)" />
+                  <div *ngIf="row.file_url" class="mt-1">
+                    <small class="text-success text-truncate d-inline-block w-100">
+                      <i class="bi bi-check-circle-fill"></i> Ready to upload
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-bold text-muted">File Display Name</label>
+                  <input type="text" class="form-control form-control-sm border-0 bg-light" [(ngModel)]="row.file_name"
+                    placeholder="e.g. Documentation" />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small fw-bold text-muted">Type</label>
+                  <select class="form-select form-select-sm border-0 bg-light" [(ngModel)]="row.file_type">
+                    <option value="">Auto</option>
+                    <option value="PDF">PDF</option>
+                    <option value="Image">Image</option>
+                    <option value="Video">Video</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="tempAttachments.length === 0" class="text-center p-4 bg-white border border-dashed rounded-3">
+              <i class="bi bi-files text-light" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-2 mb-3">No new files selected for upload</p>
+              <button class="btn btn-primary btn-sm rounded-pill px-4" (click)="addAttachmentRow()">
+                <i class="bi bi-plus-lg me-1"></i> Select Files
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer bg-white border-top-0 py-3">
+        <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeAttachmentModal()">Cancel</button>
+        <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="saveAttachments()"
+          [disabled]="tempAttachments.length === 0">
+          <i class="bi bi-cloud-arrow-up me-1"></i> Save All Files
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isAttachmentModalOpen"></div>

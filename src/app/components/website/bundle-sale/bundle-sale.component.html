@@ -1,0 +1,128 @@
+<div class="sale-container" *ngIf="!loading && bundle; else showLoading">
+
+    <!-- Floating Navbar -->
+    <nav class="floating-nav">
+        <div class="container d-flex justify-content-center justify-content-sm-between align-items-center">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center p-0 m-0" href="#">
+                <img src="img/photos/vidyaroop-logo.png" alt="Vidyaroop" class="logo-img">
+            </a>
+
+            <!-- Center Timer -->
+            <div class="timer-pill d-none d-md-flex align-items-center mx-auto">
+                <span class="pulsing-dot me-2"></span>
+                <span class="text-muted small me-2">Bundle Ends:</span>
+                <span class="fw-bold font-monospace text-white">{{ timeLeft.hours | number:'2.0' }}:{{ timeLeft.minutes
+                    | number:'2.0' }}:{{ timeLeft.seconds | number:'2.0' }}</span>
+            </div>
+
+            <!-- Right Action -->
+            <div class="d-none d-sm-flex align-items-center">
+                <span class="text-white fw-bold me-3">₹{{ bundle.bundle_discount_price }}</span>
+                <button (click)="buyNow()" class="btn btn-buy-sm">Unlock All</button>
+            </div>
+        </div>
+
+        <!-- Mobile Timer Bar -->
+        <div class="mobile-timer-bar d-md-none text-center py-1">
+            <small class="text-white-50">Offer expires in: <span class="text-white fw-bold">{{ timeLeft.hours }}h {{
+                    timeLeft.minutes }}m {{ timeLeft.seconds }}s</span></small>
+        </div>
+    </nav>
+
+    <div style="height: 100px;"></div>
+
+    <!-- Hero/Bundle Info -->
+    <div class="hero-section">
+        <div class="hero-bg" style="background-image: url('img/photos/carausel3.png')"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content container text-center pt-5">
+            <span class="badge badge-neon mb-3">Power Bundle</span>
+            <h1 class="display-3 fw-bold mb-3">{{ bundle.bundle_name }}</h1>
+            <p class="lead text-muted mx-auto col-md-8 mb-4">{{ bundle.bundle_description }}</p>
+
+            <div class="price-box mb-5">
+                <span class="old-price text-decoration-line-through text-muted fs-4 me-3">₹{{ bundle.bundle_price
+                    }}</span>
+                <span class="new-price display-2 fw-bold text-accent">₹{{ bundle.bundle_discount_price }}</span>
+            </div>
+
+            <button (click)="buyNow()" class="btn btn-lg btn-buy-pulse px-5">
+                Join the Bundle Now <i class="bi bi-unlock-fill ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Included Products Section -->
+    <div class="container py-5">
+        <h2 class="text-center fw-bold mb-5">Courses Included in this Bundle</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" *ngFor="let product of bundle.products">
+                <div class="card glass-panel h-100 overflow-hidden border-0">
+                    <img *ngIf="product.product_image" [src]="getFullImageUrl(product.product_image)"
+                        class="card-img-top" [alt]="product.product_name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2">{{ product.product_name }}</h5>
+                        <p class="text-muted small mb-0">{{ product.product_description | slice:0:120 }}...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Bottom Bar (Mobile) -->
+    <div class="sticky-bottom-bar d-sm-none">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <small class="text-muted d-block">Bundle Price</small>
+                <span class="fw-bold fs-4">₹{{ bundle.bundle_discount_price }}</span>
+            </div>
+            <button (click)="buyNow()" class="btn btn-buy-sm">Buy Bundle</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Guest Popup Modal -->
+<div class="modal fade" [ngClass]="{'show d-block': showGuestModal}" tabindex="-1" *ngIf="showGuestModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-panel border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Secure Guest Checkout</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small mb-4">Complete your purchase to get full access.</p>
+                <div class="mb-3">
+                    <label class="form-label small">Full Name</label>
+                    <input type="text" [(ngModel)]="guestInfo.name" class="form-control" placeholder="Enter your name">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Email Address</label>
+                    <input type="email" [(ngModel)]="guestInfo.email" class="form-control"
+                        placeholder="Enter your email">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small">Phone Number</label>
+                    <input type="text" [(ngModel)]="guestInfo.phone" class="form-control"
+                        placeholder="Enter your phone">
+                </div>
+                <button (click)="onPayNow()" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
+                    CONFIRM & PAY ₹{{ bundle?.bundle_discount_price }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showGuestModal"></div>
+
+<ng-template #showLoading>
+    <div class="d-flex justify-content-center align-items-center min-vh-100" *ngIf="loading">
+        <div class="spinner-border text-accent" role="status"></div>
+    </div>
+    <div class="text-center min-vh-100 d-flex flex-column justify-content-center" *ngIf="!loading && error">
+        <i class="bi bi-emoji-frown display-1 text-muted mb-3"></i>
+        <h2 class="text-muted">{{ error }}</h2>
+        <a routerLink="/" class="btn btn-outline-light mt-3 px-4">Go Home</a>
+    </div>
+</ng-template>

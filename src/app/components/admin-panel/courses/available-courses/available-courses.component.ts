@@ -442,7 +442,7 @@ export class AvailableCoursesComponent implements OnInit {
 
     const amount = course.DiscountedPrice && course.DiscountedPrice > 0 ? course.DiscountedPrice : course.ActualPrice;
 
-    // include user and course info in redirect url so the success page can read them after Instamojo redirect
+    // include user and course info in redirect url so the success page can read them after payment gateway redirect
     const redirectWithParams = `${window.location.origin}/course/payment-success`;
 
     const payload = {

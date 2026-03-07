@@ -1,0 +1,66 @@
+/* Add any custom styles for product-master component here */
+.product-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.form-image-preview {
+  height: 200px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid #dee2e6;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Redesigned Attachment Modal Styles */
+.bg-gradient-premium {
+  background: linear-gradient(45deg, #4e73df 0%, #224abe 100%);
+}
+
+.rounded-4 {
+  border-radius: 1rem !important;
+}
+
+.attachment-card {
+  transition: all 0.2s ease-in-out;
+  border-left-width: 4px !important;
+}
+
+.attachment-card:hover {
+  transform: translateX(5px);
+  background-color: #f8f9fc !important;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08) !important;
+}
+
+.file-icon-box {
+  width: 45px;
+  height: 45px;
+  background-color: #f1f4fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+  border-width: 2px !important;
+  border-color: #d1d3e2 !important;
+}
+
+.ls-1 {
+  letter-spacing: 1px;
+}
+
+.new-attachment-row {
+  transition: all 0.2s ease;
+}
+
+.new-attachment-row:hover {
+  border-color: #4e73df !important;
+}

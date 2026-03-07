@@ -1,0 +1,19 @@
+<div class="status-container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card glass-panel border-0 text-center p-5 shadow-lg mx-3" style="max-width: 500px;">
+        <div class="mb-4">
+            <img src="img/payments/payment_failure.png" alt="Payment Failed" class="status-img mb-4">
+            <h1 class="display-5 fw-bold text-danger">Payment Failed</h1>
+        </div>
+        <p class="text-muted mb-4 fs-5">
+            We couldn't process your payment. Please try again or use a different payment method.
+        </p>
+        <div class="d-grid gap-3">
+            <button (click)="retry()" class="btn btn-primary py-3 fw-bold rounded-pill shadow-sm">
+                <i class="bi bi-arrow-counterclockwise me-2"></i> Try Again
+            </button>
+            <button (click)="goHome()" class="btn btn-outline-light py-3 fw-bold rounded-pill">
+                Go to Homepage
+            </button>
+        </div>
+    </div>
+</div>

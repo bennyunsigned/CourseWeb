@@ -8,7 +8,8 @@
         <ul class="sidebar-nav mt-4">
             <!-- Dashboard Menu -->
             <li class="sidebar-item" [ngClass]="{'active': isActive('/dashboard')}">
-                <a class="sidebar-link d-flex align-items-center" [routerLink]="'/dashboard'" (click)="handleTopLevelNavClick()">
+                <a class="sidebar-link d-flex align-items-center" [routerLink]="'/dashboard'"
+                    (click)="handleTopLevelNavClick()">
                     <i class="align-middle me-2 bi bi-sliders"></i>
                     <span class="align-middle">Dashboard</span>
                 </a>
@@ -16,7 +17,7 @@
 
             <!-- Courses Menu with Submenus -->
             <li class="sidebar-item"
-                [ngClass]="{'active': isCoursesMenuOpen || isSubmenuActive(['/course/category-master', '/course/course-master', '/course/module-master'])}">
+                [ngClass]="{'active': isCoursesMenuOpen || isSubmenuActive(['/course/category-master', '/course/course-master', '/course/product-master', '/course/product-subscription', '/course/module-master'])}">
                 <a class="sidebar-link d-flex align-items-center collapsed" data-bs-toggle="collapse"
                     href="#coursesMenu" role="button" aria-expanded="false" aria-controls="coursesMenu"
                     (click)="toggleMenu('courses')">
@@ -40,7 +41,29 @@
                                 <span class="align-middle">Course Master</span>
                             </a>
                         </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/product-master')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/product-master'"
+                                (click)="activateSubmenu('courses')">
+                                <i class="align-middle me-2 bi bi-box-seam"></i>
+                                <span class="align-middle">Product Master</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/bundle-master')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/bundle-master'"
+                                (click)="activateSubmenu('courses')">
+                                <i class="align-middle me-2 bi bi-collection"></i>
+                                <span class="align-middle">Bundle Master</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/product-subscription')}">
+                            <a class="sidebar-link d-flex align-items-center"
+                                [routerLink]="'/course/product-subscription'" (click)="activateSubmenu('courses')">
+                                <i class="align-middle me-2 bi bi-cart-check"></i>
+                                <span class="align-middle">Product Subscriptions</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/course/module-master')}">
+
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/module-master'"
                                 (click)="activateSubmenu('courses')">
                                 <i class="align-middle me-2 bi bi-layers"></i>
@@ -56,7 +79,7 @@
                         </li>
                     </ng-container>
                     <ng-container *ngIf="!isSpecialUser">
-                        <!-- Alternate submenus for special user -->                        
+                        <!-- Alternate submenus for special user -->
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/course/available-course')}">
                             <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/available-course'"
                                 (click)="activateSubmenu('courses')">
@@ -65,25 +88,28 @@
                             </a>
                         </li>
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/course/my-courses')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/my-courses'" (click)="activateSubmenu('courses')">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/my-courses'"
+                                (click)="activateSubmenu('courses')">
                                 <i class="align-middle me-2 bi bi-journal-bookmark"></i>
                                 <span class="align-middle">My Courses</span>
                             </a>
                         </li>
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/course/course-subscription')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/course-subscription'" (click)="activateSubmenu('courses')">
+                            <a class="sidebar-link d-flex align-items-center"
+                                [routerLink]="'/course/course-subscription'" (click)="activateSubmenu('courses')">
                                 <i class="align-middle me-2 bi bi-credit-card-2-front"></i>
                                 <span class="align-middle">Subscriptions</span>
                             </a>
                         </li>
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/course/cart')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/cart'" (click)="activateSubmenu('courses')">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/cart'"
+                                (click)="activateSubmenu('courses')">
                                 <i class="align-middle me-2 bi bi-cart3"></i>
                                 <span class="align-middle">My Cart</span>
                                 <span class="badge bg-primary ms-2" *ngIf="cartCount > 0">{{cartCount}}</span>
                             </a>
                         </li>
-                        
+
                     </ng-container>
                 </ul>
             </li>
@@ -102,7 +128,8 @@
                     <ng-container *ngIf="isSpecialUser">
                         <!-- Admin users see admin-specific helpdesk pages -->
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/admin-tickets')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/admin-tickets'" (click)="activateSubmenu('helpdesk')">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/admin-tickets'"
+                                (click)="activateSubmenu('helpdesk')">
                                 <i class="align-middle me-2 bi bi-people-fill"></i>
                                 <span class="align-middle">Admin Tickets</span>
                             </a>
@@ -111,7 +138,8 @@
                     <ng-container *ngIf="!isSpecialUser">
                         <!-- Regular users see only their tickets -->
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/helpdesk/user-tickets')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/user-tickets'" (click)="activateSubmenu('helpdesk')">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/helpdesk/user-tickets'"
+                                (click)="activateSubmenu('helpdesk')">
                                 <i class="align-middle me-2 bi bi-person-lines-fill"></i>
                                 <span class="align-middle">My Tickets</span>
                             </a>

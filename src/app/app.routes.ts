@@ -5,10 +5,14 @@ import { SignupComponent } from './components/auth/signup/signup.component';
 import { WebsiteBaseComponent } from './components/website/website-base/website-base.component';
 import { DashboardComponent } from './components/admin-panel/dashboard/dashboard.component';
 import { CourseMasterComponent } from './components/admin-panel/courses/course-master/course-master.component';
+import { ProductMasterComponent } from './components/admin-panel/courses/product-master/product-master.component';
+import { ProductSubscriptionComponent } from './components/admin-panel/courses/product-subscription/product-subscription.component';
+import { ProductPaymentVerificationComponent } from './components/admin-panel/courses/product-payment-verification/product-payment-verification.component';
 import { AuthGuard } from './authGuard/auth.guard';
 import { AdminOnlyGuard } from './authGuard/admin-only.guard';
 import { CourseModuleComponent } from './components/admin-panel/courses/course-module/course-module.component';
 import { CategoryMasterComponent } from './components/admin-panel/courses/category-master/category-master.component';
+import { BundleMasterComponent } from './components/admin-panel/courses/bundle-master/bundle-master.component';
 import { TicketsComponent } from './components/admin-panel/helpdesk/tickets/tickets.component';
 import { TicketsUserComponent } from './components/admin-panel/helpdesk/user/tickets-user.component';
 import { TicketsAdminComponent } from './components/admin-panel/helpdesk/admin/tickets-admin.component';
@@ -22,6 +26,9 @@ import { CourseContentDetailsComponent } from './components/admin-panel/courses/
 import { AvailableCoursesComponent } from './components/admin-panel/courses/available-courses/available-courses.component';
 import { CartComponent } from './components/admin-panel/cart/cart.component';
 import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
+import { ProductSaleComponent } from './components/website/product-sale/product-sale.component';
+import { BundleSaleComponent } from './components/website/bundle-sale/bundle-sale.component';
+import { PaymentFailureComponent } from './components/payment-failure/payment-failure.component';
 import { WebsiteRefundCancellationPolicyComponent } from './components/website/website-refund-cancellation-policy/website-refund-cancellation-policy.component';
 import { WebsiteTermsComponent } from './components/website/website-terms/website-terms.component';
 
@@ -42,6 +49,18 @@ export const routes: Routes = [
     {
         path: 'offer-subscription/:subId',
         loadComponent: () => import('./components/website/offer-subscription/offer-subscription.component').then(m => m.OfferSubscriptionComponent)
+    },
+    {
+        path: 'product-sale/:productId',
+        component: ProductSaleComponent
+    },
+    {
+        path: 'bundle-sale/:bundleId',
+        component: BundleSaleComponent
+    },
+    {
+        path: 'payment-failure',
+        component: PaymentFailureComponent
     },
 
     {
@@ -80,6 +99,10 @@ export const routes: Routes = [
 
             { path: 'category-master', component: CategoryMasterComponent, canActivate: [AuthGuard] },
             { path: 'course-master', component: CourseMasterComponent, canActivate: [AuthGuard] },
+            { path: 'product-master', component: ProductMasterComponent, canActivate: [AuthGuard] },
+            { path: 'bundle-master', component: BundleMasterComponent, canActivate: [AuthGuard] },
+            { path: 'product-subscription', component: ProductSubscriptionComponent },
+            { path: 'product-payment-verification', component: ProductPaymentVerificationComponent },
             { path: 'module-master', component: CourseModuleComponent, canActivate: [AuthGuard] },
             { path: 'course-progress', component: CourseProgressComponent, canActivate: [AuthGuard] },
             { path: 'course-content', component: CourseContentDetailsComponent },
