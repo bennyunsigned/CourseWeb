@@ -30,14 +30,12 @@
         </div>
     </nav>
 
-    <div style="height: 100px;"></div>
-
     <div class="hero-section">
         <div class="hero-bg" [style.backgroundImage]="'url(' + getFullImageUrl(product.product_image) + ')'"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start">
+            <div class="row align-items-center gx-lg-4">
+                <div class="col-lg-7 mb-4 mb-lg-0 text-center text-lg-start pr-lg-4">
                     <span class="badge badge-neon mb-3">Special Offer</span>
                     <h1 class="display-3 fw-bold mb-3">{{ product.product_name }}</h1>
                     <div class="product-desc mb-4" [innerHTML]="product.product_description"></div>
@@ -53,8 +51,8 @@
                         Grab This Deal <i class="bi bi-cart-check-fill ms-2"></i>
                     </button>
                 </div>
-                <div class="col-lg-6">
-                    <div class="glass-panel p-3 text-center">
+                <div class="col-lg-5">
+                    <div class="glass-panel p-2 text-center">
                         <img *ngIf="product.product_image" [src]="getFullImageUrl(product.product_image)"
                             class="img-fluid rounded-4 shadow-lg product-hero-img" [alt]="product.product_name">
                     </div>
@@ -64,10 +62,10 @@
     </div>
 
     <!-- Features/Benefits -->
-    <div class="container py-5">
+    <div class="container pt-1 pb-4">
         <div class="row g-4 justify-content-center">
             <div class="col-md-10">
-                <div class="card glass-panel border-0 mb-5">
+                <div class="card glass-panel border-0 mb-4">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4 text-center">What you'll get</h3>
                         <div class="content-rich-text text-muted" [innerHTML]="product.product_content"></div>
@@ -174,30 +172,38 @@
 
 <!-- Guest Popup Modal -->
 <div class="modal fade" [ngClass]="{'show d-block': showGuestModal}" tabindex="-1" *ngIf="showGuestModal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-panel border-0">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">Guest Checkout</h5>
-                <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+    <div class="modal-dialog modal-dialog-centered modal-premium">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+                <h2 class="modal-title text-white">Guest Checkout</h2>
+                <button type="button" class="btn-close-custom" (click)="closeModal()" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
-            <div class="modal-body p-4">
-                <p class="text-muted small mb-4">Enter your details to receive access instantly.</p>
-                <div class="mb-3">
-                    <label class="form-label small">Full Name</label>
+            <div class="modal-body pt-4 text-center">
+                <p class="text-muted mb-5">Enter your details to receive instant access via Email &amp; WhatsApp after
+                    payment.</p>
+                <div class="mb-4 text-start">
+                    <label class="form-label">Full Name</label>
                     <input type="text" [(ngModel)]="guestInfo.name" class="form-control" placeholder="Enter your name">
                 </div>
-                <div class="mb-3">
-                    <label class="form-label small">Email Address</label>
+                <div class="mb-4 text-start">
+                    <label class="form-label">Email Address</label>
                     <input type="email" [(ngModel)]="guestInfo.email" class="form-control"
                         placeholder="Enter your email">
                 </div>
-                <div class="mb-4">
-                    <label class="form-label small">Phone Number</label>
+                <div class="mb-5 text-start">
+                    <label class="form-label">Phone Number</label>
                     <input type="text" [(ngModel)]="guestInfo.phone" class="form-control"
                         placeholder="Enter your phone">
                 </div>
-                <button (click)="onPayNow()" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
-                    PAY NOW ₹{{ product?.product_discount_price }}
+                <button (click)="onPayNow()" class="btn buy-btn w-100 mb-4">
+                    PAY NOW ₹{{ product?.product_discount_price }} <i class="bi bi-shield-lock-fill ms-2"></i>
+                </button>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pt-0">
+                <button type="button" class="btn btn-close-footer" (click)="closeModal()">
+                    <i class="bi bi-x-circle me-2"></i>Close
                 </button>
             </div>
         </div>

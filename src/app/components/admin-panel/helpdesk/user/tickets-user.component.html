@@ -4,9 +4,11 @@
     <div class="card-body">
       <div class="row">
         <div class="col-md-6 mb-2">
-          <input class="form-control" placeholder="Subject" [(ngModel)]="subject" (input)="subjectError=null" [class.is-invalid]="subjectError" maxlength="{{MAX_SUBJECT_LENGTH}}" />
+          <input class="form-control" placeholder="Subject" [(ngModel)]="subject" (input)="subjectError=null"
+            [class.is-invalid]="subjectError" maxlength="{{MAX_SUBJECT_LENGTH}}" />
           <div *ngIf="subjectError" class="invalid-feedback">{{subjectError}}</div>
-          <div class="form-text text-muted small mt-1">{{ (subject || '').length }} / {{ MAX_SUBJECT_LENGTH }} characters</div>
+          <div class="form-text text-muted small mt-1">{{ (subject || '').length }} / {{ MAX_SUBJECT_LENGTH }}
+            characters</div>
         </div>
         <div class="col-md-3 mb-2">
           <select class="form-select" [(ngModel)]="priority">
@@ -17,14 +19,17 @@
           </select>
         </div>
         <div class="col-md-3 mb-2">
-          <input id="user-helpdesk-file" type="file" class="form-control" accept="image/*,application/pdf,.doc,.docx,text/plain"
-            (change)="onFileChange($event)" />
+          <input id="user-helpdesk-file" type="file" class="form-control"
+            accept="image/*,application/pdf,.doc,.docx,text/plain" (change)="onFileChange($event)" />
           <div *ngIf="fileError" class="form-text text-danger small">{{fileError}}</div>
         </div>
         <div class="col-md-12 mb-2">
-          <textarea class="form-control" rows="3" placeholder="Description" [(ngModel)]="description" (input)="descriptionError=null" maxlength="{{MAX_DESC_LENGTH}}" [class.is-invalid]="descriptionError"></textarea>
+          <textarea class="form-control" rows="3" placeholder="Description" [(ngModel)]="description"
+            (input)="descriptionError=null" maxlength="{{MAX_DESC_LENGTH}}"
+            [class.is-invalid]="descriptionError"></textarea>
           <div *ngIf="descriptionError" class="invalid-feedback">{{descriptionError}}</div>
-          <div class="form-text text-muted small mt-1">{{ (description || '').length }} / {{ MAX_DESC_LENGTH }} characters</div>
+          <div class="form-text text-muted small mt-1">{{ (description || '').length }} / {{ MAX_DESC_LENGTH }}
+            characters</div>
         </div>
         <div class="col-md-12 d-flex justify-content-end">
           <button class="btn btn-primary" (click)="createTicket()">Create</button>
@@ -51,7 +56,7 @@
         </div>
         <div class="col-md-2 col-sm-12">
           <label class="form-label me-2">Status:</label>
-    <select class="form-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
+          <select class="form-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
             <option value="">All Statuses</option>
             <option value="open">Open</option>
             <option value="in_progress">In Progress</option>
@@ -71,154 +76,161 @@
         </div>
       </div>
     </div>
-  <div class="card-body">
-    <div *ngIf="filtered.length === 0">No tickets found</div>
-    <div *ngIf="filtered.length > 0">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Subject</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let t of paginated(); let i = index">
-            <td><span class="mobileScreen"># </span>{{ (currentPage-1)*itemsPerPage + i + 1 }}</td>
-            <td><span class="mobileScreen">Course- </span>{{t.subject}}</td>
-            <td><span class="mobileScreen">Priority- </span>{{t.priority}}</td>
-            <td><span class="mobileScreen">Status- </span>{{t.status}}</td>
-            <td><span class="mobileScreen">Created- </span>{{ formatDate(t.created_at) }}</td>
-            <td>
-              <button class="btn btn-sm btn-primary" (click)="openDetails(t)">View</button>
-              <button *ngIf="isAdmin()" class="btn btn-sm btn-danger ms-2"
-                (click)="deleteTicket(t.ticket_id)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="card-body">
+      <div *ngIf="filtered.length === 0">No tickets found</div>
+      <div *ngIf="filtered.length > 0">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Subject</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of paginated(); let i = index">
+              <td><span class="mobileScreen"># </span>{{ (currentPage-1)*itemsPerPage + i + 1 }}</td>
+              <td><span class="mobileScreen">Course- </span>{{t.subject}}</td>
+              <td><span class="mobileScreen">Priority- </span>{{t.priority}}</td>
+              <td><span class="mobileScreen">Status- </span>{{t.status}}</td>
+              <td><span class="mobileScreen">Created- </span>{{ formatDate(t.created_at) }}</td>
+              <td>
+                <button class="btn btn-sm btn-primary" (click)="openDetails(t)">View</button>
+                <button *ngIf="isAdmin()" class="btn btn-sm btn-danger ms-2"
+                  (click)="deleteTicket(t.ticket_id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-      <div class="pagination-modern custom-pagination d-flex justify-content-center">
-        <button type="button" class="pg-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
-          <i class="bi bi-chevron-left"></i>&nbsp; Prev
-        </button>
-        <div class="page-info">Page {{ currentPage }} of {{ totalPages }}</div>
-        <button type="button" class="pg-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
-          Next &nbsp;<i class="bi bi-chevron-right"></i>
-        </button>
+        <div class="pagination-modern custom-pagination d-flex justify-content-center">
+          <button type="button" class="pg-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+            <i class="bi bi-chevron-left"></i>&nbsp; Prev
+          </button>
+          <div class="page-info">Page {{ currentPage }} of {{ totalPages }}</div>
+          <button type="button" class="pg-btn" (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages">
+            Next &nbsp;<i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- details are now shown in the Bootstrap modal below -->
-<!-- Bootstrap modal for ticket details (user) -->
-<div class="modal fade" id="ticketModalUser" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content shadow-sm border-0 helpdesk-glass">
-      <div class="modal-header align-items-center p-3 modern-header">
-        <div class="me-2" style="min-width:0;">
-          <h5 class="modal-title mb-0 text-truncate">{{ selectedTicket?.ticket_id ? ('#' + selectedTicket.ticket_id) :
-            '' }} {{ selectedTicket?.subject || 'Ticket details' }}</h5>
+  <!-- details are now shown in the Bootstrap modal below -->
+  <!-- Bootstrap modal for ticket details (user) -->
+  <div class="modal fade" id="ticketModalUser" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-premium">
+      <div class="modal-content border-0">
+        <div class="modal-header align-items-center p-3 modern-header">
+          <div class="me-2" style="min-width:0;">
+            <h5 class="modal-title mb-0 text-truncate">{{ selectedTicket?.ticket_id ? ('#' + selectedTicket.ticket_id) :
+              '' }} {{ selectedTicket?.subject || 'Ticket details' }}</h5>
 
+          </div>
+          <div class="ms-auto d-flex align-items-center gap-2">
+            <button type="button" class="btn-close-custom" (click)="closeModal()" aria-label="Close">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
         </div>
-        <div class="ms-auto d-flex align-items-center gap-2">
-          <button type="button" class="btn btn-sm btn-icon btn-close-custom" (click)="closeModal()"
-            aria-label="Close">✕</button>
-        </div>
-      </div>
-      <div class="modal-body p-0 modern-body">
-        <div class="d-flex flex-column flex-lg-row">
-          <!-- Left: attachments and metadata (now includes description) -->
-          <div class="order-1 order-lg-0 p-3 left-col" style="flex:0 0 340px; max-width:340px;">
-            <!-- Attachments grid -->
-            <div *ngIf="selectedTicket?.attachments?.length" class="mb-3">
-              <div class="row g-2">
-                <div class="col-12 col-sm-12" *ngFor="let a of selectedTicket.attachments">
-                  <a [href]="resolveUrl(a.file_url)" target="_blank" rel="noopener"
-                    class="d-block hover-zoom rounded overflow-hidden">
-                    <ng-container *ngIf="a.file_type?.startsWith('image/')">
-                      <img [src]="resolveUrl(a.file_url)" [alt]="a.file_name" class="img-fluid"
-                        style="width:100%;height:auto;object-fit:cover;border-radius:8px;" />
-                    </ng-container>
-                    <ng-container *ngIf="!a.file_type?.startsWith('image/')">
-                      <div class="file-chip text-truncate">{{ a.file_name }}</div>
-                    </ng-container>
-                  </a>
+        <div class="modal-body p-0 modern-body">
+          <div class="d-flex flex-column flex-lg-row">
+            <!-- Left: attachments and metadata (now includes description) -->
+            <div class="order-1 order-lg-0 p-3 left-col" style="flex:0 0 340px; max-width:340px;">
+              <!-- Attachments grid -->
+              <div *ngIf="selectedTicket?.attachments?.length" class="mb-3">
+                <div class="row g-2">
+                  <div class="col-12 col-sm-12" *ngFor="let a of selectedTicket.attachments">
+                    <a [href]="resolveUrl(a.file_url)" target="_blank" rel="noopener"
+                      class="d-block hover-zoom rounded overflow-hidden">
+                      <ng-container *ngIf="a.file_type?.startsWith('image/')">
+                        <img [src]="resolveUrl(a.file_url)" [alt]="a.file_name" class="img-fluid"
+                          style="width:100%;height:auto;object-fit:cover;border-radius:8px;" />
+                      </ng-container>
+                      <ng-container *ngIf="!a.file_type?.startsWith('image/')">
+                        <div class="file-chip text-truncate">{{ a.file_name }}</div>
+                      </ng-container>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Description moved here for better layout -->
-            <div class="mb-3">
-              <h6 class="mb-1">Description</h6>
-              <p class="mb-0 text-muted" *ngIf="selectedTicket?.description">{{selectedTicket.description}}</p>
-              <p class="mb-0 text-muted" *ngIf="!selectedTicket?.description"><em>No description provided.</em></p>
-            </div>
+              <!-- Description moved here for better layout -->
+              <div class="mb-3">
+                <h6 class="mb-1">Description</h6>
+                <p class="mb-0 text-muted" *ngIf="selectedTicket?.description">{{selectedTicket.description}}</p>
+                <p class="mb-0 text-muted" *ngIf="!selectedTicket?.description"><em>No description provided.</em></p>
+              </div>
 
-            <div class="mb-3">
-              <div class="small text-muted">Status</div>
-              <div class="mb-2"><span class="badge" [ngClass]="{
+              <div class="mb-3">
+                <div class="small text-muted">Status</div>
+                <div class="mb-2"><span class="badge" [ngClass]="{
                       'bg-primary': selectedTicket?.status === 'open',
                       'bg-warning text-dark': selectedTicket?.status === 'in_progress',
                       'bg-success': selectedTicket?.status === 'resolved',
                       'bg-secondary': selectedTicket?.status === 'closed'
                     }">{{ selectedTicket?.status }}</span></div>
-              <div class="small text-muted">Priority</div>
-              <div><span class="badge bg-info text-dark text-uppercase">{{ selectedTicket?.priority }}</span></div>
+                <div class="small text-muted">Priority</div>
+                <div><span class="badge bg-info text-dark text-uppercase">{{ selectedTicket?.priority }}</span></div>
+              </div>
+
+              <div class="small text-muted">Created</div>
+              <div class="mb-3">{{ formatDate(selectedTicket?.created_at) }}</div>
             </div>
 
-            <div class="small text-muted">Created</div>
-            <div class="mb-3">{{ formatDate(selectedTicket?.created_at) }}</div>
-          </div>
+            <!-- Right: messages and composer -->
+            <div class="flex-grow-1 p-3 d-flex flex-column right-col modern-right" style="min-height:320px;">
+              <!-- Description moved to left column; removed here to avoid duplication -->
 
-          <!-- Right: messages and composer -->
-          <div class="flex-grow-1 p-3 d-flex flex-column right-col modern-right" style="min-height:320px;">
-            <!-- Description moved to left column; removed here to avoid duplication -->
-
-            <div id="messagesContainerUser"
-              class="messages-container flex-grow-1 mb-3 overflow-auto p-3 modern-messages"
-              style="background:transparent;">
-              <div *ngIf="selectedTicket?.messages?.length; else noMessages">
-                <div *ngFor="let m of selectedTicket.messages; let i = index" class="d-flex mb-3 message-row modern-row"
-                  [ngClass]="{'flex-row-reverse': !messageIsFromAdmin(m)}">
-                  <div class="message-body modern-message"
-                    [ngClass]="{'from-admin': messageIsFromAdmin(m), 'from-user': !messageIsFromAdmin(m)}">
-                    <div class="message-meta d-flex align-items-center gap-2">
-                      <div class="badge align-self-center"
-                        [ngClass]="{'bg-warning text-warning': messageIsFromAdmin(m), 'bg-secondary text-light': !messageIsFromAdmin(m)}">
-                        {{ messageIsFromAdmin(m) ? 'Admin' : 'You' }}</div>
-                      <div class="message-time small text-muted ms-2">{{ formatDate(m.created_at) }}</div>
+              <div id="messagesContainerUser"
+                class="messages-container flex-grow-1 mb-3 overflow-auto p-3 modern-messages"
+                style="background:transparent;">
+                <div *ngIf="selectedTicket?.messages?.length; else noMessages">
+                  <div *ngFor="let m of selectedTicket.messages; let i = index"
+                    class="d-flex mb-3 message-row modern-row" [ngClass]="{'flex-row-reverse': !messageIsFromAdmin(m)}">
+                    <div class="message-body modern-message"
+                      [ngClass]="{'from-admin': messageIsFromAdmin(m), 'from-user': !messageIsFromAdmin(m)}">
+                      <div class="message-meta d-flex align-items-center gap-2">
+                        <div class="badge align-self-center"
+                          [ngClass]="{'bg-warning text-warning': messageIsFromAdmin(m), 'bg-secondary text-light': !messageIsFromAdmin(m)}">
+                          {{ messageIsFromAdmin(m) ? 'Admin' : 'You' }}</div>
+                        <div class="message-time small text-muted ms-2">{{ formatDate(m.created_at) }}</div>
+                      </div>
+                      <div class="msg-bubble modern-bubble"
+                        [ngClass]="{'bubble-left': messageIsFromAdmin(m), 'bubble-right': !messageIsFromAdmin(m)}">{{
+                        m.message }}</div>
                     </div>
-                    <div class="msg-bubble modern-bubble"
-                      [ngClass]="{'bubble-left': messageIsFromAdmin(m), 'bubble-right': !messageIsFromAdmin(m)}">{{
-                      m.message }}</div>
+                  </div>
+                </div>
+                <ng-template #noMessages>
+                  <div class="text-center text-muted py-4"><em>No messages yet</em></div>
+                </ng-template>
+              </div>
+
+              <div class="composer mt-auto">
+                <div class="d-flex gap-2">
+                  <textarea id="userComposer" class="form-control" rows="2" [(ngModel)]="newMessage"
+                    (input)="messageError=null" placeholder="Write a message..."></textarea>
+                  <div class="d-flex flex-column">
+                    <button class="btn btn-primary" (click)="postMessage()"
+                      [disabled]="!(newMessage && newMessage.trim().length) || messageError">Send</button>
+                    <button class="btn btn-danger mt-2" (click)="clearComposer()">Clear</button>
                   </div>
                 </div>
               </div>
-              <ng-template #noMessages>
-                <div class="text-center text-muted py-4"><em>No messages yet</em></div>
-              </ng-template>
+              <div *ngIf="messageError" class="text-danger small mt-2">{{messageError}}</div>
             </div>
-
-            <div class="composer mt-auto">
-              <div class="d-flex gap-2">
-                  <textarea id="userComposer" class="form-control" rows="2" [(ngModel)]="newMessage" (input)="messageError=null"
-                  placeholder="Write a message..."></textarea>
-                <div class="d-flex flex-column">
-                  <button class="btn btn-primary" (click)="postMessage()" [disabled]="!(newMessage && newMessage.trim().length) || messageError">Send</button>
-                  <button class="btn btn-danger mt-2" (click)="clearComposer()">Clear</button>
-                </div>
-              </div>
-            </div>
-            <div *ngIf="messageError" class="text-danger small mt-2">{{messageError}}</div>
           </div>
         </div>
+        <div class="modal-footer border-0 justify-content-center pt-0">
+          <button type="button" class="btn btn-close-footer" (click)="closeModal()">
+            <i class="bi bi-x-circle me-2"></i>Close
+          </button>
+        </div>
       </div>
-      <!-- footer removed: header X closes the modal -->
     </div>
   </div>
-</div>

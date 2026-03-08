@@ -7,6 +7,7 @@ import { DashboardComponent } from './components/admin-panel/dashboard/dashboard
 import { CourseMasterComponent } from './components/admin-panel/courses/course-master/course-master.component';
 import { ProductMasterComponent } from './components/admin-panel/courses/product-master/product-master.component';
 import { ProductSubscriptionComponent } from './components/admin-panel/courses/product-subscription/product-subscription.component';
+import { BundleSubscriptionComponent } from './components/admin-panel/courses/bundle-subscription/bundle-subscription.component';
 import { ProductPaymentVerificationComponent } from './components/admin-panel/courses/product-payment-verification/product-payment-verification.component';
 import { AuthGuard } from './authGuard/auth.guard';
 import { AdminOnlyGuard } from './authGuard/admin-only.guard';
@@ -106,6 +107,7 @@ export const routes: Routes = [
             { path: 'product-master', component: ProductMasterComponent, canActivate: [AuthGuard] },
             { path: 'bundle-master', component: BundleMasterComponent, canActivate: [AuthGuard] },
             { path: 'product-subscription', component: ProductSubscriptionComponent },
+            { path: 'bundle-subscription', component: BundleSubscriptionComponent },
             { path: 'product-payment-verification', component: ProductPaymentVerificationComponent },
             { path: 'module-master', component: CourseModuleComponent, canActivate: [AuthGuard] },
             { path: 'course-progress', component: CourseProgressComponent, canActivate: [AuthGuard] },

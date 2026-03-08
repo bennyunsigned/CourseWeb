@@ -1,4 +1,4 @@
-<div class="product-master">
+<div class="bundle-master">
     <ul class="nav app-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button (click)="changeActiveTab('Add')" [ngClass]="{'active': ActiveTab === 'Add'}" class="nav-link"
@@ -85,7 +85,7 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="d-flex justify-content-end mt-4">
+                        <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
                                 <i class="bi bi-save me-1"></i> {{ selectedBundleId ? 'Update' : 'Save' }} Bundle
                             </button>
@@ -132,10 +132,12 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let bundle of paginatedData, let i = index">
-                        <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-                        <td><strong>{{ bundle.bundle_name }}</strong></td>
+                        <td><span class="mobileScreen">Sl- </span>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                        <td><span class="mobileScreen">Bundle Name- </span><strong>{{ bundle.bundle_name }}</strong>
+                        </td>
                         <td>
-                            <div class="d-flex flex-wrap gap-1">
+                            <span class="mobileScreen">Products- </span>
+                            <div class="d-inline-flex flex-wrap gap-1">
                                 <span *ngFor="let p of bundle.products" class="badge bg-secondary">
                                     {{ p.product_name }}
                                 </span>
@@ -143,9 +145,15 @@
                                     class="text-muted small">No products</span>
                             </div>
                         </td>
-                        <td>{{ bundle.bundle_price | number }}</td>
-                        <td>{{ bundle.bundle_discount_price | number }}</td>
                         <td>
+                            <span class="mobileScreen">Price- </span>{{ bundle.bundle_price | number }}
+                        </td>
+                        <td>
+                            <span class="mobileScreen">Discount Price- </span>{{ bundle.bundle_discount_price | number
+                            }}
+                        </td>
+                        <td>
+                            <span class="mobileScreen">Active- </span>
                             <span class="badge" [ngClass]="bundle.is_active ? 'bg-success' : 'bg-danger'">
                                 {{ bundle.is_active ? 'Yes' : 'No' }}
                             </span>

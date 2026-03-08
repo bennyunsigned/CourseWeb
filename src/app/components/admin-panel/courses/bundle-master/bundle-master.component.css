@@ -1,5 +1,6 @@
-.product-master {
-    padding: 1rem;
+.bundle-master {
+    /* Baseline container - styles inherited from global app-tabs system */
+    display: block;
 }
 
 .inner-card {
@@ -164,6 +165,7 @@
     cursor: not-allowed;
 }
 
-.action-buttons button {
-    padding: 0.25rem 0.5rem;
+.action-buttons button,
+.action-buttons a {
+    padding: 0.35rem 0.6rem !important;
 }

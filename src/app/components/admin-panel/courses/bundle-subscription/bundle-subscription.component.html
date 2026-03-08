@@ -1,37 +1,52 @@
-<div class="aw-product-subscription px-3">
+<div class="aw-bundle-subscription px-3">
     <div class="text-center section-header">
-        <span class="badge-neon mb-3 d-inline-block">Official Store</span>
-        <h1 class="display-3 fw-bold text-white mb-4">Premium Digital Products</h1>
-        <p class="lead text-muted mx-auto" style="max-width: 700px; font-size: 1.25rem;">Unlock professional-grade
-            resources, datasets, and curated bundles designed to accelerate your growth journey with lifetime
-            access.</p>
+        <span class="badge-neon mb-3 d-inline-block">Bundle Store</span>
+        <h1 class="display-3 fw-bold text-white mb-4">Premium Bundle Deals</h1>
+        <p class="lead text-muted mx-auto" style="max-width: 700px; font-size: 1.25rem;">Get more value with our
+            curated bundles. Each bundle includes multiple top-rated products at an exclusive combined price with
+            lifetime access.</p>
     </div>
 
     <div class="row g-4">
-        <div class="col-lg-4 col-md-6" *ngFor="let p of paginatedProducts; let i = index">
+        <div class="col-lg-4 col-md-6" *ngFor="let b of paginatedBundles; let i = index">
             <div class="premium-card h-100 shadow-lg">
-                <!-- Image Wrapper -->
-                <div class="product-image-container">
+                <!-- Bundle Image (from first product) -->
+                <div class="bundle-header-container">
                     <div class="image-wrapper">
-                        <img [src]="resolveImagePath(p.product_image)" [alt]="p.product_name" class="product-image">
+                        <img *ngIf="b.products && b.products[0]?.product_image"
+                            [src]="resolveImagePath(b.products[0]?.product_image)" [alt]="b.bundle_name"
+                            class="bundle-image">
+                        <div *ngIf="!b.products || !b.products[0]?.product_image" class="bundle-icon-wrapper">
+                            <i class="bi bi-collection-fill bundle-icon"></i>
+                        </div>
                     </div>
                     <!-- Price Badge -->
                     <div class="price-overlap-badge">
                         <div class="d-flex align-items-baseline">
                             <span class="currency">₹</span>
-                            <span>{{ p.product_discount_price || p.product_price }}</span>
+                            <span>{{ b.bundle_discount_price || b.bundle_price }}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-body d-flex flex-column">
-                    <h3 class="product-title">{{ p.product_name }}</h3>
+                    <h3 class="bundle-title">{{ b.bundle_name }}</h3>
+
+                    <!-- Product Tags -->
+                    <div class="products-included mb-3" *ngIf="b.products && b.products.length > 0">
+                        <span class="includes-label">Includes:</span>
+                        <div class="d-flex flex-wrap gap-1 mt-1">
+                            <span *ngFor="let p of b.products" class="product-chip">
+                                {{ p.product_name }}
+                            </span>
+                        </div>
+                    </div>
 
                     <div class="mt-auto">
-                        <button class="btn view-details-btn mb-3 w-100" (click)="openDescriptionModal(p)">
+                        <button class="btn view-details-btn mb-3 w-100" (click)="openDescriptionModal(b)">
                             <i class="bi bi-info-circle me-2"></i> View Details
                         </button>
-                        <button class="btn buy-btn w-100" (click)='onBuyClick(p)'>
+                        <button class="btn buy-btn w-100" (click)='onBuyClick(b)'>
                             Secure Checkout <i class="bi bi-arrow-right-short ms-2"></i>
                         </button>
                     </div>
@@ -42,7 +57,7 @@
 
     <!-- Pagination -->
     <div class="pagination-container mt-5 d-flex justify-content-center" *ngIf="totalPages > 1">
-        <nav aria-label="Product pagination">
+        <nav aria-label="Bundle pagination">
             <ul class="pagination custom-pagination">
                 <li class="page-item" [class.disabled]="currentPage === 1">
                     <button class="page-link" (click)="onPageChange(currentPage - 1)">
@@ -62,23 +77,23 @@
         </nav>
     </div>
 
-    <div *ngIf="products.length === 0" class="text-center py-5 mt-5">
-        <i class="bi bi-box2-heart display-1 text-muted mb-4 d-block"></i>
-        <h3 class="text-white fw-bold">Marketplace Refreshing</h3>
-        <p class="text-muted">We're currently updating our catalog with high-value content. Check back shortly!</p>
+    <div *ngIf="bundles.length === 0" class="text-center py-5 mt-5">
+        <i class="bi bi-collection display-1 text-muted mb-4 d-block"></i>
+        <h3 class="text-white fw-bold">Bundle Store Refreshing</h3>
+        <p class="text-muted">We're currently updating our bundle catalog. Check back shortly!</p>
     </div>
 </div>
 
-<!-- Modal Restyling -->
+<!-- Modal Backdrop -->
 <div class="modal-backdrop fade show" *ngIf="showModal || showDescriptionModal"
     style="backdrop-filter: blur(25px); background: rgba(0,0,0,0.95);"></div>
 
-<!-- Product Description Modal -->
+<!-- Bundle Description Modal -->
 <div class="modal fade show d-block" *ngIf="showDescriptionModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-premium" role="document">
         <div class="modal-content border-0">
             <div class="modal-header border-0 pb-0 position-relative">
-                <h2 class="modal-title text-white pe-5">{{ selectedProductForDescription?.product_name }}</h2>
+                <h2 class="modal-title text-white pe-5">{{ selectedBundleForDescription?.bundle_name }}</h2>
                 <button type="button" class="btn-close-custom" (click)="closeDescriptionModal()" aria-label="Close">
                     <i class="bi bi-x-lg"></i>
                 </button>
@@ -86,29 +101,37 @@
             <div class="modal-body pt-4">
                 <div class="row">
                     <div class="col-md-5 mb-4 mb-md-0">
+                        <!-- Bundle Image from first product -->
                         <div class="modal-image-wrapper mb-4">
-                            <img [src]="resolveImagePath(selectedProductForDescription?.product_image)"
-                                [alt]="selectedProductForDescription?.product_name" class="img-fluid rounded-4">
+                            <img [src]="resolveImagePath(selectedBundleForDescription?.products && selectedBundleForDescription?.products[0]?.product_image ? selectedBundleForDescription.products[0].product_image : null)"
+                                [alt]="selectedBundleForDescription?.bundle_name" class="img-fluid rounded-4"
+                                style="width:100%;height:100%;object-fit:cover;">
                         </div>
 
+                        <!-- Bundle Price Tag -->
                         <div class="modal-price-tag w-100 mb-4">
                             <span class="text-muted small d-block mb-1">Total Investment</span>
-                            <span class="h2 fw-bold neon-text">₹{{ selectedProductForDescription?.product_discount_price
-                                || selectedProductForDescription?.product_price }}</span>
+                            <span class="h2 fw-bold neon-text">₹{{ selectedBundleForDescription?.bundle_discount_price
+                                || selectedBundleForDescription?.bundle_price }}</span>
+                        </div>
+
+                        <!-- Products Included -->
+                        <div class="modal-products-section" *ngIf="selectedBundleForDescription?.products?.length > 0">
+                            <h5 class="text-indigo mb-3 fw-bold">Products in this Bundle</h5>
+                            <div class="d-flex flex-column gap-2">
+                                <div *ngFor="let p of selectedBundleForDescription?.products"
+                                    class="product-list-item d-flex align-items-center gap-2">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <span class="text-light">{{ p.product_name }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <h5 class="text-indigo mb-3 fw-bold">Overview</h5>
-                        <p class="text-muted mb-4">{{ selectedProductForDescription?.product_description }}</p>
+                        <h5 class="text-indigo mb-3 fw-bold">Bundle Overview</h5>
+                        <p class="text-muted mb-4">{{ selectedBundleForDescription?.bundle_description }}</p>
 
-                        <h5 class="text-indigo mb-3 fw-bold">In-depth Content</h5>
-                        <div class="product-full-content text-light mb-4"
-                            [innerHTML]="selectedProductForDescription?.product_content">
-                        </div>
-
-
-
-                        <button class="btn buy-btn w-100" (click)='onBuyClick(selectedProductForDescription)'>
+                        <button class="btn buy-btn w-100" (click)='onBuyClick(selectedBundleForDescription)'>
                             Secure Checkout <i class="bi bi-shield-lock-fill ms-2"></i>
                         </button>
                     </div>
@@ -134,7 +157,7 @@
                 </button>
             </div>
             <div class="modal-body pt-4 text-center">
-                <p class="text-muted mb-5">Receive your premium activation link via Email and WhatsApp instantly after
+                <p class="text-muted mb-5">Receive your bundle activation link via Email and WhatsApp instantly after
                     payment.</p>
                 <div class="mb-4 text-start">
                     <label class="form-label">Email Identity</label>

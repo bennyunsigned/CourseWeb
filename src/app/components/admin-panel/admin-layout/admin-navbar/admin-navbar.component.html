@@ -6,14 +6,16 @@
         <ul class="navbar-nav navbar-align">
             <!-- User Dropdown -->
             <li class="nav-item dropdown position-relative" [class.show]="showUserMenu">
-                <a class="nav-link dropdown-toggle d-inline-flex align-items-center" href="#" (click)="showUserMenu=!showUserMenu; $event.preventDefault()" aria-haspopup="true" aria-expanded="false">
-                    <img [src]="safeUserPicture" class="avatar img-fluid rounded me-1" alt="userName" /> 
+                <a class="nav-link dropdown-toggle d-inline-flex align-items-center" href="#"
+                    (click)="showUserMenu=!showUserMenu; $event.preventDefault()" aria-haspopup="true"
+                    aria-expanded="false">
+                    <img [src]="safeUserPicture" class="avatar img-fluid rounded me-1" alt="userName" />
                     <span class="navbar-username">{{userName}}</span>
                 </a>
-                                <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" [class.show]="showUserMenu">
-                                        <a class="dropdown-item" href="#" (click)="openChangePasswordModal(); $event.preventDefault()">
-                                                <i class="bi bi-key"></i> Change Password
-                                        </a>
+                <div class="dropdown-menu dropdown-menu-end custom-dropdown-menu" [class.show]="showUserMenu">
+                    <a class="dropdown-item" href="#" (click)="openChangePasswordModal(); $event.preventDefault()">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
                     <a class="dropdown-item" (click)="logout()">
                         <i class="bi bi-box-arrow-right"></i> Log out
                     </a>
@@ -22,26 +24,26 @@
         </ul>
     </div>
 </nav>
- 
+
 <!-- Change Password Modal -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-                        <button type="button" class="btn btn-danger btn-sm ms-auto" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-premium">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0 pb-0 position-relative">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
             <div class="modal-body">
                 <app-change-password></app-change-password>
             </div>
+            <div class="modal-footer border-0 justify-content-center pt-0">
+                <button type="button" class="btn btn-close-footer" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Close
+                </button>
+            </div>
         </div>
     </div>
-    </div>
-
-
-
-
-
-
+</div>

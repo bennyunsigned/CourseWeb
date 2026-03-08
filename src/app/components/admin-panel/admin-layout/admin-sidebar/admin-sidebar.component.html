@@ -17,7 +17,7 @@
 
             <!-- Courses Menu with Submenus -->
             <li class="sidebar-item"
-                [ngClass]="{'active': isCoursesMenuOpen || isSubmenuActive(['/course/category-master', '/course/course-master', '/course/product-master', '/course/product-subscription', '/course/module-master'])}">
+                [ngClass]="{'active': isCoursesMenuOpen || isSubmenuActive(['/course/category-master', '/course/course-master', '/course/module-master', '/course/available-course', '/course/my-courses', '/course/course-subscription', '/course/cart'])}">
                 <a class="sidebar-link d-flex align-items-center collapsed" data-bs-toggle="collapse"
                     href="#coursesMenu" role="button" aria-expanded="false" aria-controls="coursesMenu"
                     (click)="toggleMenu('courses')">
@@ -39,27 +39,6 @@
                                 (click)="activateSubmenu('courses')">
                                 <i class="align-middle me-2 bi bi-person"></i>
                                 <span class="align-middle">Course Master</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/product-master')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/product-master'"
-                                (click)="activateSubmenu('courses')">
-                                <i class="align-middle me-2 bi bi-box-seam"></i>
-                                <span class="align-middle">Product Master</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/bundle-master')}">
-                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/bundle-master'"
-                                (click)="activateSubmenu('courses')">
-                                <i class="align-middle me-2 bi bi-collection"></i>
-                                <span class="align-middle">Bundle Master</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/product-subscription')}">
-                            <a class="sidebar-link d-flex align-items-center"
-                                [routerLink]="'/course/product-subscription'" (click)="activateSubmenu('courses')">
-                                <i class="align-middle me-2 bi bi-cart-check"></i>
-                                <span class="align-middle">Product Subscriptions</span>
                             </a>
                         </li>
                         <li class="sidebar-item" [ngClass]="{'active': isActive('/course/module-master')}">
@@ -110,6 +89,66 @@
                             </a>
                         </li>
 
+                    </ng-container>
+                </ul>
+            </li>
+
+            <!-- Products & Bundles Menu -->
+            <li class="sidebar-item"
+                [ngClass]="{'active': isProductsMenuOpen || isSubmenuActive(['/course/product-master', '/course/bundle-master', '/course/product-subscription', '/course/bundle-subscription'])}">
+                <a class="sidebar-link d-flex align-items-center collapsed" data-bs-toggle="collapse"
+                    href="#productsMenu" role="button" aria-expanded="false" aria-controls="productsMenu"
+                    (click)="toggleMenu('products')">
+                    <i class="align-middle me-2 bi bi-box-seam"></i>
+                    <span class="align-middle">Products & Bundles</span>
+                    <i class="align-middle ms-auto bi bi-chevron-down"></i>
+                </a>
+                <ul class="collapse list-unstyled ps-4" id="productsMenu" [ngClass]="{'show': isProductsMenuOpen}">
+                    <ng-container *ngIf="isSpecialUser">
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/product-master')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/product-master'"
+                                (click)="activateSubmenu('products')">
+                                <i class="align-middle me-2 bi bi-tag"></i>
+                                <span class="align-middle">Product Master</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/bundle-master')}">
+                            <a class="sidebar-link d-flex align-items-center" [routerLink]="'/course/bundle-master'"
+                                (click)="activateSubmenu('products')">
+                                <i class="align-middle me-2 bi bi-collection"></i>
+                                <span class="align-middle">Bundle Master</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/product-subscription')}">
+                            <a class="sidebar-link d-flex align-items-center"
+                                [routerLink]="'/course/product-subscription'" (click)="activateSubmenu('products')">
+                                <i class="align-middle me-2 bi bi-cart-check"></i>
+                                <span class="align-middle">Product Subscriptions</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/bundle-subscription')}">
+                            <a class="sidebar-link d-flex align-items-center"
+                                [routerLink]="'/course/bundle-subscription'" (click)="activateSubmenu('products')">
+                                <i class="align-middle me-2 bi bi-collection-fill"></i>
+                                <span class="align-middle">Bundle Subscriptions</span>
+                            </a>
+                        </li>
+                    </ng-container>
+                    <ng-container *ngIf="!isSpecialUser">
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/product-subscription')}">
+                            <a class="sidebar-link d-flex align-items-center"
+                                [routerLink]="'/course/product-subscription'" (click)="activateSubmenu('products')">
+                                <i class="align-middle me-2 bi bi-cart-check"></i>
+                                <span class="align-middle">Product Subscriptions</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item" [ngClass]="{'active': isActive('/course/bundle-subscription')}">
+                            <a class="sidebar-link d-flex align-items-center"
+                                [routerLink]="'/course/bundle-subscription'" (click)="activateSubmenu('products')">
+                                <i class="align-middle me-2 bi bi-collection-fill"></i>
+                                <span class="align-middle">Bundle Subscriptions</span>
+                            </a>
+                        </li>
                     </ng-container>
                 </ul>
             </li>

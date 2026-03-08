@@ -2,75 +2,68 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PaymentService } from '../../../../services/payment.service';
-import { ProductMasterService } from '../../../../services/product-master.service';
+import { BundleMasterService } from '../../../../services/bundle-master.service';
 import { ToastrService } from 'ngx-toastr';
 import { decryptData } from '../../../../utils/crypto-util';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-    selector: 'app-product-subscription',
+    selector: 'app-bundle-subscription',
     standalone: true,
     imports: [CommonModule, FormsModule],
-    templateUrl: './product-subscription.component.html',
-    styleUrls: ['./product-subscription.component.css']
+    templateUrl: './bundle-subscription.component.html',
+    styleUrls: ['./bundle-subscription.component.css']
 })
-export class ProductSubscriptionComponent implements OnInit {
-    products: any[] = [];
+export class BundleSubscriptionComponent implements OnInit {
+    bundles: any[] = [];
     showModal = false;
-    guestDetails = {
-        email: '',
-        phone: ''
-    };
-    selectedProduct: any = null;
+    guestDetails = { email: '', phone: '' };
+    selectedBundle: any = null;
     mediaUrl = environment.apiUrl;
 
     // Pagination & Description Modal
     currentPage: number = 1;
     itemsPerPage: number = 6;
     showDescriptionModal: boolean = false;
-    selectedProductForDescription: any = null;
+    selectedBundleForDescription: any = null;
 
     constructor(
-        private productService: ProductMasterService,
+        private bundleService: BundleMasterService,
         private paymentService: PaymentService,
         private router: Router,
         private toastr: ToastrService
     ) { }
 
     ngOnInit(): void {
-        this.loadProducts();
+        this.loadBundles();
     }
 
-    // Resolve product image path
     resolveImagePath(path: string | null | undefined): string {
-        if (!path) return 'img/photos/carausel3.png'; // Fallback
+        if (!path) return 'img/photos/carausel3.png';
         if (path.startsWith('http') || path.startsWith('data:')) return path;
         return `${this.mediaUrl}/${path.replace(/^\//, '')}`;
     }
 
-    loadProducts(): void {
-        this.productService.getProducts().subscribe({
-            next: (data) => {
-                this.products = data.filter(p => p.is_active);
+    loadBundles(): void {
+        this.bundleService.getBundles().subscribe({
+            next: (data: any[]) => {
+                this.bundles = data.filter((b: any) => b.is_active);
             },
-            error: (err) => {
-                console.error('Failed to load products', err);
-                this.toastr.error('Failed to load products. Please try again later.');
+            error: (err: any) => {
+                console.error('Failed to load bundles', err);
+                this.toastr.error('Failed to load bundles. Please try again later.');
             }
         });
     }
 
-    formatPrice(amount: number) { return `₹${amount}/-`; }
-
-    // Pagination & Description Logic
-    get paginatedProducts(): any[] {
+    get paginatedBundles(): any[] {
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        return this.products.slice(startIndex, startIndex + this.itemsPerPage);
+        return this.bundles.slice(startIndex, startIndex + this.itemsPerPage);
     }
 
     get totalPages(): number {
-        return Math.ceil(this.products.length / this.itemsPerPage);
+        return Math.ceil(this.bundles.length / this.itemsPerPage);
     }
 
     onPageChange(page: number): void {
@@ -78,18 +71,18 @@ export class ProductSubscriptionComponent implements OnInit {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    openDescriptionModal(product: any): void {
-        this.selectedProductForDescription = product;
+    openDescriptionModal(bundle: any): void {
+        this.selectedBundleForDescription = bundle;
         this.showDescriptionModal = true;
     }
 
     closeDescriptionModal(): void {
         this.showDescriptionModal = false;
-        this.selectedProductForDescription = null;
+        this.selectedBundleForDescription = null;
     }
 
-    onBuyClick(product: any): void {
-        this.selectedProduct = product;
+    onBuyClick(bundle: any): void {
+        this.selectedBundle = bundle;
         const encUserId = localStorage.getItem('user_id') || '';
         const userIdStr = decryptData(encUserId);
         const userId = Number(userIdStr) || 0;
@@ -115,20 +108,20 @@ export class ProductSubscriptionComponent implements OnInit {
     }
 
     processPayment(userId: number): void {
-        const p = this.selectedProduct;
-        const amount = p.product_discount_price || p.product_price;
-        const redirectWithParams = `${window.location.origin}/course/product-payment-verification`;
+        const b = this.selectedBundle;
+        const amount = b.bundle_discount_price || b.bundle_price;
+        const redirectWithParams = `${window.location.origin}/course/bundle-payment-verification`;
 
         const payload: any = {
             amount,
-            purpose: `Product: ${p.product_name}`,
+            purpose: `Bundle: ${b.bundle_name}`,
             buyer_name: 'Guest',
             email: this.guestDetails.email,
             phone: this.guestDetails.phone,
             redirect_url: redirectWithParams,
-            payment_type: 'subscription',
+            payment_type: 'bundle_subscription',
             user_id: userId,
-            subscription_type: String(p.product_id)
+            subscription_type: String(b.bundle_id)
         };
 
         if (userId !== 0) {

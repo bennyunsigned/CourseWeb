@@ -21,35 +21,36 @@ declare global {
 })
 export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add OnInit
   isCoursesMenuOpen = false;
+  isProductsMenuOpen = false;
   isHelpdeskMenuOpen = false;
   isReportsMenuOpen = false;
   isSpecialUser = false; // when true show alternate submenus
   cartCount = 0;
   private _subs: Subscription[] = [];
 
-  constructor(private router: Router, private cartService: CartService) {}
+  constructor(private router: Router, private cartService: CartService) { }
 
   ngOnInit(): void {
     this.setActiveMenuOnLoad(); // <-- Move here
-      try {
-        const stored = localStorage.getItem('user_email');
-        if (stored) {
-            
-            let email = decryptData(stored);
-            if (!email) {
-              email = stored;
-            }
-            const normalized = email.trim().toLowerCase();
-            console.log("Email check:" + normalized);
-            this.isSpecialUser = (normalized === 'bennyunsigned@gmail.com');
-            // debug - remove in production if noisy
-            console.log('admin-sidebar: resolved user email=', normalized, 'isSpecialUser=', this.isSpecialUser);
-        } else {
-          this.isSpecialUser = false;
+    try {
+      const stored = localStorage.getItem('user_email');
+      if (stored) {
+
+        let email = decryptData(stored);
+        if (!email) {
+          email = stored;
         }
-    } catch (e) {
-        console.warn('Failed to determine user email from localStorage:', e);
+        const normalized = email.trim().toLowerCase();
+        console.log("Email check:" + normalized);
+        this.isSpecialUser = (normalized === 'bennyunsigned@gmail.com');
+        // debug - remove in production if noisy
+        console.log('admin-sidebar: resolved user email=', normalized, 'isSpecialUser=', this.isSpecialUser);
+      } else {
         this.isSpecialUser = false;
+      }
+    } catch (e) {
+      console.warn('Failed to determine user email from localStorage:', e);
+      this.isSpecialUser = false;
     }
 
     // Subscribe to cart count if logged in
@@ -80,6 +81,10 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
     // Check the current route and activate the corresponding menu
     if (this.router.url.includes('/dashboard/home')) {
       this.closeAllMenus();
+    } else if (this.router.url.includes('/course/product-master') ||
+      this.router.url.includes('/course/bundle-master') ||
+      this.router.url.includes('/course/product-subscription')) {
+      this.isProductsMenuOpen = true;
     } else if (this.router.url.includes('/course')) {
       this.isCoursesMenuOpen = true;
     } else if (this.router.url.includes('/helpdesk')) {
@@ -96,6 +101,8 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
     // Open the clicked menu
     if (menu === 'courses') {
       this.isCoursesMenuOpen = true;
+    } else if (menu === 'products') {
+      this.isProductsMenuOpen = true;
     } else if (menu === 'helpdesk') {
       this.isHelpdeskMenuOpen = true;
     } else if (menu === 'reports') {
@@ -108,6 +115,8 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
     this.closeAllMenus();
     if (parentMenu === 'courses') {
       this.isCoursesMenuOpen = true;
+    } else if (parentMenu === 'products') {
+      this.isProductsMenuOpen = true;
     } else if (parentMenu === 'helpdesk') {
       this.isHelpdeskMenuOpen = true;
     } else if (parentMenu === 'reports') {
@@ -119,6 +128,7 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit { // <-- Add
 
   closeAllMenus(autoHideSidebar: boolean = false): void {
     this.isCoursesMenuOpen = false;
+    this.isProductsMenuOpen = false;
     this.isHelpdeskMenuOpen = false;
     this.isReportsMenuOpen = false;
     // Optionally auto-hide sidebar on mobile when invoked from a navigation click

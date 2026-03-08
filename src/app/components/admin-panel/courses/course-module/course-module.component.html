@@ -2,17 +2,16 @@
     <ul class="nav app-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button (click)="changeActiveTab('Add')" [ngClass]="{'active': ActiveTab === 'Add'}" class="nav-link"
-                    id="add-tab" type="button" role="tab" aria-controls="add" aria-selected="true">
-                    <i class="bi bi-plus-circle"></i>
-                    <span class="d-none d-md-inline"> Add</span>
+                id="add-tab" type="button" role="tab" aria-controls="add" aria-selected="true">
+                <i class="bi bi-plus-circle"></i>
+                <span class="d-none d-md-inline"> Add</span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button (click)="changeActiveTab('View')" [ngClass]="{'active': ActiveTab === 'View'}"
-                    class="nav-link" id="view-tab" type="button" role="tab" aria-controls="view"
-                    aria-selected="false">
-                    <i class="bi bi-eye"></i>
-                    <span class="d-none d-md-inline"> View</span>
+            <button (click)="changeActiveTab('View')" [ngClass]="{'active': ActiveTab === 'View'}" class="nav-link"
+                id="view-tab" type="button" role="tab" aria-controls="view" aria-selected="false">
+                <i class="bi bi-eye"></i>
+                <span class="d-none d-md-inline"> View</span>
             </button>
         </li>
     </ul>
@@ -119,30 +118,18 @@
                         <td class="d-none"><span class="mobileScreen">Course - </span>{{ module.CourseName }}</td>
                         <td class="mobile-vertical">
                             <span class="mobileScreen">Module </span>
-                            <textarea
-
-                                #moduleNameInput
-                                type="text"
-                                class="form-control"
-                                [value]="module.ModuleName"
+                            <textarea #moduleNameInput type="text" class="form-control" [value]="module.ModuleName"
                                 (change)="onModuleNameChange(module.ModuleId, moduleNameInput.value)"
-                                
-                                rows="4"
-                            ></textarea>
+                                rows="4"></textarea>
                         </td>
                         <td class="mobile-vertical">
                             <span class="mobileScreen">Description </span>
-                            <textarea
-                                #moduleDescriptionInput
-                                type="text"
-                                class="form-control"
+                            <textarea #moduleDescriptionInput type="text" class="form-control"
                                 [value]="module.ModuleDescription"
                                 (change)="onModuleDescriptionChange(module.ModuleId, moduleDescriptionInput.value)"
-                                
-                                rows="4"
-                            ></textarea>
+                                rows="4"></textarea>
                         </td>
-                        <td class="mobile-vertical"> 
+                        <td class="mobile-vertical">
                             <span class="mobileScreen">Sequence No </span>
                             <input #seqInput style="width: 10px;" type="number" class="form-control"
                                 [value]="module.SequenceNo"
@@ -185,11 +172,11 @@
 <!-- Attachment Modal -->
 <div class="modal fade" id="attachmentModal" tabindex="-1" aria-labelledby="attachmentModalLabel" aria-hidden="true"
     data-bs-backdrop="static" data-bs-keyboard="false" (hidden.bs.modal)="resetAttachmentModal()">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-premium">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0 pb-0 position-relative">
                 <h5 class="modal-title" id="attachmentModalLabel">Attachments</h5>
-                <button type="button" class="btn btn-danger btn-sm ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
@@ -208,8 +195,8 @@
                         </div>
                         <div class="col-md-5">
                             <label for="newVideoUrl" class="form-label">Video URL</label>
-                            <input type="text" class="form-control mb-2" placeholder="Video URL" [(ngModel)]="newVideoUrl"
-                                name="newVideoUrl" />
+                            <input type="text" class="form-control mb-2" placeholder="Video URL"
+                                [(ngModel)]="newVideoUrl" name="newVideoUrl" />
                         </div>
                         <div class="col-md-2 mt-2">
                             <br>
@@ -230,11 +217,14 @@
                     <div *ngIf="isFetchingDuration" class="mb-3">
                         <label class="form-label">Fetching video duration...</label>
                         <div class="progress">
-                            <div *ngIf="downloadProgress >= 0" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                [style.width]="downloadProgress + '%'" aria-valuenow="downloadProgress" aria-valuemin="0" aria-valuemax="100">
+                            <div *ngIf="downloadProgress >= 0"
+                                class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                [style.width]="downloadProgress + '%'" aria-valuenow="downloadProgress"
+                                aria-valuemin="0" aria-valuemax="100">
                                 {{ downloadProgress }}%
                             </div>
-                            <div *ngIf="downloadProgress < 0" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                            <div *ngIf="downloadProgress < 0"
+                                class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                                 style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
                                 Loading...
                             </div>
@@ -271,8 +261,10 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer border-0 justify-content-center pt-0">
+                <button type="button" class="btn btn-close-footer" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Close
+                </button>
             </div>
         </div>
     </div>

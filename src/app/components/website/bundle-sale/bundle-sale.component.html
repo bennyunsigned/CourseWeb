@@ -30,8 +30,6 @@
         </div>
     </nav>
 
-    <div style="height: 100px;"></div>
-
     <!-- Hero/Bundle Info -->
     <div class="hero-section">
         <div class="hero-bg" style="background-image: url('img/photos/carausel3.png')"></div>
@@ -54,16 +52,27 @@
     </div>
 
     <!-- Included Products Section -->
-    <div class="container py-5">
-        <h2 class="text-center fw-bold mb-5">Courses Included in this Bundle</h2>
+    <div class="container pt-1 pb-5">
+        <h2 class="text-center fw-bold mb-5">Products Included in this Bundle</h2>
         <div class="row g-4 mb-5">
             <div class="col-md-6 col-lg-4" *ngFor="let product of bundle.products">
-                <div class="card glass-panel h-100 overflow-hidden border-0">
-                    <img *ngIf="product.product_image" [src]="getFullImageUrl(product.product_image)"
-                        class="card-img-top" [alt]="product.product_name" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="fw-bold mb-2">{{ product.product_name }}</h5>
-                        <p class="text-muted small mb-0">{{ product.product_description | slice:0:120 }}...</p>
+                <div class="premium-card h-100 overflow-hidden d-flex flex-column">
+                    <div class="image-wrapper">
+                        <img *ngIf="product.product_image" [src]="getFullImageUrl(product.product_image)"
+                            class="card-img-top" [alt]="product.product_name">
+                        <div *ngIf="!product.product_image"
+                            class="bundle-icon-wrapper w-100 h-100 position-absolute top-0 start-0 d-flex align-items-center justify-content-center"
+                            style="background: rgba(255,255,255,0.05);">
+                            <i class="bi bi-box-seam text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column flex-grow-1 p-4">
+                        <h5 class="fw-bold mb-3 text-white">{{ product.product_name }}</h5>
+                        <p class="text-muted small mb-4 flex-grow-1">{{ product.product_description | slice:0:120 }}...
+                        </p>
+                        <button class="btn view-details-btn w-100 mt-auto" (click)="openProductModal(product)">
+                            <i class="bi bi-info-circle me-2"></i> View Details
+                        </button>
                     </div>
                 </div>
             </div>
@@ -73,7 +82,7 @@
         <div class="col-md-10 mx-auto">
             <div class="reviews-section mt-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-bold m-0 text-white">Student Reviews</h3>
+                    <h3 class="fw-bold m-0 text-white">Customer Reviews</h3>
                     <div class="badge bg-primary rounded-pill px-3">{{ reviews.length }} Reviews</div>
                 </div>
 
@@ -165,38 +174,95 @@
 
 </div>
 
-<!-- Guest Popup Modal -->
-<div class="modal fade" [ngClass]="{'show d-block': showGuestModal}" tabindex="-1" *ngIf="showGuestModal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-panel border-0">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">Secure Guest Checkout</h5>
-                <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+<!-- Product Description Modal -->
+<div class="modal fade" [ngClass]="{'show d-block': showProductModal}" tabindex="-1" *ngIf="showProductModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-premium" role="document">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0 pb-0 position-relative">
+                <h2 class="modal-title text-white pe-5">{{ selectedProduct?.product_name }}</h2>
+                <button type="button" class="btn-close-custom" (click)="closeProductModal()" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
-            <div class="modal-body p-4">
-                <p class="text-muted small mb-4">Complete your purchase to get full access.</p>
-                <div class="mb-3">
-                    <label class="form-label small">Full Name</label>
-                    <input type="text" [(ngModel)]="guestInfo.name" class="form-control" placeholder="Enter your name">
+            <div class="modal-body pt-4">
+                <div class="row">
+                    <div class="col-md-5 mb-4 mb-md-0">
+                        <div class="modal-image-wrapper mb-4">
+                            <img [src]="getFullImageUrl(selectedProduct?.product_image)"
+                                [alt]="selectedProduct?.product_name" class="img-fluid rounded-4">
+                        </div>
+
+                        <div class="modal-price-tag w-100 mb-4">
+                            <span class="text-muted small d-block mb-1">Retail Value</span>
+                            <span class="h2 fw-bold neon-text">₹{{ selectedProduct?.product_discount_price
+                                || selectedProduct?.product_price }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <h5 class="text-indigo mb-3 fw-bold">Overview</h5>
+                        <p class="text-muted mb-4">{{ selectedProduct?.product_description }}</p>
+
+                        <h5 class="text-indigo mb-3 fw-bold">In-depth Content</h5>
+                        <div class="product-full-content text-light mb-4"
+                            [innerHTML]="selectedProduct?.product_content">
+                        </div>
+
+                        <button class="btn buy-btn w-100" (click)='buyNow()'>
+                            Unlock Entire Bundle <i class="bi bi-shield-lock-fill ms-2"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label small">Email Address</label>
-                    <input type="email" [(ngModel)]="guestInfo.email" class="form-control"
-                        placeholder="Enter your email">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label small">Phone Number</label>
-                    <input type="text" [(ngModel)]="guestInfo.phone" class="form-control"
-                        placeholder="Enter your phone">
-                </div>
-                <button (click)="onPayNow()" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
-                    CONFIRM & PAY ₹{{ bundle?.bundle_discount_price }}
+            </div>
+            <div class="modal-footer border-0 justify-content-center pt-0">
+                <button type="button" class="btn btn-close-footer" (click)="closeProductModal()">
+                    <i class="bi bi-x-circle me-2"></i>Close
                 </button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal-backdrop fade show" *ngIf="showGuestModal"></div>
+
+<!-- Guest Popup Modal -->
+<div class="modal fade" [ngClass]="{'show d-block': showGuestModal}" tabindex="-1" *ngIf="showGuestModal">
+    <div class="modal-dialog modal-dialog-centered modal-premium">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0 pb-0 justify-content-center position-relative">
+                <h2 class="modal-title text-white">Secure Guest Checkout</h2>
+                <button type="button" class="btn-close-custom" (click)="closeModal()" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body pt-4 text-center">
+                <p class="text-muted mb-5">Enter your details to receive instant access via Email &amp; WhatsApp after
+                    payment.</p>
+                <div class="mb-4 text-start">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" [(ngModel)]="guestInfo.name" class="form-control" placeholder="Enter your name">
+                </div>
+                <div class="mb-4 text-start">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" [(ngModel)]="guestInfo.email" class="form-control"
+                        placeholder="Enter your email">
+                </div>
+                <div class="mb-5 text-start">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" [(ngModel)]="guestInfo.phone" class="form-control"
+                        placeholder="Enter your phone">
+                </div>
+                <button (click)="onPayNow()" class="btn buy-btn w-100 mb-4">
+                    CONFIRM &amp; PAY ₹{{ bundle?.bundle_discount_price }} <i class="bi bi-shield-lock-fill ms-2"></i>
+                </button>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pt-0">
+                <button type="button" class="btn btn-close-footer" (click)="closeModal()">
+                    <i class="bi bi-x-circle me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showGuestModal || showProductModal"
+    style="backdrop-filter: blur(25px); background: rgba(0,0,0,0.95);"></div>
 
 <ng-template #showLoading>
     <div class="d-flex justify-content-center align-items-center min-vh-100" *ngIf="loading">

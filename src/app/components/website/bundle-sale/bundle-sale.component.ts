@@ -59,6 +59,19 @@ export class BundleSaleComponent implements OnInit, OnDestroy {
         phone: ''
     };
 
+    showProductModal = false;
+    selectedProduct: any = null;
+
+    openProductModal(product: any) {
+        this.selectedProduct = product;
+        this.showProductModal = true;
+    }
+
+    closeProductModal() {
+        this.showProductModal = false;
+        this.selectedProduct = null;
+    }
+
     timeLeft: any = { hours: 0, minutes: 0, seconds: 0 };
     private timerInterval: any;
 

@@ -193,14 +193,15 @@
 <!-- Attachment Modal -->
 <div class="modal fade" [ngClass]="{'show d-block': isAttachmentModalOpen}" tabindex="-1" role="dialog"
   aria-labelledby="attachmentModalLabel" aria-hidden="true" *ngIf="isAttachmentModalOpen">
-  <div class="modal-dialog modal-lg modal-dialog-centered shadow-lg" role="document">
-    <div class="modal-content border-0 overflow-hidden rounded-4">
-      <div class="modal-header bg-gradient-premium text-white py-3">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-premium" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-header border-0 pb-0 position-relative">
         <h5 class="modal-title fw-bold" id="attachmentModalLabel">
           <i class="bi bi-paperclip me-2"></i> Product Attachments
         </h5>
-        <button type="button" class="btn-close btn-close-white" aria-label="Close"
-          (click)="closeAttachmentModal()"></button>
+        <button type="button" class="btn-close-custom" (click)="closeAttachmentModal()" aria-label="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
       </div>
       <div class="modal-body bg-light p-4">
         <div class="mb-4">
@@ -302,8 +303,10 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer bg-white border-top-0 py-3">
-        <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeAttachmentModal()">Cancel</button>
+      <div class="modal-footer bg-white border-top-0 py-3 justify-content-between">
+        <button type="button" class="btn btn-close-footer" (click)="closeAttachmentModal()">
+          <i class="bi bi-x-circle me-2"></i>Close
+        </button>
         <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="saveAttachments()"
           [disabled]="tempAttachments.length === 0">
           <i class="bi bi-cloud-arrow-up me-1"></i> Save All Files

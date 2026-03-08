@@ -320,6 +320,178 @@
     --neon-yellow-04: rgba(255, 212, 0, 0.04);
 }
 
+/* Global Premium Modal System */
+.modal-premium .modal-content {
+    background: #0f1016 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 40px !important;
+    padding: 2.5rem !important;
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.9) !important;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-premium .modal-header {
+    border-bottom: none !important;
+    padding: 0 0 1.5rem !important;
+    display: flex;
+    align-items: center;
+}
+
+.modal-premium .modal-title {
+    font-weight: 900 !important;
+    font-size: 2rem !important;
+    letter-spacing: -1px;
+    color: #fff !important;
+    line-height: 1.2;
+}
+
+.modal-premium .modal-body {
+    padding: 1.25rem 2.25rem !important;
+}
+
+.modal-premium .modal-footer {
+    border-top: none !important;
+    padding: 1.25rem 2.25rem 2rem !important;
+}
+
+/* Global footer close button for all premium modals */
+.btn-close-footer {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #94a3b8;
+    border-radius: 50px;
+    padding: 0.6rem 1.8rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-close-footer:hover {
+    background: rgba(239, 68, 68, 0.15);
+    /* Red background with opacity */
+    color: #ef4444;
+    /* Red text */
+    border-color: rgba(239, 68, 68, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Superior Mobile Experience: Immersive Full-Screen */
+@media (max-width: 767px) {
+    .modal-premium.modal-dialog {
+        margin: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 100% !important;
+        /* Full height dialog */
+        padding: 0 !important;
+    }
+
+    .modal-premium .modal-content {
+        border-radius: 0 !important;
+        height: 100% !important;
+        min-height: 100vh !important;
+        border: none !important;
+        padding: 0 !important;
+        overflow-y: auto !important;
+        /* This is the scrollable container */
+        -webkit-overflow-scrolling: touch !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: #0f1016 !important;
+    }
+
+    /* Restore visible premium scrollbar */
+    .modal-premium .modal-content::-webkit-scrollbar {
+        width: 4px !important;
+        display: block !important;
+    }
+
+    .modal-premium .modal-content::-webkit-scrollbar-thumb {
+        background: rgba(99, 102, 241, 0.4) !important;
+        border-radius: 10px !important;
+    }
+
+    .modal-premium .modal-title {
+        font-size: 1.2rem !important;
+        text-align: center;
+        width: 100%;
+        padding: 0 2.5rem;
+        /* Room for close button if needed */
+        font-weight: 800 !important;
+        line-height: 1.3;
+    }
+
+    .modal-premium .modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+        background: rgba(15, 16, 22, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 1rem 1.25rem !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        min-height: 70px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .modal-premium .modal-body {
+        padding: 2.5rem 1.75rem 4rem !important;
+        /* Strong side padding (28px) strictly enforced */
+        flex-grow: 1;
+        overflow-x: hidden;
+    }
+
+    .modal-premium .modal-footer {
+        padding: 1.5rem 1.75rem !important;
+        background: rgba(15, 16, 22, 0.95);
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        flex-shrink: 0;
+    }
+}
+
+/* Custom Close Button for Premium Modals */
+.btn-close-custom {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.btn-close-custom:hover {
+    background: #6366f1;
+    border-color: #6366f1;
+    transform: rotate(90deg) scale(1.1);
+}
+
+@media (max-width: 767px) {
+    .btn-close-custom {
+        top: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
 /* Base page */
 body,
 html,
@@ -1818,6 +1990,7 @@ footer.footer ul,
     table th {
         display: none !important;
     }
+
     table tbody tr {
         margin-bottom: 10px !important;
     }
