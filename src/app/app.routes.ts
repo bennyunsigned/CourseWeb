@@ -60,12 +60,12 @@ export const routes: Routes = [
         component: BundleSaleComponent
     },
     {
-        path: 'payment-failure',
-        component: PaymentFailureComponent
+        path: 'course/payment-success',
+        component: PaymentSuccessComponent
     },
     {
-        path: 'payment-success',
-        component: PaymentSuccessComponent
+        path: 'course/payment-failure',
+        component: PaymentFailureComponent
     },
 
     {
