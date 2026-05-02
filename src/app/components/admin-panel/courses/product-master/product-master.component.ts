@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { ImageUploadService } from '../../../../services/image-upload.service';
 import { environment } from '../../../../../environments/environment';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { encryptData } from '../../../../utils/crypto-util';
 
 
 @Component({
@@ -402,5 +403,10 @@ export class ProductMasterComponent implements OnInit {
                 }
             });
         }
+    }
+
+    getEncryptedId(id: number | string): string {
+        if (!id) return '';
+        return encodeURIComponent(encryptData(id.toString()));
     }
 }

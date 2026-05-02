@@ -8,6 +8,7 @@ import { Product } from '../../../../models/productModel';
 import { ToastrService } from 'ngx-toastr';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { environment } from '../../../../../environments/environment';
+import { encryptData } from '../../../../utils/crypto-util';
 
 @Component({
     selector: 'app-bundle-master',
@@ -211,5 +212,10 @@ export class BundleMasterComponent implements OnInit {
         }
         this.currentPage = 1;
         this.filterData();
+    }
+
+    getEncryptedId(id: number | string): string {
+        if (!id) return '';
+        return encodeURIComponent(encryptData(id.toString()));
     }
 }

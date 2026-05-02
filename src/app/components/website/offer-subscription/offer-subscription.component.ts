@@ -105,16 +105,21 @@ export class OfferSubscriptionComponent implements OnInit, OnDestroy {
     }
 
     startTimer() {
-        // 4 hour countdown loop
-        let totalSeconds = 4 * 60 * 60;
+        // 1 hour countdown loop
+        let totalSeconds = 1 * 60 * 60;
 
         // Try to recover state from session storage to keep timer consistent on refresh
-        const saved = sessionStorage.getItem('offer_timer');
-        if (saved) {
-            const diff = Math.floor((Date.now() - Number(saved)) / 1000);
-            if (diff < totalSeconds) totalSeconds -= diff;
-        } else {
-            sessionStorage.setItem('offer_timer', String(Date.now()));
+        try {
+            const saved = sessionStorage.getItem('offer_timer');
+            if (saved) {
+                const diff = Math.floor((Date.now() - Number(saved)) / 1000);
+                if (diff < totalSeconds) totalSeconds -= diff;
+            } else {
+                sessionStorage.setItem('offer_timer', String(Date.now()));
+            }
+        } catch (e) {
+            console.warn('sessionStorage access denied', e);
+            // Ignore error and just start a fresh 4-hour timer
         }
 
         this.timerInterval = setInterval(() => {

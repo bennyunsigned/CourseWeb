@@ -162,7 +162,7 @@
                             <button class="btn btn-primary btn-sm" (click)="editBundle(bundle.bundle_id!)">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>&nbsp;
-                            <a [href]="'/bundle-sale/' + bundle.bundle_id" target="_blank"
+                            <a [href]="'/bundle-sale/' + getEncryptedId(bundle.bundle_id!)" target="_blank"
                                 class="btn btn-success btn-sm" title="View Sale Page">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>&nbsp;

@@ -28,14 +28,24 @@ export class ProductSaleComponent implements OnInit, OnDestroy {
     submittingReview = false;
 
     isLoggedIn(): boolean {
-        return !!localStorage.getItem('access_token');
+        try {
+            return !!localStorage.getItem('access_token');
+        } catch (e) {
+            console.warn('localStorage access denied', e);
+            return false;
+        }
     }
 
     getUserId(): number {
-        const encryptedId = localStorage.getItem('user_id');
-        if (!encryptedId) return 0;
-        const decryptedId = decryptData(encryptedId);
-        return Number(decryptedId) || 0;
+        try {
+            const encryptedId = localStorage.getItem('user_id');
+            if (!encryptedId) return 0;
+            const decryptedId = decryptData(encryptedId);
+            return Number(decryptedId) || 0;
+        } catch (e) {
+            console.warn('localStorage access denied', e);
+            return 0;
+        }
     }
 
     getFullImageUrl(imagePath: string | undefined): string {
@@ -74,8 +84,17 @@ export class ProductSaleComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.startTimer();
         this.route.paramMap.subscribe(params => {
-            const id = params.get('productId');
+            let id = params.get('productId');
             if (id) {
+                try {
+                    const decoded = decodeURIComponent(id);
+                    const decrypted = decryptData(decoded);
+                    if (decrypted && !isNaN(Number(decrypted))) {
+                        id = decrypted;
+                    }
+                } catch (e) {
+                    console.warn('Could not decrypt productId', e);
+                }
                 this.productId = id;
                 this.loadProduct();
                 this.loadReviews();
@@ -91,13 +110,18 @@ export class ProductSaleComponent implements OnInit, OnDestroy {
     }
 
     startTimer() {
-        let totalSeconds = 4 * 60 * 60;
-        const saved = sessionStorage.getItem('product_sale_timer');
-        if (saved) {
-            const diff = Math.floor((Date.now() - Number(saved)) / 1000);
-            if (diff < totalSeconds) totalSeconds -= diff;
-        } else {
-            sessionStorage.setItem('product_sale_timer', String(Date.now()));
+        let totalSeconds = 1 * 60 * 60;
+        try {
+            const saved = sessionStorage.getItem('product_sale_timer');
+            if (saved) {
+                const diff = Math.floor((Date.now() - Number(saved)) / 1000);
+                if (diff < totalSeconds) totalSeconds -= diff;
+            } else {
+                sessionStorage.setItem('product_sale_timer', String(Date.now()));
+            }
+        } catch (e) {
+            console.warn('sessionStorage access denied', e);
+            // Ignore error and just start a fresh 4-hour timer
         }
 
         this.timerInterval = setInterval(() => {

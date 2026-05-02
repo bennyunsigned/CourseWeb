@@ -162,7 +162,7 @@
               <button class="btn btn-primary btn-sm" (click)="editProduct(product.product_id)">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>&nbsp;
-              <a [href]="'/product-sale/' + product.product_id" target="_blank" class="btn btn-success btn-sm"
+              <a [href]="'/product-sale/' + getEncryptedId(product.product_id)" target="_blank" class="btn btn-success btn-sm"
                 title="View Sale Page">
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
               </a>&nbsp;
